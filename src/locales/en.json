@@ -1,0 +1,22 @@
+{
+    "login": {
+        "title": "Autorize to system",
+        "login": "User name",
+        "pass": "Password",
+        "b_login": "Login"
+    },
+    "error": {
+        "required": "Required",
+        "login": "Authorization failed"
+    },
+    "menu": {
+        "users": "Operators",
+        "groups": "groups",
+        "logs": "Log",
+        "logout": "Logout",
+        "settings": "Settings",
+        "clients": "Clients",
+        "services": "Services",
+        "abonements": "Abonements"
+    }
+}
