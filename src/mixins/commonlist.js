@@ -52,7 +52,15 @@ export default {
             }
         }
     },
-
+    watch: {
+        pagination: {
+          handler() {
+            this.loadData();
+          },
+          deep: true,
+        },
+      },
+   
     methods: {
         startSearch() {
             let latv = "ēūīāšģķļžčņ";

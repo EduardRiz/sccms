@@ -47,3 +47,34 @@ export default {
   },
 };
 </script>
+<style>
+tbody tr:nth-of-type(odd) {
+  background-color: cornsilk;
+}
+thead {
+  background-color: #bfe0df;
+}
+.v-data-footer {
+  background-color: #bfe0df;
+}
+.idcs-fill-width {
+    width: 100%;
+}
+
+.idcs-dialog-title {
+    background-color: #a8e0ff !important;
+    border-color: #a8e0ff !important;
+    margin-bottom: 16px !important;
+}
+
+.idcs-main-list {
+    background-color: #fffde7 !important;
+    border-color: #fffde7 !important;
+}
+
+.add-button-div {
+    position: absolute;
+    padding-top: 58px;
+    margin-left: 10px;
+}
+</style>

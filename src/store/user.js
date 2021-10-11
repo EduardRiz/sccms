@@ -9,14 +9,14 @@ const state = {
 const getters = {
     // SESSSION 
     isLogged: state => {
-        return state.sessionData !== null && state.sessionData.username;
+        return state.sessionData !== null && state.sessionData.name;
     },
     name: state => {
-        return state.sessionData !== null ? state.sessionData.username : "Anonymous";
+        return state.sessionData !== null ? state.sessionData.name : "Anonymous";
     },
     role: state => {
         try {
-            return state.sessionData.rules.role;
+            return state.sessionData.role;
         } catch (error) {
             return null;
         }
@@ -49,8 +49,8 @@ const actions = {
         let vm = payload.__vm;
         payload.pars.pass = vm.$CryptoJS.enc.Base64.stringify(vm.$CryptoJS.SHA256(payload.pars.pass));
         try {
-            let result = await api.login(payload.pars);
-            if (result.username) {
+            const result = await api.login(payload.pars);
+            if (result.name) {
                 context.commit('setUser', {
                     ...result,
                 });
@@ -108,7 +108,7 @@ const actions = {
 const mutations = {
     setUser: (state, payload) => {
         try {
-            if (payload.username == undefined) {
+            if (payload.name == undefined) {
                 state.sessionData = null;
             } else {
                 state.sessionData = payload;

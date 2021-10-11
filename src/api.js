@@ -1,8 +1,5 @@
 import axios from "axios";
-const API = process.env.NODE_ENV == "development" ? "http://192.168.112.114:5678/scapi" : "https://service.elektroniskaskartes.lv/scapi";
-//const API = process.env.NODE_ENV == "development" ? "https://service.elektroniskaskartes.lv/vcapi" : "https://service.elektroniskaskartes.lv/vcapi";
-//const API = process.env.NODE_ENV == "development" ? "http://159.148.124.12:4567/vcapi" : "https://service.elektroniskaskartes.lv/vcapi";
-//axios.defaults.withCredentials = true;
+const API = process.env.NODE_ENV == "development" ? "https://192.168.112.114:5678/scapi" : "https://service.elektroniskaskartes.lv/scapi";
 
 const posapi = axios.create({
     crossDomain: true,
@@ -21,84 +18,65 @@ const api = {
             });
         });
     },
+    imageClientLink(idx) {
+        return this.api + '/operator/image?path=images/client&idx=' + idx + '.jpg'
+    },
     login(data) {
         return this.apiPostRequest("login", data);
     },
     logout() {
         return this.apiPostRequest("logout");
     },
-    // USERS
-    getUsers() {
-        return this.apiGetRequest("cms/users/select");
+    // HOME PAGE
+    addService2client(data) {
+        return this.apiPostRequest("operator/buy/service", data);
     },
-    updateUser(data) {
-        return this.apiPostRequest("cms/users/save", data);
+    addAbonement2client(data) {
+        return this.apiPostRequest("operator/buy/abonement", data);
     },
-    deleteUser(username) {
-        return this.apiPostRequest("cms/users/delete/" + username);
+    registerVisit2client(data) {
+        return this.apiPostRequest("operator/client/visit", data);
     },
-    // USER GROUPS
-    getGroups() {
-        return this.apiGetRequest("cms/groups/select");
+    getClientServices(idx) {
+        return this.apiGetRequest("operator/client/services/" + idx);
     },
-    updateGroup(data) {
-        return this.apiPostRequest("cms/groups/save", data);
+    getRegisteredClientServices(idx) {
+        return this.apiGetRequest("operator/client/regservs/" + idx);
     },
-    deleteGroup(username) {
-        return this.apiPostRequest("cms/groups/delete/" + username);
-    },
-    // VIRTUAL CARDS
-    getVirtualCards(data) {
-        return this.apiGetRequest("cms/vcards/select", data);
-    },
-    saveVirtualCard(data) {
-        return this.apiPostRequest("cms/vcards/save", data);
-    },
-    delVirtualCard(data) {
-        return this.apiPostRequest("cms/vcards/delete/" + data.idx);
-    },
-    addCardsToMerchant(data){
-        return this.apiPostRequest("cms/vcards/add", data);
-    },
-    // EVENTS
-    getEvents(data) {
-        return this.apiGetRequest("cms/events/select", data);
-    },
-    // DEVICES
-    getDevices(data) {
-        return this.apiGetRequest("cms/devices/select", data);
-    },
-    cleanPushToken(serial, device, passtype) {
-        return this.apiPostRequest("cms/devices/unbind/device/" + serial + "/" + device + "/" + passtype);
-    },
-    freeDeviceCard(item) {
-        return this.apiPostRequest("cms/devices/unbind/card/" + item.idx, {
-            deviceid: item.deviceid,
-            passtype: item.passtype
+    searchClient(pattern) {
+        return this.apiGetRequest("operator/client/search", {
+            pattern: pattern
         });
     },
-    cleanDeviceCustomData(idx){
-        return this.apiPostRequest("cms/devices/clear/" + idx);
+    saveImage(data, file) {
+        return this.apiMultipartPostRequest("operator/file/save/" + data.idx, data, file);
     },
-    removeDevice(idx){
-        return this.apiPostRequest("cms/devices/delete/" + idx);
+    getImage(dir, idx) {
+        return this.apiGetRequest("operator/image", {
+            path: dir,
+            idx: idx + ".jpg"
+        });
     },
-    sendPushNotification(idx) {
-        return this.apiPostRequest("cms/devices/notify/" + idx);
-    },
-    getSerialQrCodeLink(idx){
-        return this.apiPostRequest("cms/devices/pkpass/" + idx);
-    },
-    // MERCHANTS
-    getMerchs(data) {
-        return this.apiGetRequest("cms/merchs/select", data);
-    },
-    saveMerch(data) {
-        return this.apiPostRequest("cms/merchs/save", data);
-    },
-    deleteMerch(idx) {
-        return this.apiPostRequest("cms/merchs/delete/" + idx);
-    },
+    //USERS
+    // getUsers() {
+    //     return this.apiGetRequest("cms/users/select");
+    // },
+    // updateUser(data) {
+    //     return this.apiPostRequest("cms/users/save", data);
+    // },
+    // deleteUser(username) {
+    //     return this.apiPostRequest("cms/users/delete/" + username);
+    // },
+    // USER GROUPS
+    // getGroups() {
+    //     return this.apiGetRequest("cms/groups/select");
+    // },
+    // updateGroup(data) {
+    //     return this.apiPostRequest("cms/groups/save", data);
+    // },
+    // deleteGroup(username) {
+    //     return this.apiPostRequest("cms/groups/delete/" + username);
+    // },
 
     //LOG FUNCTIONAL
     getServerLog(file) {
@@ -108,36 +86,6 @@ const api = {
     },
     loadLogsFiles() {
         return this.apiGetRequest("cms/log/files");
-    },
-
-    //PKPASS FUNCTIONAL
-    loadPkpassDirs() {
-        return this.apiGetRequest("cms/pkpass/dirs");
-    },
-    pkpassCopy(from, to) {
-        return this.apiPostRequest("cms/pkpass/bin/copy", {
-            from: from,
-            to: to
-        });
-    },
-    pkpassCriterionImgLink(alias, img) {
-        return API + "/cms/criterions/img/get/" + alias + "?img=" + img;
-    },
-    savePkpassCriterionImage(alias, file) {
-        return this.apiMultipartManyPostRequest("cms/criterions/img/set/" + alias, null, file);
-    },
-
-    pkpassImgLink(alias, img) {
-        return API + "/cms/pkpass/img/get/" + alias + "?img=" + img;
-    },
-    savePkpassImage(alias, file) {
-        return this.apiMultipartManyPostRequest("cms/pkpass/img/set/" + alias, null, file);
-    },
-    getPkpassTemplate(alias) {
-        return this.apiGetRequest("cms/pkpass/template/get/" + alias);
-    },
-    setPkpassTemplate(alias, data) {
-        return this.apiPostRequest("cms/pkpass/template/set/" + alias, data);
     },
 
 
@@ -172,6 +120,7 @@ const api = {
         if (file) {
             formdata.append("file", file);
         }
+        console.log(formdata)
         pars.prevcache = new Date().getTime();
         return new Promise((resolve, reject) => {
             posapi.post(uri, formdata, {
@@ -216,8 +165,26 @@ const api = {
             });
         })
     },
+    apiDeleteRequest(uri, data, pars) {
+        if (typeof pars == "undefined" || pars == null) pars = {};
+        if (typeof data == "undefined") data = null;
+        pars.prevcache = new Date().getTime();
+        return new Promise((resolve, reject) => {
+            posapi.delete(uri, {
+                data: data,
+                params: pars,
+            }).then(response => {
+                resolve(response.data);
+            }).catch(error => {
+                this.$vm.$store.commit("user/clearUser");
+                this.$vm.$router.push("/login");
+                this.baseReject(error);
+                reject(error);
+            });
+        })
+    },
     upper_menu: [{
-            text: "configs",
+            text: "config",
             route: "/configs",
             side: true,
             icon: "mdi-cogs",
@@ -251,18 +218,62 @@ const api = {
         }, {
             text: "clients",
             route: "/clients",
-            icon: "mdi-users"
+            side: true,
+            icon: "mdi-account-group"
         }, {
             text: "services",
-            route: "/services",
-            icon: "mdi-table-cog"
+            route: "/clserv",
+            side: true,
+            icon: "mdi-human-scooter"
         }, {
-            text: "abonemets",
+            text: "abonements",
             route: "/abonements",
-            icon: "mdi-calendar-outline",
-            role: 0
+            side: true,
+            icon: "mdi-table-multiple",
+        }, {
+            text: "rooms",
+            route: "/rooms",
+            side: true,
+            icon: "mdi-greenhouse",
+        }, {
+            text: "coachs",
+            route: "/coachs",
+            side: true,
+            icon: "mdi-weight-lifter",
+        }, {
+            text: "workouts",
+            route: "/workouts",
+            side: true,
+            icon: "mdi-calendar-month",
+        }, {
+            text: "soldabonements",
+            route: "/soldabonements",
+            side: true,
+            icon: "mdi-account-supervisor",
+        }, {
+            text: "regvis",
+            route: "/regvis",
+            side: true,
+            icon: "mdi-star-check-outline",
+        }, {
+            text: "regservs",
+            route: "/regservs",
+            side: true,
+            icon: "mdi-account-supervisor",
+        }, {
+            divider: true,
+        }, {
+            text: "dicts",
+            route: "/dicts",
+            side: true,
+            icon: "mdi-notebook",
+        }, {
+            divider: true,
         },
     ],
+
+
+    // api ui functions
     getSavedLocaleAsStr() {
         return localStorage.getItem("lang");
     },

@@ -1,1 +1,5 @@
-{}
+{
+    "settings": {
+		"vetur.validation.template": false,
+	}
+}

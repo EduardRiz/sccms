@@ -1,22 +1,113 @@
 {
+    "title": "Sportclub CMS",
+    "fields": {
+        "created": "Created",
+        "updated": "Updated",
+        "action": "Actions",
+        "tags": "Tags",
+        "status": "Status",
+        "description": "Description",
+        "coach": "Coach",
+        "room": "Room",
+        "avatar": "Avatar",
+        "services": "Services",
+        "client": "Client",
+        "abonement": "Abonement",
+        "service": "Service",
+        "workout": "Workout",
+        "isWorkout": "Is service a workout",
+        "name": "Name"
+    },
+    "dialogs": {
+        "client": "Edit client {idx}",
+        "newrec": "new record",
+        "assignWorkout": "Assign workout",
+        "buyAbonement": "Buy abonement",
+        "buyService": "Buy service",
+        "workout": "Edit workout {idx}",
+        "abonement": "Edit abonement {idx}",
+        "coach": "Edit coach {idx}"
+    },
     "login": {
         "title": "Autorize to system",
         "login": "User name",
         "pass": "Password",
         "b_login": "Login"
     },
+    "home": {
+        "profile": "Client info",
+        "abonement": "Current abonement"
+    },
     "error": {
         "required": "Required",
         "login": "Authorization failed"
+    },
+    "button": {
+        "save": "update",
+        "delete": "delete"
     },
     "menu": {
         "users": "Operators",
         "groups": "groups",
         "logs": "Log",
         "logout": "Logout",
-        "settings": "Settings",
+        "config": "Settings",
+        "events": "Events log",
         "clients": "Clients",
         "services": "Services",
-        "abonements": "Abonements"
+        "rooms": "Rooms",
+        "coachs": "Coachs",
+        "workouts": "Workouts",
+        "abonements": "Abonements",
+        "regvis": "Used services",
+        "regservs": "Availables services",
+        "dicts": "Dictionaries",
+        "soldabonements": "Sold abonements"
+    },
+    "label": {
+        "nodata": "Records not found",
+        "rowPerPage": "Records per page",
+        "startDate": "Start date of the action",
+        "startTime": "Start time of the action",
+        "endDate": "End date of the action",
+        "endTime": "End time of the action",
+        "filter": "Filter parameters"
+    },
+    "statusesOld": [{
+        "text": "",
+        "value": 0
+    }, {
+        "text": "Ok",
+        "value": 1
+    }, {
+        "text": "Blocked",
+        "value": 2
+    }],
+    "statuses": [{
+            "text": "Active",
+            "value": "OK"
+        }, {
+            "text": "Blocked",
+            "value": "BLOCKED"
+        },
+        {
+            "text": "Not active",
+            "value": "BROKEN"
+        }
+    ],
+    "dialog": {
+        "ttl": {
+            "delete": "Confirm action"
+        },
+        "txt": {
+            "delete": "Delete record ?"
+        },
+        "btn": {
+            "delete": "delete"
+        },
+        "ico": {
+            "delete": "mdi-delete"
+        }
     }
+
 }

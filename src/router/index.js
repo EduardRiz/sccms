@@ -23,6 +23,78 @@ const routes = [{
     },
   },
   {
+    path: '/clserv',
+    name: 'Services',
+    component: () => import('@/views/Services.vue'),
+    meta: {
+      auth: true,
+    },
+  },
+  {
+    path: '/rooms',
+    name: 'Rooms',
+    component: () => import('@/views/Rooms.vue'),
+    meta: {
+      auth: true,
+    },
+  },
+  {
+    path: '/coachs',
+    name: 'Coachs',
+    component: () => import('@/views/Coachs.vue'),
+    meta: {
+      auth: true,
+    },
+  },
+  {
+    path: '/abonements',
+    name: 'Abonements',
+    component: () => import('@/views/Abonements.vue'),
+    meta: {
+      auth: true,
+    },
+  },
+  {
+    path: '/workouts',
+    name: 'Workouts',
+    component: () => import('@/views/Workouts.vue'),
+    meta: {
+      auth: true,
+    },
+  },
+  {
+    path: '/soldabonements',
+    name: 'SoldAbonements',
+    component: () => import('@/views/SoldAbonements.vue'),
+    meta: {
+      auth: true,
+    },
+  },
+  {
+    path: '/regservs',
+    name: 'RegisteredServices',
+    component: () => import('@/views/RegisteredServices.vue'),
+    meta: {
+      auth: true,
+    },
+  },
+  {
+    path: '/regvis',
+    name: 'RegisteredVisits',
+    component: () => import('@/views/RegisteredVisits.vue'),
+    meta: {
+      auth: true,
+    },
+  },
+  {
+    path: '/dicts',
+    name: 'Dictionaries',
+    component: () => import('@/views/Dictionaries.vue'),
+    meta: {
+      auth: true,
+    },
+  },
+  {
     path: '/logs',
     name: 'Logs',
     component: () => import("@/views/Logs.vue"),
@@ -49,11 +121,11 @@ router.beforeEach(function (to, from, next) {
   if (to.meta.auth) {
     if (store.state.user.sessionData == null) {
       api.ping().then(response => {
-        if (!response.user || !response.user.username) {
+        if (!response.user || !response.user.name) {
           next('/login');
         } else {
           try {
-            if (store.state.user.sessionData.rules.role || to.meta.user) next();
+            if (store.state.user.sessionData.role || to.meta.user) next();
           } catch (error) {
             console.log(error)
           }
@@ -63,7 +135,7 @@ router.beforeEach(function (to, from, next) {
       });
     } else {
       try {
-        if (store.state.user.sessionData.rules.role || to.meta.user) next();
+        if (store.state.user.sessionData.role || to.meta.user) next();
       } catch (error) {
         console.log(error)
       }

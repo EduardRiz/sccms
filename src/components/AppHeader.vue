@@ -84,13 +84,13 @@
           </v-btn>
 
         </template>
-        <!-- <template v-if="item.divider">
+        <template v-if="item.divider">
           <v-divider vertical :key="item.text"></v-divider>
-        </template> -->
+        </template>
       </template>
-      <!-- <v-btn icon to="/">
+      <v-btn icon to="/" class="ml-2">
         <v-icon>mdi-home</v-icon>
-      </v-btn>-->
+      </v-btn>
     </v-app-bar>
   </nav>
 </template>
