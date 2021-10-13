@@ -25,7 +25,7 @@
       </template>
       <template v-slot:item.image="{ item }">
         <v-avatar>
-          <v-img alt="Avatar" :src="$api.imageClientLink(item.idx)" />
+          <v-img alt="Avatar" :src="$api.publicImgLink(item.img)" />
         </v-avatar>
       </template>
       <template v-slot:item.info.status="{ item }">

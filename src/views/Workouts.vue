@@ -24,6 +24,9 @@
           <v-icon color="primary">mdi-pencil</v-icon>
         </v-btn>
       </template>
+      <template v-slot:item.service="{ item }">
+        <sc-record-info v-model="item.service" store="services/item" />
+      </template>
       <template v-slot:item.coach="{ item }">
         <sc-record-info v-model="item.coach" store="coachs/item" />
       </template>
@@ -70,6 +73,14 @@
                 ></v-select>
               </v-col>
             </v-row>
+            <v-select
+              v-model="item.service"
+              :label="$t('fields.service')"
+              :items="$store.getters['services/items']"
+              item-text="info.name"
+              item-value="idx"
+              :rules="[v=>!!v||$t('error.required')]"
+            ></v-select>
             <v-select
               v-model="item.coach"
               :label="$t('fields.coach')"
@@ -149,6 +160,10 @@ export default {
           value: "info.description",
         },
         {
+          text: this.$t("fields.service"),
+          value: "service",
+        },
+        {
           text: this.$t("fields.coach"),
           value: "coach",
         },
@@ -212,6 +227,9 @@ export default {
     }
     if (!this.$store.getters["rooms/isItems"]) {
       this.$store.dispatch("rooms/LOAD");
+    }
+    if (!this.$store.getters["services/isItems"]) {
+      this.$store.dispatch("services/LOAD");
     }
     if (!this.$store.getters[store_module + "/isItems"]) {
       this.$store.dispatch(store_module + "/LOAD");

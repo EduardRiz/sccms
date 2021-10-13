@@ -14,6 +14,8 @@
         "client": "Client",
         "abonement": "Abonement",
         "service": "Service",
+        "days": "Days of work",
+        "hours": "Hours of work",
         "workout": "Workout",
         "isWorkout": "Is service a workout",
         "name": "Name"
@@ -73,6 +75,42 @@
         "endTime": "End time of the action",
         "filter": "Filter parameters"
     },
+    "dict": {
+        "times": "Time settings",
+        "groups": "Discount groups"
+    },
+    "week": [{
+        "text": "Monday",
+        "short": "Mo",
+        "value": 1
+    }, {
+        "text": "Tuesday",
+        "short": "Tu",
+        "value": 2
+    }, {
+        "text": "Wednesday",
+        "short": "We",
+        "value": 3
+    }, {
+        "text": "Thursday",
+        "short": "Th",
+        "value": 4
+    }, {
+        "text": "Friday",
+        "short": "Fr",
+        "value": 5
+    }, {
+        "text": "Saturday",
+        "short": "Sa",
+        "value": 6
+    }, {
+        "text": "Sunday",
+        "short": "Su",
+        "value": 7
+    }],
+    "week1": [
+        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+    ],
     "statusesOld": [{
         "text": "",
         "value": 0

@@ -1,37 +1,6 @@
 import api from '@/api.js'
 
-function updateTags(state) {
-    try {
-        state.items.forEach((e) => {
-            if (e.info.tags) {
-                state.tags = state.tags.concat(e.info.tags);
-            }
-        });
-    } catch (error) {
-        console.log(error);
-    }
-    state.tags = state.tags.filter((value, index, self) => {
-        return self.indexOf(value) === index;
-    }).sort();
-}
-
-function updateTag(state, item) {
-    try {
-        if (!item.info.tags) return;
-        item.info.tags.forEach((e) => {
-            if (state.tags.indexOf(e) != -1) return;
-            state.tags.push(e);
-        });
-    } catch (error) {
-        console.log(error);
-    }
-    state.tags = state.tags.filter((value, index, self) => {
-        return self.indexOf(value) === index;
-    }).sort();
-}
-
-
-const apiBase = "cms/dict";
+const apiBase = "cms/dicts";
 const state = {
     items: [],
     tags: []
@@ -40,9 +9,6 @@ const state = {
 const getters = {
     items: state => {
         return state.items;
-    },
-    tags: state => {
-        return state.tags;
     },
     isItems: state => {
         return state.items.length;
@@ -68,13 +34,9 @@ const actions = {
         });
     },
     SAVE: function (context, payload) {
-        const tags = payload.info.tags;
-        if (tags && tags.length) payload.tagsStr = tags.join(",");
-        return new Promise((resolve) =>{
+        return new Promise((resolve) => {
             api.apiPostRequest(apiBase, payload).then(response => {
                 if (response) {
-                    // for transit created
-                    response.audit.created = response.audit.created ? response.audit.created : payload.audit.created;
                     context.commit("saveItem", response);
                     resolve(response)
                 }
@@ -83,7 +45,6 @@ const actions = {
     },
     DELETE: function (context, payload) {
         api.apiDeleteRequest(apiBase + "/" + payload).then(response => {
-            console.log(response)
             if (response) context.commit("deleteItem", payload);
         });
     },
@@ -93,9 +54,8 @@ const mutations = {
         if (payload.cause) {
             state.items = [];
             api.showMessage(payload.message, true);
-        } else if(!payload.empty) {
-            state.items = [...payload.content];
-            updateTags(state);
+        } else {
+            state.items = [...payload];
         }
     },
     saveItem: (state, payload) => {
@@ -107,7 +67,6 @@ const mutations = {
         } else {
             Object.assign(state.items[index], payload);
         }
-        updateTag(state, payload);
     },
     deleteItem: (state, payload) => {
         const index = state.items.findIndex(e => e.idx == payload);

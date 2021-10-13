@@ -160,6 +160,31 @@ const filters = [{
         }
     },
     {
+        name: "time_interval",
+        func: (hours) => {
+            if (!hours) return "";
+            let str = "";
+            let it = [];
+            for (let i = 0; i < 25; i++) {
+                if (hours[i]) {
+                    it.push(i);
+                } else {
+                    if (it.length) {
+                        if (str) str += ", ";
+                        str += it[0] + ":00-" + it[it.length - 1] + ":00";
+                    }
+                    it = [];
+                }
+            }
+            if (it.length) {
+                if (str) str += ", ";
+                str += it[0] + ":00-" + it[it.length - 1] + ":00";
+            }
+            return str;
+        },
+    },
+
+    {
         name: "removeCoding",
         func: (val) => {
             try {

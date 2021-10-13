@@ -199,7 +199,7 @@
             prepend-icon="mdi-calendar-month"
             :label="$t('fields.workout')"
             :placeholder="$t('fields.workout')"
-            :items="$store.getters['workouts/items']"
+            :items="availableWorkouts"
             return-object
             item-value="idx"
             item-text="info.name"
@@ -234,6 +234,7 @@ export default {
       searchData: null,
       foundedClients: [],
       clientServices: [],
+      availableWorkouts: [],
       clientRegisteredServices: [],
       current_client: default_record,
     };
@@ -254,7 +255,13 @@ export default {
     checkServ(i) {
       this.servIndex2assign = this.clientServices.indexOf(i);
       if (i.info.params && i.info.params.isworkout) {
-        this.d_assignworkout = true;
+        this.availableWorkouts = [];
+        this.$api
+          .getAvailableWorkouts(i.service)
+          .then((response) => {
+            this.availableWorkouts = [ ...response];
+            this.d_assignworkout = true;
+          });
       } else {
         i.sels = !i.sels;
         this.clientServices.splice(this.servIndex2assign, 1, i);
@@ -264,6 +271,7 @@ export default {
       this.searchData = null;
       this.clientServices = [];
       this.foundedClients = [];
+      this.availableWorkouts = [];
       this.abonement2buy = null;
       this.service2buy = null;
       this.current_client = default_record;

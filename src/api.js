@@ -18,8 +18,11 @@ const api = {
             });
         });
     },
+    publicImgLink(img) {
+        return this.api + '/img/' + img;
+    },
     imageClientLink(idx) {
-        return this.api + '/operator/image?path=images/client&idx=' + idx + '.jpg'
+        return this.api + '/operator/image?path=images/client&idx=' + idx + '.jpg';
     },
     login(data) {
         return this.apiPostRequest("login", data);
@@ -42,6 +45,9 @@ const api = {
     },
     getRegisteredClientServices(idx) {
         return this.apiGetRequest("operator/client/regservs/" + idx);
+    },
+    getAvailableWorkouts(service) {
+        return this.apiGetRequest("operator/client/workouts/" + service);
     },
     searchClient(pattern) {
         return this.apiGetRequest("operator/client/search", {
