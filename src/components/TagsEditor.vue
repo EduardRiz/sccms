@@ -36,14 +36,18 @@ export default {
   },
   watch: {
     value: {
-      handler(v) { this.tags = v?[...v]:[];},
+      handler(v) {
+        this.tags = v ? [...v] : [];
+      },
     },
   },
   methods: {
     add() {
       if (!this.tags) this.tags = [];
-      if (this.ntag) this.tags.push(this.ntag);
-      this.$emit("input", this.tags);
+      if (this.ntag && this.tags.indexOf(this.ntag) == -1) {
+        this.tags.push(this.ntag);
+        this.$emit("input", this.tags);
+      }
       this.ntag = null;
     },
     rem(i) {

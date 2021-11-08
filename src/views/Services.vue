@@ -3,7 +3,7 @@
     <v-row align="center" align-content="center">
       <v-spacer></v-spacer>
       <v-col cols="3">
-        <v-select v-model="filter.tag" :items="userTags" :label="$t('fields.tags')" clearable></v-select>
+        <v-select v-model="filter.tag" :items="tags" :label="$t('fields.tags')" clearable></v-select>
       </v-col>
       <v-col cols="3">
         <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" clearable></v-text-field>
@@ -25,7 +25,10 @@
         </v-btn>
       </template>
       <template v-slot:item.isworkout="{ item }">
-        <v-icon>{{item.info.params.isworkout?"mdi-check":""}}</v-icon>
+        <v-icon>{{item.params.isworkout?"mdi-check":""}}</v-icon>
+      </template>
+      <template v-slot:item.isscalar="{ item }">
+        <v-icon>{{item.params.isscalar?"mdi-check":""}}</v-icon>
       </template>
       <template v-slot:item.info.status="{ item }">
         <sc-record-status :status="item.info.status" />
@@ -38,12 +41,10 @@
         </div>
       </template>
     </v-data-table>
-    <v-dialog v-model="d_edit" persistent width="500">
+    <v-dialog v-model="d_edit" persistent fullscreen>
       <v-card color="yellow lighten-5">
         <v-card-title>
-          <i18n path="dialogs.client">
-            <template #idx>{{item.idx}}</template>
-          </i18n>
+          <sc-dialog-title object="service" :item="item" />
           <v-spacer></v-spacer>
           <v-btn @click="d_edit=false" icon color="error">
             <v-icon>mdi-close-circle</v-icon>
@@ -73,8 +74,43 @@
               :rows="2"
               auto-grow
             ></v-textarea>
-            <v-checkbox :label="$t('fields.isWorkout')" v-model="item.info.params.isworkout"></v-checkbox>
-            <TagsEditor v-model="item.info.tags" />
+            <v-row class="ml-0">
+              <v-checkbox :label="$t('fields.isWorkout')" v-model="item.params.isworkout"></v-checkbox>
+              <v-checkbox
+                :label="$t('fields.isScalar')"
+                v-model="item.params.isscalar"
+                class="ml-4"
+              ></v-checkbox>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
+                <i18n path="fields.tariffs" />
+                <v-data-table :items="tariffs" :headers="tariffs_hdrs" class="orange lighten-5">
+                  <template v-slot:item.price="{ item }">{{item.price*100 | currency}}</template>
+                  <template v-slot:item.days="{ item }">
+                    <sc-week-days v-if="item.time" :days="item.time.days" />
+                  </template>
+                  <template v-slot:item.duration="{ item }">
+                    <span>{{item.duration | duration_filter}}</span>
+                  </template>
+                  <template v-slot:item.status="{ item }">
+                    <sc-record-status v-if="item.info" :status="item.info.status" />
+                  </template>
+                  <template v-slot:item.hours="{ item }">
+                    <span v-if="item.time">{{item.time.hours | time_interval}}</span>
+                  </template>
+                  <template v-slot:body.append>
+                    <div class="add-button-div">
+                      <v-btn fab absolute bottom @click="d_editTariff=true" dark class="pink">
+                        <v-icon>mdi-pencil</v-icon>
+                      </v-btn>
+                    </div>
+                  </template>
+                </v-data-table>
+              </v-col>
+            </v-row>
+
+            <TagsEditor v-model="item.info.tags" class="mt-10" />
             <sc-record-audit :audit="item.audit" />
           </v-form>
         </v-card-text>
@@ -89,31 +125,62 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="d_editTariff" fullscreen>
+      <v-card class="orange lighten-5">
+        <v-card-title>
+          <v-spacer></v-spacer>
+          <v-btn @click="d_editTariff=false" icon color="error">
+            <v-icon>mdi-close-circle</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <TariffTable :sels="tariffs" isSelectable @onSave="updateTariffs" type="SERVICE" />
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     <ConfirmDialog v-model="d_confirm" :mode="dmode" @click:ok="remove">{{$t("dialog.txt.delete")}}</ConfirmDialog>
   </v-sheet>
 </template>
 
 <script>
 import commonmixin from "@/mixins/commonlist.js";
+import TariffTable from "@/components/TariffsTable.vue";
+
 const store_module = "services";
+const DEF = { info: { status: "OK" }, params: {}, tariffs: [] };
 
 export default {
   name: "Services",
   mixins: [commonmixin],
+  components: {
+    TariffTable,
+  },
   computed: {
     records() {
       return this.$store.getters[store_module + "/items"];
     },
-    userTags() {
-      if (!this.tags.length) this.updateTags();
-      return this.tags;
+    tags() {
+      return this.$store.getters[store_module + "/tags"];
+    },
+    tariffs() {
+      try {
+        let a = [];
+        this.item.tariffs.forEach((idx) => {
+          a.push(this.$store.getters["tariffs/item"](idx));
+        });
+        //console.log(a)
+        return a;
+      } catch (error) {
+        //console.log(error)
+        return [];
+      }
     },
   },
   data() {
     return {
-      item: { info: { params: {} } },
-      tags: [],
+      item: DEF,
       d_edit: false,
+      d_editTariff: false,
       filter: {},
       headers: [
         {
@@ -135,6 +202,10 @@ export default {
           value: "isworkout",
         },
         {
+          text: this.$t("fields.isScalar"),
+          value: "isscalar",
+        },
+        {
           text: this.$t("fields.status"),
           value: "info.status",
         },
@@ -147,39 +218,55 @@ export default {
           },
         },
       ],
+      tariffs_hdrs: [
+        {
+          text: this.$t("fields.name"),
+          value: "info.name",
+        },
+        {
+          text: this.$t("fields.days"),
+          value: "days",
+        },
+        {
+          text: this.$t("fields.hours"),
+          value: "hours",
+        },
+        {
+          text: this.$t("fields.duration"),
+          value: "duration",
+        },
+        {
+          text: this.$t("fields.price"),
+          value: "price",
+        },
+        {
+          text: this.$t("fields.tags"),
+          value: "tags",
+        },
+        {
+          text: this.$t("fields.status"),
+          value: "status",
+        },
+      ],
     };
   },
   methods: {
-    updateTags() {
-      try {
-        this.records.forEach((e) => {
-          if (e.info.tags) {
-            this.tags = this.tags.concat(e.info.tags);
-          }
-        });
-      } catch (error) {
-        console.log(error);
-      }
-      this.tags = this.tags.filter((value, index, self) => {
-        return self.indexOf(value) === index;
-      });
+    updateTariffs(a) {
+      if (!this.item.tariffs) this.item.tariffs = [];
+      this.item.tariffs = [...a];
+      this.d_editTariff = false;
     },
     edit(i) {
-      if (!i) i = { info: { status: "OK", params: {} } };
-      this.item = { ...i };
+      this.item = this.$api.copy(i, DEF);
       this.d_edit = true;
     },
     save() {
-      if (this.item.info.tags && this.item.info.tags.length)
-        this.item.tagsStr = this.item.tags.join(",");
       this.$store.dispatch(store_module + "/SAVE", this.item).then(() => {
-        this.updateTags();
         this.d_edit = false;
       });
     },
     remove() {
       this.$store.dispatch(store_module + "/DELETE", this.item.idx).then(() => {
-        this.updateTags();
         this.d_edit = false;
       });
     },
@@ -187,6 +274,9 @@ export default {
   mounted() {
     if (!this.$store.getters[store_module + "/isItems"]) {
       this.$store.dispatch(store_module + "/LOAD");
+    }
+    if (!this.$store.getters["tariffs/isItems"]) {
+      this.$store.dispatch("tariffs/LOAD");
     }
   },
 };

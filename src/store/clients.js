@@ -1,36 +1,5 @@
 import api from '@/api.js'
 
-function updateTags(state) {
-    try {
-        state.items.forEach((e) => {
-            if (e.info.tags) {
-                state.tags = state.tags.concat(e.info.tags);
-            }
-        });
-    } catch (error) {
-        console.log(error);
-    }
-    state.tags = state.tags.filter((value, index, self) => {
-        return self.indexOf(value) === index;
-    }).sort();
-}
-
-function updateTag(state, item) {
-    try {
-        if (!item.info.tags) return;
-        item.info.tags.forEach((e) => {
-            if (state.tags.indexOf(e) != -1) return;
-            state.tags.push(e);
-        });
-    } catch (error) {
-        console.log(error);
-    }
-    state.tags = state.tags.filter((value, index, self) => {
-        return self.indexOf(value) === index;
-    }).sort();
-}
-
-
 const apiBase = "cms/clients";
 const state = {
     items: [],
@@ -95,7 +64,7 @@ const mutations = {
             api.showMessage(payload.message, true);
         } else if(!payload.empty) {
             state.items = [...payload.content];
-            updateTags(state);
+            api.updateTags(state);
         }
     },
     saveItem: (state, payload) => {
@@ -107,7 +76,7 @@ const mutations = {
         } else {
             Object.assign(state.items[index], payload);
         }
-        updateTag(state, payload);
+        api.updateTag(state, payload);
     },
     deleteItem: (state, payload) => {
         const index = state.items.findIndex(e => e.idx == payload);

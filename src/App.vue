@@ -8,7 +8,26 @@
         </v-fade-transition>
       </v-container>
     </v-main>
-    <v-footer app>{{footer}}</v-footer>
+    <!-- <v-bottom-navigation v-model="value">
+    <v-btn value="recent">
+      <span>Recent</span>
+
+      <v-icon>mdi-history</v-icon>
+    </v-btn>
+
+    <v-btn value="favorites">
+      <span>Favorites</span>
+
+      <v-icon>mdi-heart</v-icon>
+    </v-btn>
+
+    <v-btn value="nearby">
+      <span>Nearby</span>
+
+      <v-icon>mdi-map-marker</v-icon>
+    </v-btn>
+  </v-bottom-navigation> -->
+    <v-footer app><span>{{footer}}</span></v-footer>
     <v-snackbar v-model="show" :color="mColor" transition="v-scroll-x-transition" shaped>
       {{ mText }}
       <template v-slot:action="{ attrs }">

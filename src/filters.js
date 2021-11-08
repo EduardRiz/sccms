@@ -183,6 +183,50 @@ const filters = [{
             return str;
         },
     },
+    {
+        name: "duration_filter",
+        func: (v) => {
+            try {
+                return v.value + " " + v.type;
+            } catch (error) {
+                return "";
+            }
+        },
+    },
+
+
+    {
+        name: "days_interval",
+        func: (days) => {
+            try {
+                let dd = days;
+                return dd.sort().join();
+                // let str = "";
+                // let it = [];
+                // days.sort().forEach(e => {
+                //     console.log(e, it, str)
+                //     if (!it.length) {
+                //         it.push(e);
+                //         it.push(e);
+                //     } else if (it[1] == e - 1) {
+                //         it[1] = e;
+                //     } else {
+                //         if (str) str += ", ";
+                //         str += it[0] + "-" + it[it.length - 1];
+                //         it = [];
+                //     }
+                // });
+                // if (it.length) {
+                //     if (str) str += ", ";
+                //     str += it[0] + "-" + it[it.length - 1];
+                // }
+                // return str;
+
+            } catch (error) {
+                return "";
+            }
+        },
+    },
 
     {
         name: "removeCoding",

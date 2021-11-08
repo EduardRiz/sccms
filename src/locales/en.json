@@ -7,28 +7,83 @@
         "tags": "Tags",
         "status": "Status",
         "description": "Description",
+        "group": "Group",
         "coach": "Coach",
         "room": "Room",
         "avatar": "Avatar",
-        "services": "Services",
         "client": "Client",
+        "keyid": "Key ID",
+        "role": "Role",
+        "club": "Club",
         "abonement": "Abonement",
         "service": "Service",
         "days": "Days of work",
         "hours": "Hours of work",
+        "price": "Price",
+        "time": "Time of work",
+        "fromDate": "From",
+        "toDate": "To",
+        "duration": "Duration",
+        "wofix": "Fix date or periodic",
+        "wodate": "Fix date of workout",
+        "wodays": "Week day of workout",
+        "wotime": "Start of workout",
+        "woduration": "Duration of workout in minutes",
+        "wodates": "Planed",
+        "wotimes": "Start",
+        "wodurations": "Duration",
+        "duration_type": "Duration type",
         "workout": "Workout",
-        "isWorkout": "Is service a workout",
+        "isWorkout": "Service is a workout",
+        "isScalar": "Service is a scalar",
+        "services": "Services",
+        "card": "Card",
+        "tariffs": "Tariffs",
+        "tariff": "Tariff",
+        "servisvisits": "Is limited visits",
+        "dateofbuy": "Date of activation",
+        "serviscount": "Count of visits",
+        "count2reg": "Count to register",
+        "tariff_type": "Tariff type",
+        "buytag": "Detail of deal",
+        "place": "Place",
+        "thread": "Thread",
+        "key": "Key",
+        "visitfrom": "Client enter",
+        "visitto": "Client out",
+        "detail": "Detail",
+        "clubstart": "Start of work",
+        "clubstop": "End of work",
+        "text": "Text",
+        "type": "Type",
+        "login": "Login",
+        "password": "New password",
+        "color": "Color",
         "name": "Name"
     },
     "dialogs": {
-        "client": "Edit client {idx}",
+        "ryba":"{prefix} {object} {idx}",
+        "edit":"Edit",
+        "create":"Create",
+        "key": "box key",
+        "group": "group",
+        "user": "user",
+        "room": "room",
+        "client": "client",
+        "club": "club",
+        "service": "service",
         "newrec": "new record",
+        "tag": "Edit tag ({idx})",
+        "time": "Edit time ({idx})",
         "assignWorkout": "Assign workout",
+        "assignKey": "Assign key to client",
         "buyAbonement": "Buy abonement",
         "buyService": "Buy service",
-        "workout": "Edit workout {idx}",
-        "abonement": "Edit abonement {idx}",
-        "coach": "Edit coach {idx}"
+        "tariff": "Tariff",
+        "workout": "workout",
+        "abonement": "abonement",
+        "wocalendar": "Calendar of workouts",
+        "coach": "coach"
     },
     "login": {
         "title": "Autorize to system",
@@ -37,18 +92,45 @@
         "b_login": "Login"
     },
     "home": {
+        "keyid":"Key: {keyid}, key name: {keyname}.   Entered: {from}",
         "profile": "Client info",
+        "from": "From : {date}",
+        "to": "To : {date}",
+        "worktime": "Time : {time}",
+        "available": "Availabled services",
+        "unavailable": "Temporary unavailabled services",
         "abonement": "Current abonement"
     },
     "error": {
         "required": "Required",
-        "login": "Authorization failed"
+        "login": "Authorization failed",
+        "clientNotFound":"Client not found",
+        "keyNotFound":"Key not found"
     },
     "button": {
         "save": "update",
+        "buy": "buy",
+        "ok": "OK",
+        "add": "Add",
+        "register": "Register visit",
+        "cancel": "cancel",
+        "clone": "clone",
+        "back": "Back",
         "delete": "delete"
     },
+    "caltypes": {
+        "month": "Month",
+        "day": "Day",
+        "week": "Week"
+    },
+    "durations": [
+        "1 month", "2 months", "3 months", "4 months", "5 months", "6 months"
+    ],
     "menu": {
+        "home": "Dashboard",
+        "login": "",
+        "clubsett": "Club",
+        "abnmnt": "Abonements",
         "users": "Operators",
         "groups": "groups",
         "logs": "Log",
@@ -59,15 +141,22 @@
         "services": "Services",
         "rooms": "Rooms",
         "coachs": "Coachs",
+        "tariffs": "Tariffs",
+        "dictionaries": "Dictionaries",
         "workouts": "Workouts",
         "abonements": "Abonements",
         "regvis": "Used services",
+        "reports": "Reports",
+        "clubs": "Sport clubs",
+        "visits": "Visits",
+        "keys": "Keys",
         "regservs": "Availables services",
         "dicts": "Dictionaries",
         "soldabonements": "Sold abonements"
     },
     "label": {
         "nodata": "Records not found",
+        "selall": "Select all",
         "rowPerPage": "Records per page",
         "startDate": "Start date of the action",
         "startTime": "Start time of the action",
@@ -77,7 +166,49 @@
     },
     "dict": {
         "times": "Time settings",
+        "tags": "Payment tags",
         "groups": "Discount groups"
+    },
+    "tariff_types": [{
+        "text": "Abonement",
+        "value": "ABONEMENT"
+    }, {
+        "text": "Service",
+        "value": "SERVICE"
+    }],
+    "duration_types": [{
+        "text": "Hour",
+        "value": "h"
+    }, {
+        "text": "Day",
+        "value": "d"
+    }, {
+        "text": "Month",
+        "value": "m"
+    }],
+    "icons": {
+        "config": "mdi-cogs",
+        "users": "mdi-account",
+        "groups": "mdi-account-multiple",
+        "events": "mdi-notebook",
+        "logs": "mdi-notebook",
+        "clients": "mdi-account-group",
+        "services": "mdi-human-scooter",
+        "abonements": "mdi-table-multiple",
+        "abnmnt": "mdi-table-multiple",
+        "rooms": "mdi-greenhouse",
+        "coachs": "mdi-weight-lifter",
+        "workouts": "mdi-calendar-month",
+        "tariffs": "mdi-grid",
+        "keys": "mdi-key-change",
+        "soldabonements": "mdi-account-supervisor",
+        "regvis": "mdi-star-check-outline",
+        "regservs": "mdi-account-supervisor",
+        "reports": "mdi-chart-multiple",
+        "clubsett": "mdi-city",
+        "clubs": "mdi-city-variant",
+        "visits": "mdi-run",
+        "dicts": "mdi-notebook"
     },
     "week": [{
         "text": "Monday",
@@ -111,15 +242,18 @@
     "week1": [
         "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
     ],
-    "statusesOld": [{
-        "text": "",
-        "value": 0
+    "roles": [{
+        "text": "Anonimous",
+        "value": "BROKEN"
     }, {
-        "text": "Ok",
-        "value": 1
+        "text": "User",
+        "value": "USER"
     }, {
-        "text": "Blocked",
-        "value": 2
+        "text": "Power user",
+        "value": "POWERUSER"
+    }, {
+        "text": "Admin",
+        "value": "ADMIN"
     }],
     "statuses": [{
             "text": "Active",
@@ -135,16 +269,20 @@
     ],
     "dialog": {
         "ttl": {
-            "delete": "Confirm action"
+            "delete": "Confirm action",
+            "settime": "Confirm action"
         },
         "txt": {
-            "delete": "Delete record ?"
+            "delete": "Delete record ?",
+            "settime": "Set time of client checkin manually ?"
         },
         "btn": {
-            "delete": "delete"
+            "delete": "delete",
+            "settime": "ok"
         },
         "ico": {
-            "delete": "mdi-delete"
+            "delete": "mdi-delete",
+            "settime": "mdi-clock-check-outline"
         }
     }
 

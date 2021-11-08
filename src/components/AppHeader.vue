@@ -1,7 +1,7 @@
 <template>
   <nav>
     <v-navigation-drawer
-      v-if="$store.getters['user/isLogged']"
+      v-if="$store.getters['session/isLogged']"
       v-model="drawer"
       class="teal lighten-5"
       width="320"
@@ -13,13 +13,18 @@
           <v-list-item-avatar>
             <v-icon class="display-2">mdi-account</v-icon>
           </v-list-item-avatar>
-          <v-list-item-content>{{$store.getters['user/name']}}</v-list-item-content>
+          <v-list-item-content>
+            <div class="subtitle-2">{{$store.getters['session/username']}}</div>
+            <div>{{$store.getters['session/name']}}</div>
+          </v-list-item-content>
         </v-list-item>
         <v-divider class="mb-5"></v-divider>
         <v-list-item-group>
-          <template v-if="$store.getters['user/role']">
+          <template>
             <template v-for="(item,k) in upperMenu">
-              <template v-if="!item.side && !item.divider">
+              <template
+                v-if="!item.side && !item.divider && !item.menu && $api.testRoles(item.role)"
+              >
                 <v-list-item link :key="item.text" class="hidden-lg-and-up" :to="item.route">
                   <v-list-item-icon>
                     <v-icon>{{item.icon}}</v-icon>
@@ -30,10 +35,10 @@
               <template v-else-if="item.divider">
                 <v-divider :key="k"></v-divider>
               </template>
-              <template v-if="item.side">
+              <template v-if="item.side && $api.testRoles(item.role)">
                 <v-list-item link :key="item.text" :to="item.route">
                   <v-list-item-icon>
-                    <v-icon>{{item.icon}}</v-icon>
+                    <v-icon>{{$t('icons.'+item.text)}}</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>{{$t('menu.'+item.text)}}</v-list-item-content>
                 </v-list-item>
@@ -52,14 +57,43 @@
       <SelectLocale />
     </v-navigation-drawer>
 
-    <v-app-bar v-if="$store.getters['user/isLogged']" app dark class="primary">
+    <v-app-bar v-if="$store.getters['session/isLogged']" app dark class="primary">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title style="width: 300px" class="ml-0 pl-4">
+      <!-- <v-toolbar-title style="width: 300px" class="ml-0 pl-4">
         <i18n path="title" class="hidden-sm-only"></i18n>
+      </v-toolbar-title>-->
+      <v-toolbar-title v-if="$route.name" class="ml-4">
+        <i18n :path="'menu.'+$route.name.toLowerCase()"></i18n>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <template v-for="item in upperMenu">
-        <template v-if="!item.side && !item.divider && $store.getters['user/role']">
+        <template v-if="item.menu && $api.testRoles(item.role)">
+          <v-menu v-model="item.fmenu" offset-y :key="item.text">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn v-bind="attrs" v-on="on" text>
+                <v-icon class="mr-1">{{$t('icons.'+item.text)}}</v-icon>
+                <i18n :path="'menu.'+item.text" />
+                <v-icon>mdi-chevron-down</v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <template v-for="(subitem, index) in item.menu">
+                <v-list-item
+                  v-if="$api.testRoles(subitem.role)"
+                  :key="index"
+                  link
+                  :to="subitem.route"
+                >
+                  <v-list-item-icon>
+                    <v-icon>{{$t('icons.'+subitem.text)}}</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>{{$t('menu.'+subitem.text)}}</v-list-item-content>
+                </v-list-item>
+              </template>
+            </v-list>
+          </v-menu>
+        </template>
+        <template v-else-if="!item.side && !item.divider && $store.getters['user/role']">
           <v-btn
             text
             class="ml-2 hidden-md-and-down"
@@ -71,7 +105,9 @@
             {{$t('menu.'+item.text)}}
           </v-btn>
         </template>
-        <template v-else-if="!item.side && !item.divider && ($store.getters['user/role']==item.role)">
+        <template
+          v-else-if="!item.side && !item.divider && ($store.getters['user/role']==item.role)"
+        >
           <v-btn
             text
             class="ml-2 hidden-md-and-down"
@@ -79,10 +115,9 @@
             :to="item.route"
             active-class="link-active"
           >
-            <v-icon class="mr-3">{{ item.icon }}</v-icon>
+            <v-icon class="mr-3" v-text="$t('icon.'+item.text)"></v-icon>
             {{$t('menu.'+item.text)}}
           </v-btn>
-
         </template>
         <template v-if="item.divider">
           <v-divider vertical :key="item.text"></v-divider>
@@ -115,7 +150,7 @@ export default {
 
   methods: {
     async logoff() {
-      await this.$store.dispatch("user/LOGOUT");
+      await this.$store.dispatch("session/LOGOUT");
       this.$router.push("/login");
     },
   },

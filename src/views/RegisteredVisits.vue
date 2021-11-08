@@ -3,9 +3,6 @@
     <v-row align="center" align-content="center">
       <v-spacer></v-spacer>
       <v-col cols="3">
-        <v-select v-model="filter.tag" :items="userTags" :label="$t('fields.tags')" clearable></v-select>
-      </v-col>
-      <v-col cols="3">
         <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" clearable></v-text-field>
       </v-col>
     </v-row>
@@ -25,13 +22,13 @@
         </v-btn>
       </template>
       <template v-slot:item.client="{ item }">
-        <sc-record-info v-model="item.client" store="clients/item" />
+        <sc-record-info :idx="item.client" store="clients/item" />
       </template>
       <template v-slot:item.abonement="{ item }">
-        <sc-record-info v-model="item.abonement" store="soldabonements/item" />
+        <sc-record-info :idx="item.abonement" store="soldabonements/item" />
       </template>
       <template v-slot:item.service="{ item }">
-        <sc-record-info v-model="item.service" store="services/item" />
+        <sc-record-info :idx="item.service" store="services/item" />
       </template>
       <template v-slot:body.append>
         <div class="add-button-div">
@@ -100,21 +97,16 @@ import commonmixin from "@/mixins/commonlist.js";
 const store_module = "regvisits";
 
 export default {
-  name: "Abonements",
+  name: "Regvisits",
   mixins: [commonmixin],
   computed: {
     records() {
       return this.$store.getters[store_module + "/items"];
     },
-    userTags() {
-      if (!this.tags.length) this.updateTags();
-      return this.tags;
-    },
   },
   data() {
     return {
       item: { info: {} },
-      tags: [],
       d_edit: false,
       filter: {},
       headers: [
@@ -140,47 +132,21 @@ export default {
           text: this.$t("fields.created"),
           value: "audit.created",
         },
-        {
-          text: this.$t("fields.tags"),
-          value: "info.tags",
-          filter: (value) => {
-            if (!this.filter.tag) return true;
-            return value && value.indexOf(this.filter.tag) != -1;
-          },
-        },
       ],
     };
   },
   methods: {
-    updateTags() {
-      try {
-        this.records.forEach((e) => {
-          if (e.info.tags) {
-            this.tags = this.tags.concat(e.info.tags);
-          }
-        });
-      } catch (error) {
-        console.log(error);
-      }
-      this.tags = this.tags.filter((value, index, self) => {
-        return self.indexOf(value) === index;
-      });
-    },
     edit(i) {
       this.item = { ...i };
       this.d_edit = true;
     },
     save() {
-      if (this.item.info.tags && this.item.info.tags.length)
-        this.item.tagsStr = this.item.info.tags.join(",");
       this.$store.dispatch(store_module + "/SAVE", this.item).then(() => {
-        this.updateTags();
         this.d_edit = false;
       });
     },
     remove() {
       this.$store.dispatch(store_module + "/DELETE", this.item.idx).then(() => {
-        this.updateTags();
         this.d_edit = false;
       });
     },

@@ -11,6 +11,25 @@ const routes = [{
     name: 'Home',
     component: () => import('../views/Home.vue'),
     meta: {
+      role: "USER",
+      auth: true,
+    },
+  },
+  {
+    path: '/users',
+    name: 'Users',
+    component: () => import('../views/Users.vue'),
+    meta: {
+      role: "USER",
+      auth: true,
+    },
+  },
+  {
+    path: '/groups',
+    name: 'Groups',
+    component: () => import('../views/Groups.vue'),
+    meta: {
+      role: "USER",
       auth: true,
     },
   },
@@ -19,6 +38,7 @@ const routes = [{
     name: 'Clients',
     component: () => import('../views/Clients.vue'),
     meta: {
+      role: "USER",
       auth: true,
     },
   },
@@ -27,6 +47,7 @@ const routes = [{
     name: 'Services',
     component: () => import('@/views/Services.vue'),
     meta: {
+      role: "USER",
       auth: true,
     },
   },
@@ -35,6 +56,16 @@ const routes = [{
     name: 'Rooms',
     component: () => import('@/views/Rooms.vue'),
     meta: {
+      role: "USER",
+      auth: true,
+    },
+  },
+  {
+    path: '/keys',
+    name: 'Keys',
+    component: () => import('@/views/BoxKeys.vue'),
+    meta: {
+      role: "USER",
       auth: true,
     },
   },
@@ -43,6 +74,7 @@ const routes = [{
     name: 'Coachs',
     component: () => import('@/views/Coachs.vue'),
     meta: {
+      role: "USER",
       auth: true,
     },
   },
@@ -51,6 +83,7 @@ const routes = [{
     name: 'Abonements',
     component: () => import('@/views/Abonements.vue'),
     meta: {
+      role: "USER",
       auth: true,
     },
   },
@@ -59,6 +92,7 @@ const routes = [{
     name: 'Workouts',
     component: () => import('@/views/Workouts.vue'),
     meta: {
+      role: "USER",
       auth: true,
     },
   },
@@ -67,6 +101,7 @@ const routes = [{
     name: 'SoldAbonements',
     component: () => import('@/views/SoldAbonements.vue'),
     meta: {
+      role: "USER",
       auth: true,
     },
   },
@@ -75,14 +110,43 @@ const routes = [{
     name: 'RegisteredServices',
     component: () => import('@/views/RegisteredServices.vue'),
     meta: {
+      role: "USER",
       auth: true,
     },
   },
   {
     path: '/regvis',
-    name: 'RegisteredVisits',
+    name: 'regvis',
     component: () => import('@/views/RegisteredVisits.vue'),
     meta: {
+      role: "USER",
+      auth: true,
+    },
+  },
+  {
+    path: '/tariffs',
+    name: 'Tariffs',
+    component: () => import('@/views/Tariffs.vue'),
+    meta: {
+      role: "USER",
+      auth: true,
+    },
+  },
+  {
+    path: '/visits',
+    name: 'Visits',
+    component: () => import('@/views/Visits.vue'),
+    meta: {
+      role: "USER",
+      auth: true,
+    },
+  },
+  {
+    path: '/clubs',
+    name: 'clubs',
+    component: () => import('@/views/Clubs.vue'),
+    meta: {
+      role: "USER",
       auth: true,
     },
   },
@@ -91,6 +155,7 @@ const routes = [{
     name: 'Dictionaries',
     component: () => import('@/views/Dictionaries.vue'),
     meta: {
+      role: "USER",
       auth: true,
     },
   },
@@ -99,6 +164,7 @@ const routes = [{
     name: 'Logs',
     component: () => import("@/views/Logs.vue"),
     meta: {
+      role: "USER",
       auth: true,
     },
   },
@@ -108,6 +174,7 @@ const routes = [{
     component: () => import("@/views/Login.vue"),
     meta: {
       auth: false,
+      role: "USER"
     },
   },
 ]
@@ -119,13 +186,15 @@ const router = new VueRouter({
 
 router.beforeEach(function (to, from, next) {
   if (to.meta.auth) {
-    if (store.state.user.sessionData == null) {
+    if (store.state.session.sessionData == null) {
       api.ping().then(response => {
-        if (!response.user || !response.user.name) {
+        store.state.session.sessionData = response;
+        if (!response.user) {
           next('/login');
         } else {
           try {
-            if (store.state.user.sessionData.role || to.meta.user) next();
+            //console.log(store.state.user.sessionData.group.role, to.meta.role)
+            if (api.testRoles(to.meta.role)) next();
           } catch (error) {
             console.log(error)
           }
@@ -135,7 +204,8 @@ router.beforeEach(function (to, from, next) {
       });
     } else {
       try {
-        if (store.state.user.sessionData.role || to.meta.user) next();
+        //console.log(store.state.user.sessionData.group.role, to.meta.role)
+        if (api.testRoles(to.meta.role)) next();
       } catch (error) {
         console.log(error)
       }

@@ -4,7 +4,7 @@
     <div class="text-h5 mt-4">{{hours|time_interval}}</div>
     <v-btn
       small
-      v-for="(h,i) in hours_"
+      v-for="(h,i) in hours"
       :key="i"
       icon
       :class="'ma-1 '+(h?'success':'')"
@@ -30,9 +30,14 @@ export default {
       cur: null,
     };
   },
-  computed: {
-    hours_() {
-      return this.value;
+  // computed: {
+  //    hours_() {
+  //      return this.value;
+  //    },
+  // },
+  watch: {
+    value() {
+      this.hours = this.value;
     },
   },
   methods: {
@@ -54,9 +59,9 @@ export default {
       this.cur = null;
     },
   },
-  mounted() {
-    this.hours = this.value;
-  },
+  mounted(){
+      this.hours = this.value;
+  }
 };
 </script>
 

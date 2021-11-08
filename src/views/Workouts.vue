@@ -2,10 +2,40 @@
   <v-sheet class="fill-height ma-2 idcs-fill-width">
     <v-row align="center" align-content="center">
       <v-spacer></v-spacer>
-      <v-col cols="3">
-        <v-select v-model="filter.tag" :items="userTags" :label="$t('fields.tags')" clearable></v-select>
+      <v-col cols="2">
+        <v-select
+          v-model="filter.service"
+          :items="$store.getters['services/items']"
+          :label="$t('fields.service')"
+          item-text="info.name"
+          item-value="idx"
+          clearable
+        ></v-select>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="2">
+        <v-select
+          v-model="filter.room"
+          :items="$store.getters['rooms/items']"
+          :label="$t('fields.room')"
+          item-text="info.name"
+          item-value="idx"
+          clearable
+        ></v-select>
+      </v-col>
+      <v-col cols="2">
+        <v-select
+          v-model="filter.coach"
+          :items="$store.getters['coachs/items']"
+          :label="$t('fields.coach')"
+          item-text="info.name"
+          item-value="idx"
+          clearable
+        ></v-select>
+      </v-col>
+      <v-col cols="2">
+        <v-select v-model="filter.tag" :items="tags" :label="$t('fields.tags')" clearable></v-select>
+      </v-col>
+      <v-col cols="2">
         <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" clearable></v-text-field>
       </v-col>
     </v-row>
@@ -25,13 +55,27 @@
         </v-btn>
       </template>
       <template v-slot:item.service="{ item }">
-        <sc-record-info v-model="item.service" store="services/item" />
+        <sc-record-info :idx="item.service" store="services/item" />
+      </template>
+      <template v-slot:item.setdate="{ item }">
+        <span v-if=item.settings.fix>{{item.settings.date | dt-only}}</span>
+        <span v-else-if="item.settings.days">{{$t("week")[item.settings.days-1].text}}</span>
+        <span v-else>?</span>
+      </template>
+      <template v-slot:item.setcol="{ item }">
+        <v-icon :color="item.settings.color?item.settings.color:'white'">mdi-circle</v-icon>
+      </template>
+      <template v-slot:item.settime="{ item }">
+        <span>{{item.settings.time}}</span>
+      </template>
+      <template v-slot:item.setdur="{ item }">
+        <span>{{item.settings.duration+" min"}}</span>
       </template>
       <template v-slot:item.coach="{ item }">
-        <sc-record-info v-model="item.coach" store="coachs/item" />
+        <sc-record-info :idx="item.coach" store="coachs/item" />
       </template>
       <template v-slot:item.room="{ item }">
-        <sc-record-info v-model="item.room" store="rooms/item" />
+        <sc-record-info :idx="item.room" store="rooms/item" />
       </template>
       <template v-slot:item.info.status="{ item }">
         <sc-record-status :status="item.info.status" />
@@ -41,108 +85,41 @@
           <v-btn fab absolute bottom @click="edit(null)" dark class="pink">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
+          <v-btn fab absolute bottom color="primary" class="ml-16" @click="d_showcalendar=true">
+            <v-icon fab>mdi-calendar</v-icon>
+          </v-btn>
         </div>
       </template>
     </v-data-table>
-    <v-dialog v-model="d_edit" persistent width="500">
-      <v-card color="yellow lighten-5">
-        <v-card-title>
-          <i18n path="dialogs.workout">
-            <template #idx>{{item.idx}}</template>
-          </i18n>
-          <v-spacer></v-spacer>
-          <v-btn @click="d_edit=false" icon color="error">
-            <v-icon>mdi-close-circle</v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-card-text>
-          <v-form ref="form" lazy-validation>
-            <v-row>
-              <v-col cols="8">
-                <v-text-field
-                  v-model="item.info.name"
-                  :label="$t('fields.name')"
-                  :rules="[v=>!!v||$t('error.required')]"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="4">
-                <v-select
-                  v-model="item.info.status"
-                  :items="$t('statuses')"
-                  :label="$t('fields.status')"
-                ></v-select>
-              </v-col>
-            </v-row>
-            <v-select
-              v-model="item.service"
-              :label="$t('fields.service')"
-              :items="$store.getters['services/items']"
-              item-text="info.name"
-              item-value="idx"
-              :rules="[v=>!!v||$t('error.required')]"
-            ></v-select>
-            <v-select
-              v-model="item.coach"
-              :label="$t('fields.coach')"
-              :items="$store.getters['coachs/items']"
-              item-text="info.name"
-              item-value="idx"
-              :rules="[v=>!!v||$t('error.required')]"
-            ></v-select>
-            <v-select
-              v-model="item.room"
-              :label="$t('fields.room')"
-              :items="$store.getters['rooms/items']"
-              item-text="info.name"
-              item-value="idx"
-              :rules="[v=>!!v||$t('error.required')]"
-            ></v-select>
-            <v-textarea
-              v-model="item.info.description"
-              :label="$t('fields.description')"
-              :rows="2"
-              auto-grow
-            ></v-textarea>
-            <TagsEditor v-model="item.info.tags" />
-            <sc-record-audit :audit="item.audit" />
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn text @click="d_confirm=true" color="primary">
-            <i18n path="button.delete" />
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn text @click="save" color="primary">
-            <i18n path="button.save" />
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <ConfirmDialog v-model="d_confirm" :mode="dmode" @click:ok="remove">{{$t("dialog.txt.delete")}}</ConfirmDialog>
+    <WorkoutCalendar v-model="d_showcalendar" />
+    <WorkoutDialog v-model="d_edit" :record="item" />
   </v-sheet>
 </template>
 
 <script>
 import commonmixin from "@/mixins/commonlist.js";
-const store_module = "workouts";
+import WorkoutCalendar from "@/components/WorkoutCalendar.vue";
+import WorkoutDialog from "@/components/WorkoutDialog.vue";
 
+const store_module = "workouts";
+const DEF = { info: { status: "OK" }, settings: {} };
 export default {
   name: "Workouts",
   mixins: [commonmixin],
+  components: { WorkoutCalendar, WorkoutDialog },
   computed: {
     records() {
       return this.$store.getters[store_module + "/items"];
     },
-    userTags() {
-      if (!this.tags.length) this.updateTags();
-      return this.tags;
+    tags() {
+      return this.$store.getters[store_module + "/tags"];
     },
   },
   data() {
     return {
-      item: { info: {} },
-      tags: [],
+      item: { ...DEF },
       d_edit: false,
+      d_showcalendar: false,
       filter: {},
       headers: [
         {
@@ -156,19 +133,48 @@ export default {
           value: "info.name",
         },
         {
-          text: this.$t("fields.description"),
-          value: "info.description",
+          text: "",
+          sortable: false,
+          value: "setcol",
+          align: "center",
+        },
+        {
+          text: this.$t("fields.wodates"),
+          value: "setdate",
+          align: "center",
+        },
+        {
+          text: this.$t("fields.wotimes"),
+          value: "settime",
+          align: "center",
+        },
+        {
+          text: this.$t("fields.wodurations"),
+          value: "setdur",
+          align: "center",
         },
         {
           text: this.$t("fields.service"),
+          filter: (value) => {
+            if (!this.filter.service) return true;
+            return value == this.filter.service;
+          },
           value: "service",
         },
         {
           text: this.$t("fields.coach"),
+          filter: (value) => {
+            if (!this.filter.coach) return true;
+            return value == this.filter.coach;
+          },
           value: "coach",
         },
         {
           text: this.$t("fields.room"),
+          filter: (value) => {
+            if (!this.filter.room) return true;
+            return value == this.filter.room;
+          },
           value: "room",
         },
         {
@@ -187,36 +193,18 @@ export default {
     };
   },
   methods: {
-    updateTags() {
-      try {
-        this.records.forEach((e) => {
-          if (e.info.tags) {
-            this.tags = this.tags.concat(e.info.tags);
-          }
-        });
-      } catch (error) {
-        console.log(error);
-      }
-      this.tags = this.tags.filter((value, index, self) => {
-        return self.indexOf(value) === index;
-      });
-    },
     edit(i) {
-      if (!i) i = { info: { status: "OK" } };
+      if (!i) i = { ...DEF };
       this.item = { ...i };
       this.d_edit = true;
     },
     save() {
-      if (this.item.info.tags && this.item.info.tags.length)
-        this.item.tagsStr = this.item.tags.join(",");
       this.$store.dispatch(store_module + "/SAVE", this.item).then(() => {
-        this.updateTags();
         this.d_edit = false;
       });
     },
     remove() {
       this.$store.dispatch(store_module + "/DELETE", this.item.idx).then(() => {
-        this.updateTags();
         this.d_edit = false;
       });
     },
@@ -224,6 +212,9 @@ export default {
   mounted() {
     if (!this.$store.getters["coachs/isItems"]) {
       this.$store.dispatch("coachs/LOAD");
+    }
+    if (!this.$store.getters["sysvars/isColors"]) {
+      this.$store.dispatch("sysvars/LOAD_COLORS");
     }
     if (!this.$store.getters["rooms/isItems"]) {
       this.$store.dispatch("rooms/LOAD");

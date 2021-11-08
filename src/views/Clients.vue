@@ -77,6 +77,10 @@ export default {
           value: "info.name",
         },
         {
+          text: this.$t("fields.card"),
+          value: "card",
+        },
+        {
           text: this.$t("fields.avatar"),
           value: "image",
         },
@@ -101,7 +105,7 @@ export default {
   },
   methods: {
     edit(i) {
-      this.item = i ? { ...i } : null;
+      this.item = this.$api.copy(i, {});
       this.d_edit = true;
     },
   },

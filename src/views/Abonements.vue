@@ -3,7 +3,7 @@
     <v-row align="center" align-content="center">
       <v-spacer></v-spacer>
       <v-col cols="3">
-        <v-select v-model="filter.tag" :items="userTags" :label="$t('fields.tags')" clearable></v-select>
+        <v-select v-model="filter.tag" :items="tags" :label="$t('fields.tags')" clearable></v-select>
       </v-col>
       <v-col cols="3">
         <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" clearable></v-text-field>
@@ -13,7 +13,6 @@
       :headers="headers"
       :items="records"
       :search="search"
-      :items-per-page.sync="itemPerPage"
       item-key="idx"
       class="transparent table-custom"
       :footer-props="foot_props"
@@ -28,7 +27,7 @@
         <sc-record-status :status="item.info.status" />
       </template>
       <template v-slot:item.services="{ item }">
-        <v-chip v-for="s in item.services" :key="s">{{$store.getters["services/item"](s).info.name}}</v-chip>
+        <sc-services-list :item="item" />
       </template>
       <template v-slot:body.append>
         <div class="add-button-div">
@@ -41,9 +40,7 @@
     <v-dialog v-model="d_edit" persistent fullscreen>
       <v-card color="yellow lighten-5">
         <v-card-title>
-          <i18n path="dialogs.abonement">
-            <template #idx>{{item.idx}}</template>
-          </i18n>
+          <sc-dialog-title object="abonement" :item="item" />
           <v-spacer></v-spacer>
           <v-btn @click="d_edit=false" icon color="error">
             <v-icon>mdi-close-circle</v-icon>
@@ -74,33 +71,69 @@
               auto-grow
             ></v-textarea>
             <v-divider></v-divider>
-            <v-card>
-              <v-card-title>
+            <v-row class="my-2">
+              <v-col cols="12">
                 <i18n path="fields.services" />
-                <v-spacer></v-spacer>
-                <v-select
-                  v-model="item.services"
-                  :items="$store.getters['services/items']"
-                  item-value="idx"
-                  item-text="info.name"
-                  chips
-                  multiple
-                ></v-select>
-              </v-card-title>
-              <v-card-text>
-                <v-row v-for="idx in item.services" :key="idx">
-                  <v-col>{{$store.getters['services/item'](idx).info.name}}</v-col>
-                </v-row>
-              </v-card-text>
-              <v-card-actions></v-card-actions>
-            </v-card>
+                <v-card class="orange lighten-5">
+                  <v-card-title>
+                    <v-select
+                      v-model="item.services"
+                      :items="$store.getters['services/items']"
+                      item-value="idx"
+                      item-text="info.name"
+                      chips
+                      multiple
+                      deletable-chips
+                      menu-props="closeOnContentClick"
+                      @change="addService"
+                    ></v-select>
+                  </v-card-title>
+                  <v-card-text>
+                    <table>
+                      <tr v-for="serv in item.services" :key="serv">
+                        <td>
+                          <sc-record-info class="text-h6 mr-6" :idx="serv" store="services/item" />
+                        </td>
+                        <ServiceSettings :item="item" :idx="serv" />
+                      </tr>
+                    </table>
+                  </v-card-text>
+                  <v-card-actions></v-card-actions>
+                </v-card>
+              </v-col>
+              <v-col cols="12">
+                <i18n path="fields.tariffs" />
+                <v-data-table :items="tariffs" :headers="tariffs_hdrs" class="orange lighten-5">
+                  <template v-slot:item.price="{ item }">{{item.price*100 | currency}}</template>
+                  <template v-slot:item.days="{ item }">
+                    <sc-week-days v-if="item.time" :days="item.time.days" />
+                  </template>
+                  <template v-slot:item.duration="{ item }">
+                    <span>{{item.duration | duration_filter}}</span>
+                  </template>
+                  <template v-slot:item.status="{ item }">
+                    <sc-record-status v-if="item.info" :status="item.info.status" />
+                  </template>
+                  <template v-slot:item.hours="{ item }">
+                    <span v-if="item.time">{{item.time.hours | time_interval}}</span>
+                  </template>
+                  <template v-slot:body.append>
+                    <div class="add-button-div">
+                      <v-btn fab absolute bottom @click="d_editTariff=true" dark class="pink">
+                        <v-icon>mdi-pencil</v-icon>
+                      </v-btn>
+                    </div>
+                  </template>
+                </v-data-table>
+              </v-col>
+            </v-row>
             <v-divider></v-divider>
-            <TagsEditor v-model="item.info.tags" />
+            <TagsEditor v-model="item.info.tags" class="mt-10" />
             <sc-record-audit :audit="item.audit" />"
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn text @click="d_confirm=true" color="primary">
+          <v-btn text @click="d_confirm=true" color="primary" v-if="item.idx">
             <i18n path="button.delete" />
           </v-btn>
           <v-spacer></v-spacer>
@@ -111,35 +144,93 @@
       </v-card>
     </v-dialog>
     <ConfirmDialog v-model="d_confirm" :mode="dmode" @click:ok="remove">{{$t("dialog.txt.delete")}}</ConfirmDialog>
+    <v-dialog v-model="d_editTariff" fullscreen>
+      <v-card class="orange lighten-5">
+        <v-card-title>
+          <v-spacer></v-spacer>
+          <v-btn @click="d_editTariff=false" icon color="error">
+            <v-icon>mdi-close-circle</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <TariffTable :sels="tariffs" isSelectable @onSave="updateTariffs" type="ABONEMENT" />
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-sheet>
 </template>
 
 <script>
 import commonmixin from "@/mixins/commonlist.js";
+import ServiceSettings from "@/components/ServiceSettings.vue";
+import TariffTable from "@/components/TariffsTable.vue";
 const store_module = "abonements";
+const DEF = { info: { status: "OK" }, tariffs: [], settings: {} };
 
 export default {
   name: "Abonements",
   mixins: [commonmixin],
+  components: {
+    TariffTable,
+    ServiceSettings,
+  },
   computed: {
     records() {
       return this.$store.getters[store_module + "/items"];
     },
-    userTags() {
-      if (!this.tags.length) this.updateTags();
-      return this.tags;
+    tags() {
+      return this.$store.getters[store_module + "/tags"];
+    },
+    tariffs() {
+      try {
+        let a = [];
+        this.item.tariffs.forEach((idx) => {
+          a.push(this.$store.getters["tariffs/item"](idx));
+        });
+        return a;
+      } catch (error) {
+        return [];
+      }
     },
   },
   data() {
     return {
-      item: { info: {} },
-      tags: [],
+      // servs: [],
+      // servsett: {},
+      item: { ...DEF },
       d_edit: false,
+      d_editTariff: false,
       filter: {},
-      services: {
-        1: { idx: 1, name: "service 1" },
-        2: { idx: 2, name: "service 2" },
-      },
+      tariffs_hdrs: [
+        {
+          text: this.$t("fields.name"),
+          value: "info.name",
+        },
+        {
+          text: this.$t("fields.days"),
+          value: "days",
+        },
+        {
+          text: this.$t("fields.hours"),
+          value: "hours",
+        },
+        {
+          text: this.$t("fields.duration"),
+          value: "duration",
+        },
+        {
+          text: this.$t("fields.price"),
+          value: "price",
+        },
+        {
+          text: this.$t("fields.tags"),
+          value: "tags",
+        },
+        {
+          text: this.$t("fields.status"),
+          value: "status",
+        },
+      ],
       headers: [
         {
           text: this.$t("fields.action"),
@@ -175,36 +266,34 @@ export default {
     };
   },
   methods: {
-    updateTags() {
-      try {
-        this.records.forEach((e) => {
-          if (e.info.tags) {
-            this.tags = this.tags.concat(e.info.tags);
-          }
-        });
-      } catch (error) {
-        console.log(error);
-      }
-      this.tags = this.tags.filter((value, index, self) => {
-        return self.indexOf(value) === index;
-      });
+    updateTariffs(a) {
+      if (!this.item.tariffs) this.item.tariffs = [];
+      this.item.tariffs = [...a];
+      this.d_editTariff = false;
     },
     edit(i) {
-      if (!i) i = { info: { status: "OK" } };
-      this.item = { ...i };
+      this.item = this.$api.copy(i, DEF);
       this.d_edit = true;
     },
+    addService() {
+      //      console.log(a, this.item.services);
+      if (!this.item.settings) this.$set(this.item, "settings", {});
+      this.item.services.forEach((e) => {
+        const serv = this.$store.getters["services/item"](e);
+        let servsett = {};
+        if (serv.params && serv.params.isscalar)
+          servsett = { visits: true, vcount: 30, scalar: true };
+        this.$set(this.item.settings, "s" + e, servsett);
+      });
+    },
     save() {
-      if (this.item.info.tags && this.item.info.tags.length)
-        this.item.tagsStr = this.item.info.tags.join(",");
+      if (!this.$refs.form.validate()) return;
       this.$store.dispatch(store_module + "/SAVE", this.item).then(() => {
-        this.updateTags();
         this.d_edit = false;
       });
     },
     remove() {
       this.$store.dispatch(store_module + "/DELETE", this.item.idx).then(() => {
-        this.updateTags();
         this.d_edit = false;
       });
     },
@@ -212,6 +301,9 @@ export default {
   mounted() {
     if (!this.$store.getters["services/isItems"]) {
       this.$store.dispatch("services/LOAD");
+    }
+    if (!this.$store.getters["tariffs/isItems"]) {
+      this.$store.dispatch("tariffs/LOAD");
     }
     if (!this.$store.getters[store_module + "/isItems"]) {
       this.$store.dispatch(store_module + "/LOAD");

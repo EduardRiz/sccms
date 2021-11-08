@@ -10,6 +10,12 @@ const getters = {
     items: state => {
         return state.items;
     },
+    times: state => {
+        return state.items.filter(e => e.type == "times");
+    },
+    tags: state => {
+        return state.items.filter(e => e.type == "tags");
+    },
     isItems: state => {
         return state.items.length;
     },

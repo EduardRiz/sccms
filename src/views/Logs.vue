@@ -2,7 +2,7 @@
   <v-main class="fill-height pa-2 idcs-main-list">
     <v-row align="center" align-content="center">
       <v-col cols="12" sm="3">
-        <v-select :items="logs" v-model="logfile" @change="loadLog"></v-select>
+        <v-select :items="logs" v-model="logfile" @change="loadLog" menu-props="offsetY"></v-select>
       </v-col>
       <v-spacer></v-spacer>
       <v-col cols="12" sm="3">

@@ -3,11 +3,18 @@ import api from '@/api.js'
 const apiBase = "cms/clservs";
 const state = {
     items: [],
+    tags: []
 }
 
 const getters = {
     items: state => {
         return state.items;
+    },
+    tags: state => {
+        return state.tags;
+    },
+    tariffed: state => {
+        return state.items.filter(e => e.tariffs != null && e.tariffs.length && e.info.status == "OK");
     },
     isItems: state => {
         return state.items.length;
@@ -36,8 +43,8 @@ const actions = {
         const tags = payload.info.tags;
         if (tags && tags.length) payload.tagsStr = tags.join(",");
         api.apiPostRequest(apiBase, payload).then(response => {
-            if (response){
-                response.audit.created = response.audit.created?response.audit.created:payload.audit.created;
+            if (response) {
+                response.audit.created = response.audit.created ? response.audit.created : payload.audit.created;
                 context.commit("saveItem", response);
             }
         });
@@ -54,7 +61,8 @@ const mutations = {
             state.items = [];
             api.showMessage(payload.message, true);
         } else {
-            state.items = payload;
+            state.items = [...payload];
+            api.updateTags(state);
         }
     },
     saveItem: (state, payload) => {
@@ -66,6 +74,7 @@ const mutations = {
         } else {
             Object.assign(state.items[index], payload);
         }
+        api.updateTag(state, payload);
     },
     deleteItem: (state, payload) => {
         const index = state.items.findIndex(e => e.idx == payload);

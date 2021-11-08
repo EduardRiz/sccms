@@ -3,7 +3,7 @@
     <v-row align="center" align-content="center">
       <v-spacer></v-spacer>
       <v-col cols="3">
-        <v-select v-model="filter.tag" :items="userTags" :label="$t('fields.tags')" clearable></v-select>
+        <v-select v-model="filter.tag" :items="tags" :label="$t('fields.tags')" clearable></v-select>
       </v-col>
       <v-col cols="3">
         <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" clearable></v-text-field>
@@ -38,9 +38,7 @@
     <v-dialog v-model="d_edit" persistent width="500">
       <v-card color="yellow lighten-5">
         <v-card-title>
-          <i18n path="dialogs.coach">
-            <template #idx>{{item.idx}}</template>
-          </i18n>
+          <sc-dialog-title object="coach" :item="item" />
           <v-spacer></v-spacer>
           <v-btn @click="d_edit=false" icon color="error">
             <v-icon>mdi-close-circle</v-icon>
@@ -92,6 +90,9 @@
 <script>
 import commonmixin from "@/mixins/commonlist.js";
 const store_module = "coachs";
+const DEF_ITEM = {
+  info: { status: "OK" },
+};
 
 export default {
   name: "Coachs",
@@ -100,15 +101,13 @@ export default {
     records() {
       return this.$store.getters[store_module + "/items"];
     },
-    userTags() {
-      if (!this.tags.length) this.updateTags();
-      return this.tags;
+    tags() {
+      return this.$store.getters[store_module + "/tags"];
     },
   },
   data() {
     return {
-      item: { info: {} },
-      tags: [],
+      item: { ...DEF_ITEM },
       d_edit: false,
       filter: {},
       headers: [
@@ -142,36 +141,18 @@ export default {
     };
   },
   methods: {
-    updateTags() {
-      try {
-        this.records.forEach((e) => {
-          if (e.info.tags) {
-            this.tags = this.tags.concat(e.info.tags);
-          }
-        });
-      } catch (error) {
-        console.log(error);
-      }
-      this.tags = this.tags.filter((value, index, self) => {
-        return self.indexOf(value) === index;
-      });
-    },
     edit(i) {
       if (!i) i = { info: { status: "OK" } };
-      this.item = { ...i };
+      this.item = this.$api.copy(i, DEF_ITEM);
       this.d_edit = true;
     },
     save() {
-      if (this.item.tags && this.item.tags.length)
-        this.item.tagsStr = this.item.tags.join(",");
       this.$store.dispatch(store_module + "/SAVE", this.item).then(() => {
-        this.updateTags();
         this.d_edit = false;
       });
     },
     remove() {
       this.$store.dispatch(store_module + "/DELETE", this.item.idx).then(() => {
-        this.updateTags();
         this.d_edit = false;
       });
     },

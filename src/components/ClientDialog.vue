@@ -2,9 +2,7 @@
   <v-dialog v-model="isActive" persistent width="800">
     <v-card color="yellow lighten-5">
       <v-card-title>
-        <i18n path="dialogs.client">
-          <template #idx>{{item_.idx?item_.idx:$t("dialogs.newrec")}}</template>
-        </i18n>
+        <sc-dialog-title object="client" :item="item" />
         <v-spacer></v-spacer>
         <v-btn @click="close" icon color="error">
           <v-icon>mdi-close-circle</v-icon>
@@ -56,7 +54,7 @@
               ></v-img>
               <v-img
                 v-if="!isCameraActive"
-                :src="$api.imageClientLink(item_.idx)"
+                :src="$api.publicImgLink(item_.img, true)"
                 height="272"
                 width="364"
                 eager
@@ -73,6 +71,7 @@
                 :items="$t('statuses')"
                 :label="$t('fields.status')"
               ></v-select>
+              <v-text-field v-model="item_.card" :label="$t('fields.card')"></v-text-field>
             </v-col>
           </v-row>
           <v-row>
@@ -154,6 +153,7 @@ export default {
       if (this.isCameraActive) {
         this.onStop();
       } else {
+        this.isCapturedImage = false;
         if (this.deviceId) this.onStart();
         else if (this.devices.length != 0) {
           this.deviceId = this.devices[0].deviceId;

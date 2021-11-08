@@ -86,7 +86,7 @@ export default {
       this.showAlert = false;
       try {
         if (
-          await this.$store.dispatch("user/LOGIN", {
+          await this.$store.dispatch("session/LOGIN", {
             pars: {
               username: this.user,
               pass: this.pass,

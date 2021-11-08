@@ -3,11 +3,15 @@ import api from '@/api.js'
 const apiBase = "cms/workouts";
 const state = {
     items: [],
+    tags:[]
 }
 
 const getters = {
     items: state => {
         return state.items;
+    },
+    tags: state => {
+        return state.tags;
     },
     isItems: state => {
         return state.items.length;
@@ -57,6 +61,7 @@ const mutations = {
             api.showMessage(payload.message, true);
         } else {
             state.items = payload;
+            api.updateTags(state);
         }
     },
     saveItem: (state, payload) => {
@@ -68,6 +73,7 @@ const mutations = {
         } else {
             Object.assign(state.items[index], payload);
         }
+        api.updateTag(state, payload);
     },
     deleteItem: (state, payload) => {
         const index = state.items.findIndex(e => e.idx == payload);

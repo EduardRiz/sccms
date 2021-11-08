@@ -12,12 +12,20 @@ import RecordAudit from "@/components/RecordAudit.vue";
 import TagsEditor from "@/components/TagsEditor.vue";
 import RecordInfoField from "@/components/RecordInfoField.vue";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
+import DialogTitle from "@/components/DialogTitle.vue";
+import WeekForTime from "@/components/WeekForTime.vue";
+import ServicesAsList from "@/components/ServicesAsList.vue";
 
 Vue.use(VueCryptojs);
 Vue.component("sc-record-status", RecordStatus);
 Vue.component("sc-record-audit", RecordAudit);
+Vue.component("sc-dialog-title", DialogTitle);
 Vue.component("sc-confirm-dialog", ConfirmDialog);
 Vue.component("sc-record-info", RecordInfoField);
+Vue.component("sc-week-days", WeekForTime);
+Vue.component("sc-services-list", ServicesAsList, );
+
+
 Vue.component("TagsEditor", TagsEditor);
 Vue.config.productionTip = false
 Vue.prototype.$api = api;
