@@ -63,7 +63,8 @@
         <i18n path="title" class="hidden-sm-only"></i18n>
       </v-toolbar-title>-->
       <v-toolbar-title v-if="$route.name" class="ml-4">
-        <i18n :path="'menu.'+$route.name.toLowerCase()"></i18n>
+        <span>{{$store.getters['session/scname']}}</span>
+        <i18n :path="'menu.'+$route.name.toLowerCase()" class="ml-4"></i18n>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <template v-for="item in upperMenu">

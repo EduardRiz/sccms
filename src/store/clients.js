@@ -24,6 +24,15 @@ const getters = {
             return o ? o : {};
         }
     },
+    testCard: state => {
+        return (card) => {
+            if(!card) return false;
+            const o = state.items.find(e => {
+                return e.card && (e.card.trim() == card.trim())
+            });
+            return o ? true : false;
+        }
+    },
 }
 const actions = {
     LOAD: function (context) {

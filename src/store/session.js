@@ -27,6 +27,13 @@ const getters = {
             return "noname";
         }
     },
+    scname: state => {
+        try {
+            return state.sessionData.club.info.name;
+        } catch (error) {
+            return "";
+        }
+    },
     role: state => {
         try {
             return state.sessionData.group.role;

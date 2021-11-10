@@ -9,21 +9,6 @@
     </v-tabs>
 
     <v-tabs-items v-model="tab" class="fill-height">
-      <v-tab-item key="tags" class="fill-height">
-        <div class="add-button-div">
-          <v-btn fab absolute bottom @click="editTag(null)" dark class="pink">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </div>
-        <div class="py-4 pl-16">
-          <v-chip v-for="tag in tags" :key="tag.idx" class="mx-2">
-            <v-icon left @click="editTag(tag)" color="primary">mdi-pencil</v-icon>
-            <span>{{tag.name}}</span>
-            <span v-if="tag.details" class="ml-4">{{tag.details.name}}</span>
-            <v-icon right @click="(item={...tag},d_confirm=true)" color="error">mdi-delete</v-icon>
-          </v-chip>
-        </div>
-      </v-tab-item>
       <v-tab-item key="times" class="fill-height">
         <v-row align="center" align-content="center">
           <v-spacer></v-spacer>
@@ -62,10 +47,20 @@
           </template>
         </v-data-table>
       </v-tab-item>
-      <v-tab-item key="groups">
-        <v-card flat>
-          <v-card-text>table of groups</v-card-text>
-        </v-card>
+      <v-tab-item key="tags" class="fill-height">
+        <div class="add-button-div">
+          <v-btn fab absolute bottom @click="editTag(null)" dark class="pink">
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </div>
+        <div class="py-4 pl-16">
+          <v-chip v-for="tag in tags" :key="tag.idx" class="mx-2">
+            <v-icon left @click="editTag(tag)" color="primary">mdi-pencil</v-icon>
+            <span>{{tag.name}}</span>
+            <span v-if="tag.details" class="ml-4">{{tag.details.name}}</span>
+            <v-icon right @click="(item={...tag},d_confirm=true)" color="error">mdi-delete</v-icon>
+          </v-chip>
+        </div>
       </v-tab-item>
     </v-tabs-items>
     <v-dialog v-model="d_edit" persistent width="1200">
@@ -168,7 +163,7 @@ export default {
   data() {
     return {
       tab: null,
-      items: ["tags", "times", "groups"],
+      items: ["times", "tags"],
       d_edit: false,
       d_editTag: false,
       headers: [
@@ -200,16 +195,17 @@ export default {
       this.item = { ...t };
       this.d_editTag = true;
     },
-    edit(i) {
-      if (!i) {
-        i = {
-          details: { days: [1, 2, 3, 4, 5, 6, 7], hours: [], type: "times" },
-        };
-        for (let k = 0; k < 25; k++) {
-          i.details.hours[k] = 0;
-        }
+    defrec() {
+      let def = {
+        details: { days: [1, 2, 3, 4, 5, 6, 7], hours: [], type: "times" },
+      };
+      for (let k = 0; k < 25; k++) {
+        def.details.hours[k] = 0;
       }
-      this.item = { ...i };
+      return def;
+    },
+    edit(i) {
+      this.item = this.$api.copy(i, this.defrec());
       this.d_edit = true;
     },
     save() {

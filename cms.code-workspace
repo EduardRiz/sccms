@@ -5,6 +5,8 @@
 		}
 	],
 	"settings": {
-		"vetur.validation.template": false
+		"vetur.validation.template": false,
+		"jira-plugin.workingProject": "",
+		"atlascode.bitbucket.enabled": false
 	}
 }

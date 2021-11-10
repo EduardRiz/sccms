@@ -76,10 +76,11 @@ const filters = [{
     },
     {
         name: "dt-time",
-        func: (val) => {
+        func: (val) => 
+        {
             if (!val) return "";
             moment.locale(api.getSavedLocaleAsStr());
-            if (val && val.constructor.name === 'Moment') return moment(val.toDate()).format("DD MMM YYYY");
+            if (val && val.constructor.name === 'Moment') return moment(val.toDate()).format("DD MMM YYYY HH:mm");
             return moment(val).format("YYYY-MM-DD HH:mm");
         }
     },

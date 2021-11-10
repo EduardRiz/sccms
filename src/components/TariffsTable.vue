@@ -75,6 +75,14 @@
 import commonmixin from "@/mixins/commonlist.js";
 import TariffDialog from "@/components/TariffDialog";
 const store_module = "tariffs";
+const DEF_ITEM = {
+  info: { status: "OK" },
+  type: "ABONEMENT",
+  duration: {
+    type: "m",
+    value: 1,
+  },
+};
 
 export default {
   mixins: [commonmixin],
@@ -190,19 +198,7 @@ export default {
       this.$emit("onSave", a);
     },
     edit(i) {
-      console.log(this.item, i);
-
-      this.item = i
-        ? { ...i }
-        : {
-            info: { status: "OK" },
-            type: this.type,
-            duration: {
-              type: "m",
-              value: 1,
-            },
-          };
-      console.log(this.item, i);
+      this.item = this.$api.copy(i, DEF_ITEM);
       this.d_edit = true;
     },
   },

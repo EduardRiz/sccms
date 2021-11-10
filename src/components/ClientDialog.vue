@@ -70,8 +70,20 @@
                 v-model="item_.info.status"
                 :items="$t('statuses')"
                 :label="$t('fields.status')"
+                :rules="[v=>!!v||$t('error.required')]"
               ></v-select>
-              <v-text-field v-model="item_.card" :label="$t('fields.card')"></v-text-field>
+              <v-text-field
+                v-model="item_.card"
+                :label="$t('fields.card')"
+                :rules="[v=>!!v||$t('error.required')]"
+              ></v-text-field>
+              <v-checkbox
+                error
+                v-model="allowExistsCard"
+                v-if="isExistsCard"
+                class="orange-text"
+                :label="$t('fields.cardExists')"
+              ></v-checkbox>
             </v-col>
           </v-row>
           <v-row>
@@ -105,6 +117,7 @@
 <script>
 import { WebCam } from "vue-web-cam";
 const store_module = "clients";
+const DEF = { info: { status: "OK" } };
 
 export default {
   name: "client-dialog",
@@ -122,22 +135,32 @@ export default {
       devices: [],
       deviceId: null,
       d_confirm: false,
+      allowExistsCard: false,
+      isExistsCard: false,
+      item_: DEF,
     };
   },
   computed: {
     device: function () {
       return this.devices.find((n) => n.deviceId === this.deviceId);
     },
-    item_() {
-      if (!this.item) return { info: { status: "OK" } };
-      if (!this.item.info) return { info: { status: "OK" } };
-      return this.item;
-    },
+    // item_() {
+    //   if (!this.item) return { info: { status: "OK" } };
+    //   if (!this.item.info) return { info: { status: "OK" } };
+    //   return this.item;
+    // },
     isActive() {
       return this.value;
     },
   },
   watch: {
+    value() {
+      this.item_ = this.$api.copy(this.item, DEF);
+      this.allowExistsCard = false;
+      this.img = null;
+      this.isExistsCard = false;
+      this.d_confirm = false;
+    },
     camera: function (id) {
       this.deviceId = id;
     },
@@ -172,6 +195,11 @@ export default {
       this.$emit("input", false);
     },
     save() {
+      if (!this.$refs.form.validate()) return;
+      this.isExistsCard = this.$store.getters["clients/testCard"](
+        this.item_.card
+      );
+      if (this.isExistsCard && !this.allowExistsCard) return;
       const rec = this.item_;
       if (this.img) rec.img = this.img;
       this.$store.dispatch(store_module + "/SAVE", rec).then((response) => {

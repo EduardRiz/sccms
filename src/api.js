@@ -377,6 +377,23 @@ const api = {
             return {};
         }
     },
+    toDate(from, period) {
+        try {
+            const dt = this.$vm.$moment(from);
+            switch (period.duration.type) {
+                case "m":
+                    return dt.add(period.duration.value, "month");
+                case "d":
+                    return dt.add(period.duration.value, "day");
+                case "h":
+                    return dt.add(period.duration.value, "hour");
+                default:
+                    return "";
+            }
+        } catch (error) {
+            return "";
+        }
+    },
     getSavedLocaleAsStr() {
         return localStorage.getItem("lang");
     },

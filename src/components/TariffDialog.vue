@@ -2,9 +2,7 @@
   <v-dialog v-model="isActive" persistent fullscreen>
     <v-card color="yellow lighten-5">
       <v-card-title>
-        <i18n path="dialogs.tariff">
-          <template #idx>{{item_.idx?item_.idx:$t("dialogs.newrec")}}</template>
-        </i18n>
+          <sc-dialog-title object="tariff" :item="item" />
         <v-spacer></v-spacer>
         <v-btn @click="$emit('input', false)" icon color="error">
           <v-icon>mdi-close-circle</v-icon>
@@ -145,7 +143,6 @@ export default {
   },
   watch: {
     item(v) {
-      console.log("watch", this.item, v);
       this.item_ = v ? { ...this.item } : { ...DEF_ITEM };
       //console.log("watch", this.item_);
     },

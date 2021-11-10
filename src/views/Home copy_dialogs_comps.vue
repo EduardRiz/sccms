@@ -4,9 +4,6 @@
       <i18n path="home.total">
         <template #count>{{intoClubCount}}</template>
       </i18n>
-      <i18n path="home.freekey" class="ml-4">
-        <template #count>{{freeKeys}}</template>
-      </i18n>
       <v-spacer></v-spacer>
       <v-btn icon x-small @click="tickleConnection">
         <v-icon>{{connected?"mdi-bell":"mdi-bell-off"}}</v-icon>
@@ -90,10 +87,52 @@
             </v-btn>
           </v-col>
           <v-col cols="12" v-if="current_client.idx">
-            <sc-list-registered-services
-              :items="clientRegisteredServices"
-              :client="current_client"
-            />
+            <v-card v-if="clientRegisteredServices.length" class="orange lighten-4">
+              <v-card-title>
+                <v-avatar>
+                  <v-img alt="Avatar" :src="$api.publicImgLink(current_client.img, true)" />
+                </v-avatar>
+                <span class="ml-6">{{current_client.info.name}}</span>
+              </v-card-title>
+              <v-card-text>
+                <v-list three-line class="orange lighten-5">
+                  <template v-for="item in clientRegisteredServices">
+                    <v-list-item :key="item.idx" :class="item.sels?'yellow lighten-4':''">
+                      <v-list-item-avatar>
+                        <v-icon fab>mdi-human-scooter</v-icon>
+                      </v-list-item-avatar>
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          <v-chip>{{item.count}}</v-chip>
+                          <span class="mx-2">{{item.audit.updated | dt-time}}</span>
+                          <sc-record-info :idx="item.service" store="services/item" />
+                        </v-list-item-title>
+                        <v-list-item-subtitle v-if="item.workout">
+                          <v-icon x-small color="primary" class="mx-2">{{$t("icons.workouts")}}</v-icon>
+                          <sc-record-info :idx="item.workout.idx" store="workouts/item" />
+                          <v-icon x-small color="primary" class="mx-2">{{$t("icons.rooms")}}</v-icon>
+                          <sc-record-info :idx="item.workout.room" store="rooms/item" class="ml-1" />
+                          <v-icon x-small color="primary" class="mx-2">{{$t("icons.coachs")}}</v-icon>
+                          <sc-record-info
+                            :idx="item.workout.coach"
+                            store="coachs/item"
+                            class="ml-1"
+                          />
+                          <div v-if="item.settings">
+                            <v-icon>mdi-clock</v-icon>
+                          </div>
+                        </v-list-item-subtitle>
+                      </v-list-item-content>
+                      <v-list-item-action>
+                        <v-btn icon @click="cancelRegistration(item)">
+                          <v-icon>{{item.sels?"mdi-close":"mdi-check"}}</v-icon>
+                        </v-btn>
+                      </v-list-item-action>
+                    </v-list-item>
+                  </template>
+                </v-list>
+              </v-card-text>
+            </v-card>
           </v-col>
         </v-row>
       </v-col>
@@ -238,10 +277,10 @@
             </v-expansion-panels>
           </v-card-text>
           <v-card-actions>
-            <v-btn icon fab class="primary" dark @click="d_buyService=true">
+            <v-btn icon fab class="primary" dark @click="startBuyService">
               <v-icon>mdi-human-scooter</v-icon>
             </v-btn>
-            <v-btn icon fab class="primary" dark @click="d_buyAbonement=true">
+            <v-btn icon fab class="primary" dark @click="startBuyAbonement">
               <v-icon>mdi-table-multiple</v-icon>
             </v-btn>
             <v-spacer></v-spacer>
@@ -269,16 +308,154 @@
       </v-col>
     </v-row>
     <sc-client-dialog v-model="d_client" :item="item" @save="onNewClient" />
-    <sc-dialog-buy-service
-      v-model="d_buyService"
-      :client="current_client.idx"
-      @onbuy="transformAvailableService"
-    />
-    <sc-dialog-buy-abonement
-      v-model="d_buyAbonement"
-      :client="current_client.idx"
-      @onbuy="transformAvailableService"
-    />
+    <!-- <v-dialog v-model="d_buyService" width="800">
+      <v-card class="teal lighten-5">
+        <v-card-title>
+          <i18n path="dialogs.buyService"></i18n>
+          <v-spacer></v-spacer>
+          <v-btn @click="d_buyService=false" icon color="error">
+            <v-icon>mdi-close-circle</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-select
+            v-model="service2buy"
+            prepend-icon="mdi-human-scooter"
+            :label="$t('fields.service')"
+            :placeholder="$t('fields.service')"
+            :items="$store.getters['services/tariffed']"
+            return-object
+            item-value="idx"
+            item-text="info.name"
+          ></v-select>
+          <v-select
+            v-if="service2buy"
+            v-model="tariff2buy"
+            prepend-icon="mdi-grid"
+            :label="$t('fields.tariff')"
+            :placeholder="$t('fields.tariff')"
+            :items="$store.getters['tariffs/list'](service2buy.tariffs)"
+            return-object
+            item-value="idx"
+            item-text="info.name"
+          >
+            <template #item="{item}">
+              <TariffInfo :tariff="item" />
+            </template>
+          </v-select>
+          <TariffInfo :tariff="tariff2buy" large :service="service2buy" />
+          <AskDateDialog v-model="date2buy" v-if="tariff2buy" />
+          <v-select
+            v-if="tariff2buy"
+            v-model="tags2buy"
+            :label="$t('fields.buytag')"
+            :placeholder="$t('fields.buytag')"
+            :items="$store.getters['dicts/tags']"
+            item-value="name"
+            multiple
+            chips
+            deletable-chips
+            item-text="name"
+            menu-props="offsetY,closeOnContentClick"
+          >
+            <template #item="{item}">
+              <span>{{item.name}}</span>
+              <span v-if="item.details" class="ml-4">{{item.details.name}}</span>
+            </template>
+          </v-select>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            @click="buyService"
+            v-if="date2buy&&tariff2buy&&service2buy"
+            color="success"
+            class="rounded-pill elevation-10"
+          >
+            <i18n path="button.buy" />
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog> -->
+    <sc-dialog-buy-service v-model="d_buyService" :client="current_client.idx" @onbuy="transformAvailableService" />
+    <sc-dialog-buy-abonement v-model="d_buyAbonement" :client="current_client.idx" @onbuy="transformAvailableService" />
+    <!-- <v-dialog v-model="d_buyAbonement" width="800">
+      <v-card class="teal lighten-5">
+        <v-card-title>
+          <i18n path="dialogs.buyAbonement"></i18n>
+          <v-spacer></v-spacer>
+          <v-btn @click="d_buyAbonement=false" icon color="error">
+            <v-icon>mdi-close-circle</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-select
+            v-model="abonement2buy"
+            prepend-icon="mdi-table-multiple"
+            :label="$t('fields.abonement')"
+            :placeholder="$t('fields.abonement')"
+            :items="$store.getters['abonements/tariffed']"
+            return-object
+            item-value="idx"
+            item-text="info.name"
+            menu-props="offsetY"
+          >
+            <template #item="{item}">
+              <div>
+                <div class="text-h6">{{item.info.name}}</div>
+                <sc-services-list :item="item" />
+              </div>
+            </template>
+          </v-select>
+          <v-select
+            v-if="abonement2buy"
+            v-model="tariff2buy"
+            prepend-icon="mdi-grid"
+            :label="$t('fields.tariff')"
+            :placeholder="$t('fields.tariff')"
+            :items="$store.getters['tariffs/list'](abonement2buy.tariffs)"
+            return-object
+            item-value="idx"
+            item-text="info.name"
+            menu-props="offsetY"
+          >
+            <template #item="{item}">
+              <TariffInfo :tariff="item" />
+            </template>
+          </v-select>
+          <TariffInfo v-if="tariff2buy" :tariff="tariff2buy" />
+          <AskDateDialog v-model="date2buy" v-if="tariff2buy" />
+          <v-select
+            v-model="tags2buy"
+            :label="$t('fields.buytag')"
+            :placeholder="$t('fields.buytag')"
+            :items="$store.getters['dicts/tags']"
+            item-value="name"
+            multiple
+            chips
+            deletable-chips
+            item-text="name"
+            menu-props="offsetY"
+          >
+            <template #item="{item}">
+              <span>{{item.name}}</span>
+              <span v-if="item.details" class="ml-4">{{item.details.name}}</span>
+            </template>
+          </v-select>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            @click="buyAbonement"
+            v-if="date2buy&&tariff2buy&&abonement2buy"
+            color="success"
+            class="rounded-pill elevation-10"
+          >
+            <i18n path="button.buy" />
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>-->
     <v-dialog v-model="d_preregister" persistent width="800">
       <v-card class="teal lighten-5">
         <v-card-title>
@@ -335,16 +512,15 @@
           </v-btn>
         </v-card-title>
         <v-card-text class="mt-10">
-          <v-autocomplete
+          <v-select
             v-model="key2assign"
             prepend-icon="mdi-key"
             :label="$t('fields.key')"
             :items="availableKeys"
             return-object
             item-value="idx"
-            @keydown.enter="registerVisit"
             item-text="name"
-          ></v-autocomplete>
+          ></v-select>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -360,9 +536,10 @@
 
 <script>
 import ClientDialog from "@/components/ClientDialog";
+// import TariffInfo from "@/components/TariffInfo";
+// import AskDateDialog from "@/components/AskDateDialog";
 import BuyAbonement from "@/components/home/BuyAbonement.vue";
 import BuyService from "@/components/home/BuyService.vue";
-import ListRegServices from "@/components/home/ClientRegisteredServices.vue";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
 
@@ -371,9 +548,10 @@ export default {
   name: "Home",
   components: {
     "sc-client-dialog": ClientDialog,
+    // TariffInfo,
+    // AskDateDialog,
     "sc-dialog-buy-abonement": BuyAbonement,
     "sc-dialog-buy-service": BuyService,
-    "sc-list-registered-services": ListRegServices,
   },
   data() {
     return {
@@ -387,12 +565,16 @@ export default {
       send_message: null,
       connected: false,
       intoClubCount: 0,
-      freeKeys: 0,
 
       searchKey: null,
       panels: 0,
       item: {},
       key2assign: null,
+      service2buy: null,
+      date2buy: null,
+      tags2buy: null,
+      tariff2buy: null,
+      abonement2buy: null,
       workout2assign: null,
       servIndex2assign: null,
       searchData: null,
@@ -473,6 +655,26 @@ export default {
         this.$set(i, "testcode", i.settings.vcount <= 0 ? 4 : -4);
       }
     },
+    startBuyService() {
+      this.date2buy = this.$moment();
+      this.tags2buy = null;
+      this.tariff2bu = null;
+      this.service2buy = null;
+      this.$store.dispatch("services/LOAD");
+      this.$store.dispatch("tariffs/LOAD");
+      this.$store.dispatch("dicts/LOAD");
+      this.d_buyService = true;
+    },
+    startBuyAbonement() {
+      // this.date2buy = this.$moment();
+      // this.tags2buy = null;
+      // this.tariff2bu = null;
+      // this.abonement2buy = null;
+      // this.$store.dispatch("abonements/LOAD");
+      // this.$store.dispatch("tariffs/LOAD");
+      // this.$store.dispatch("dicts/LOAD");
+      this.d_buyAbonement = true;
+    },
     assignWorkout(confirm) {
       try {
         const i = this.clientServices[this.servIndex2assign];
@@ -544,7 +746,6 @@ export default {
       this.show_info = false;
     },
     registerVisit() {
-      if(!this.key2assign.idx) return;
       this.$api
         .registerVisit2client(
           this.current_client.idx,
@@ -558,8 +759,41 @@ export default {
           this.closeClient();
         });
     },
+    buyService() {
+      this.$api
+        .addService2client({
+          client: this.current_client.idx,
+          tariff: this.tariff2buy,
+          start: this.date2buy.valueOf(),
+          tags: this.tags2buy,
+          service: this.service2buy,
+        })
+        .then((response) => {
+          this.transformAvailableService(response);
+        })
+        .finally(() => {
+          this.d_buyService = false;
+        });
+    },
+    buyAbonement() {
+      this.$api
+        .addAbonement2client({
+          client: this.current_client.idx,
+          abonement: this.abonement2buy,
+          tariff: this.tariff2buy,
+          start: this.date2buy.valueOf(),
+          tags: this.tags2buy,
+        })
+        .then((response) => {
+          this.transformAvailableService(response);
+        })
+        .finally(() => {
+          this.d_buyAbonement = false;
+        });
+    },
     editClient(cl) {
-      this.item = this.$api.copy(cl, null);
+      if (cl == undefined) cl = null;
+      this.item = { ...cl };
       this.d_client = true;
     },
     onNewClient(item) {
@@ -641,6 +875,7 @@ export default {
     },
     transformAvailableService(response) {
       try {
+        console.log("transform", response)
         this.clientServices = [];
         response.forEach((e) => this.testAvailability(e));
         this.clientServices = [
@@ -668,6 +903,7 @@ export default {
     },
     // socket support
     send() {
+      console.log("Send message:" + this.send_message);
       if (this.stompClient && this.stompClient.connected) {
         const msg = { command: this.send_message };
         this.stompClient.send("/scapi/cmd", JSON.stringify(msg), {});
