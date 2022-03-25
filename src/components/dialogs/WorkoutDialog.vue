@@ -1,8 +1,8 @@
 <template>
-  <v-dialog v-model="isActive" persistent width="1024">
+  <v-dialog v-model="isActive" persistent width="1024" @keydown.escape="$emit('input', false)">
     <v-card color="yellow lighten-5">
       <v-card-title>
-        <sc-dialog-title object="workout" :item="item" />
+        <sc-dialog-title object="workout" :item="item" icon="workouts" />
         <v-spacer></v-spacer>
         <v-btn @click="$emit('input',false)" icon color="error">
           <v-icon>mdi-close-circle</v-icon>
@@ -27,7 +27,7 @@
             </v-col>
             <v-col cols="3">
               <v-select
-                v-model="item.settings.color"
+                v-model="item.color"
                 :items="$store.getters['sysvars/colors']"
                 :label="$t('fields.color')"
               >
@@ -45,7 +45,7 @@
               <v-select
                 v-model="item.service"
                 :label="$t('fields.service')"
-                :items="$store.getters['services/items']"
+                :items="$store.getters['services/list']($store.getters['session/services'])"
                 item-text="info.name"
                 item-value="idx"
                 :rules="[v=>!!v||$t('error.required')]"
@@ -74,9 +74,9 @@
           </v-row>
           <v-row>
             <v-col cols="3">
-              <v-switch v-model="item.settings.fix" :label="$t('fields.wofix')"></v-switch>
+              <v-switch v-model="fix" :label="$t('fields.wofix')"></v-switch>
             </v-col>
-            <v-col cols="3" v-if="item.settings.fix">
+            <v-col cols="3" v-if="fix">
               <v-menu
                 v-model="menu1"
                 :close-on-content-click="false"
@@ -87,7 +87,7 @@
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
-                    v-model="item.settings.date"
+                    v-model="item.fixdate"
                     :label="$t('fields.wodate')"
                     prepend-icon="mdi-calendar"
                     readonly
@@ -95,12 +95,12 @@
                     v-on="on"
                   ></v-text-field>
                 </template>
-                <v-date-picker v-model="item.settings.date" @input="menu1 = false"></v-date-picker>
+                <v-date-picker v-model="item.fixdate" @input="menu1 = false"></v-date-picker>
               </v-menu>
             </v-col>
-            <v-col cols="3" v-if="!item.settings.fix">
+            <v-col cols="3" v-else>
               <v-select
-                v-model="item.settings.days"
+                v-model="item.dayofweek"
                 :label="$t('fields.wodays')"
                 :items="$t('week')"
                 clearable
@@ -113,7 +113,7 @@
                 v-model="menu2"
                 :close-on-content-click="false"
                 :nudge-right="40"
-                :return-value.sync="item.settings.time"
+                :return-value.sync="item.beginat"
                 transition="scale-transition"
                 offset-y
                 max-width="290px"
@@ -121,7 +121,7 @@
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
-                    v-model="item.settings.time"
+                    v-model="item.beginat"
                     :label="$t('fields.wotime')"
                     prepend-icon="mdi-clock-time-four-outline"
                     v-bind="attrs"
@@ -131,19 +131,15 @@
                 </template>
                 <v-time-picker
                   v-if="menu2"
-                  v-model="item.settings.time"
+                  v-model="item.beginat"
                   format="24hr"
                   full-width
-                  @click:minute="$refs.menu.save(item.settings.time)"
+                  @click:minute="$refs.menu.save(item.beginat)"
                 ></v-time-picker>
               </v-menu>
             </v-col>
             <v-col cols="3">
-              <v-text-field
-                type="number"
-                v-model="item.settings.duration"
-                :label="$t('fields.woduration')"
-              ></v-text-field>
+              <v-text-field type="number" v-model="item.duration" :label="$t('fields.woduration')"></v-text-field>
             </v-col>
           </v-row>
           <v-textarea
@@ -152,11 +148,11 @@
             :rows="2"
             auto-grow
           ></v-textarea>
-          <TagsEditor v-model="item.info.tags" />
+          <TagsEditor v-model="item.info.tags" :source="tags" />
           <sc-record-audit :audit="item.audit" />
         </v-form>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions v-if="$store.getters['session/testPowerUser']">
         <v-btn text @click="d_confirm=true" color="error" v-if="item.idx">
           <i18n path="button.delete" />
         </v-btn>
@@ -169,27 +165,23 @@
         </v-btn>
       </v-card-actions>
     </v-card>
-    <ConfirmDialog v-model="d_confirm" @click:ok="remove">{{$t("dialog.txt.delete")}}</ConfirmDialog>
+    <sc-confirm-dialog v-model="d_confirm" @click:ok="remove">{{$t("dialog.txt.delete")}}</sc-confirm-dialog>
   </v-dialog>
 </template>
 
 <script>
-import ConfirmDialog from "@/components/ConfirmDialog.vue";
-
 const store_module = "workouts";
 const DEF = { info: { status: "OK" }, settings: {} };
 
 export default {
   name: "workout-dialog",
-  components: {
-    ConfirmDialog,
-  },
   props: {
     value: Boolean,
     record: Object,
   },
   data() {
     return {
+      fix: false,
       menu2: false,
       menu1: false,
       item: { ...DEF },
@@ -200,8 +192,9 @@ export default {
     record: {
       handler(v) {
         this.item = this.record ? JSON.parse(JSON.stringify(v)) : { ...DEF };
-        if (!this.item.settings.color)
-          this.item.settings.color = this.$store.getters["sysvars/nextcolor"]();
+        this.fix = this.item.fixdate;
+        if (!this.item.color)
+          this.item.color = this.$store.getters["sysvars/nextcolor"]();
       },
       deep: true,
     },
@@ -210,6 +203,9 @@ export default {
     isActive() {
       return this.value;
     },
+    tags() {
+      return this.$store.getters[store_module + "/tags"];
+    },
   },
   methods: {
     clone() {
@@ -217,6 +213,7 @@ export default {
     },
     save() {
       if (!this.$refs.form.validate()) return;
+      if (!this.fix) this.item.fixdate = null;
       this.$store
         .dispatch(store_module + "/SAVE", this.item)
         .then(() => {

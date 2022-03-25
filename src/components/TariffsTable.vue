@@ -18,6 +18,9 @@
       <v-col cols="3">
         <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" clearable></v-text-field>
       </v-col>
+      <v-btn icon class="error ma-4" dark to="/">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </v-row>
     <v-data-table
       v-model="selected"
@@ -31,7 +34,7 @@
       :no-data-text="$t('label.nodata')"
     >
       <template v-slot:item.action="{ item }">
-        <v-btn icon @click="edit(item)">
+        <v-btn icon @click="edit(item)" v-if="$store.getters['session/testPowerUser']">
           <v-icon color="primary">mdi-pencil</v-icon>
         </v-btn>
       </template>
@@ -48,32 +51,22 @@
       <template v-slot:item.status="{ item }">
         <sc-record-status :status="item.info.status" />
       </template>
-      <template v-slot:body.append>
-        <div class="add-button-div">
-          <v-btn fab absolute bottom @click="edit(null)" dark class="pink">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-          <v-btn
-            fab
-            absolute
-            bottom
-            @click="saveTariffs"
-            dark
-            class="accept-btn success"
-            v-if="isSelectable"
-          >
-            <v-icon>mdi-check</v-icon>
-          </v-btn>
-        </div>
+      <template v-slot:footer.prepend>
+        <v-btn fab @click="edit(null)" dark class="pink my-1" v-if="$store.getters['session/testPowerUser']">
+          <v-icon color="white">mdi-plus</v-icon>
+        </v-btn>
+        <v-btn fab @click="saveTariffs" dark class="accept-btn success" v-if="isSelectable">
+          <v-icon color="white">mdi-check</v-icon>
+        </v-btn>
       </template>
     </v-data-table>
-    <sc-tariff-dialog v-model="d_edit" :item.sync="item" />
+    <sc-tariff-dialog v-model="d_edit" :item.sync="item" :type="type" />
   </div>
 </template>
 
 <script>
 import commonmixin from "@/mixins/commonlist.js";
-import TariffDialog from "@/components/TariffDialog";
+//import TariffDialog from "@/components/dialogs/TariffDialog";
 const store_module = "tariffs";
 const DEF_ITEM = {
   info: { status: "OK" },
@@ -106,7 +99,9 @@ export default {
       default: false,
     },
   },
-  components: { "sc-tariff-dialog": TariffDialog },
+  components: {
+    "sc-tariff-dialog": () => import("@/components/dialogs/TariffDialog"),
+  },
   computed: {
     selected2() {
       return this.value;
@@ -126,12 +121,6 @@ export default {
       d_edit: false,
       filter: {},
       headers: [
-        {
-          text: this.$t("fields.action"),
-          value: "action",
-          width: 70,
-          sortable: false,
-        },
         {
           text: this.$t("fields.name"),
           value: "info.name",
@@ -203,6 +192,17 @@ export default {
     },
   },
   mounted() {
+    if (this.$store.getters["session/testPowerUser"]) {
+      this.headers = [
+        {
+          text: this.$t("fields.action"),
+          value: "action",
+          width: 70,
+          sortable: false,
+        },
+        ...this.headers,
+      ];
+    }
     if (!this.$store.getters["dicts/isItems"]) {
       this.$store.dispatch("dicts/LOAD");
     }

@@ -1,9 +1,5 @@
-import ConfirmDialog from "@/components/ConfirmDialog.vue";
 
 export default {
-    components: {
-        ConfirmDialog
-    },
     data() {
         return {
             items: [],

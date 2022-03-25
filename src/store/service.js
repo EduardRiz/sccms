@@ -19,6 +19,14 @@ const getters = {
     isItems: state => {
         return state.items.length;
     },
+    list: state => {
+        return (idxlist) => {
+            const o = state.items.filter(e => {
+                return idxlist.indexOf(e.idx) != -1
+            });
+            return o ? o : [];
+        }
+    },
     item: state => {
         return (id) => {
             const o = state.items.find(e => {
@@ -40,12 +48,16 @@ const actions = {
         });
     },
     SAVE: function (context, payload) {
-        const tags = payload.info.tags;
-        if (tags && tags.length) payload.tagsStr = tags.join(",");
-        api.apiPostRequest(apiBase, payload).then(response => {
+        const item = payload.item;
+        const tags = item.info.tags;
+        if (tags && tags.length) item.tagsStr = tags.join(",");
+        api.apiPostRequest(apiBase, item).then(response => {
             if (response) {
-                response.audit.created = response.audit.created ? response.audit.created : payload.audit.created;
+                response.audit.created = response.audit.created ? response.audit.created : item.audit.created;
                 context.commit("saveItem", response);
+                if(payload.isChanged){
+                    payload.vm.$store.dispatch("session/REFRESHCLUB");
+                } 
             }
         });
     },

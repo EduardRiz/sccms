@@ -3,7 +3,7 @@
     <v-chip v-for="s in item.services" :key="s" class="mr-1">
       <span>{{name(s)}}</span>
       <v-icon v-if="isWorkout(s)" class="ml-2" color="orange darken-4" small>mdi-calendar-month</v-icon>
-      <v-icon v-if="isScalar(s)" class="ml-2" color="orange darken-4" small>mdi-progress-clock</v-icon>
+      <v-icon v-if="aScalar(s)" class="ml-2" color="orange darken-4" small>mdi-progress-clock</v-icon>
       <span v-if="vcount(s)" class="ml-2 vcount rounded-l">{{vcount(s)}}</span>
     </v-chip>
   </div>
@@ -15,18 +15,22 @@ export default {
   props: { item: Object },
   methods: {
     name(idx) {
-      return this.$store.getters["services/item"](idx).info.name;
+      try {
+        return this.$store.getters["services/item"](idx).info.name;
+      } catch (error) {
+        return "unnamed";
+      }
     },
     isWorkout(idx) {
       try {
-        return this.$store.getters["services/item"](idx).params.isworkout;
+        return this.$store.getters["services/item"](idx).workout;
       } catch (error) {
         return false;
       }
     },
-    isScalar(idx) {
+    aScalar(idx) {
       try {
-        return this.$store.getters["services/item"](idx).params.isscalar;
+        return this.$store.getters["services/item"](idx).scalar;
       } catch (error) {
         return false;
       }

@@ -1,17 +1,22 @@
 <template>
   <div>
     <v-row dense>
-      <v-col cols="3">
-        <v-text-field
-          v-model="ntag"
+      <v-col cols="4">
+        <v-autocomplete
+          v-model="ntag1"
           append-icon="mdi-plus-circle"
+          :search-input.sync="ntag"
           @click:append="add"
-          label="Tags"
+          :items="items"
+          hide-no-data
+          hide-selected
+          :error-messages="errMessage"
+          :label="$t('fields.tags')"
           @keypress.enter="add"
-        ></v-text-field>
+        ></v-autocomplete>
       </v-col>
-      <v-col cols="9" align-self="center">
-        <v-chip close v-for="i in tags" :key="i" @click:close="rem(i)" class="ml-2">{{i}}</v-chip>
+      <v-col cols="8" align-self="center">
+        <v-chip close v-for="i in tags" :key="i" @click:close="rem(i)" class="ma-1">{{i}}</v-chip>
       </v-col>
     </v-row>
   </div>
@@ -21,7 +26,17 @@
 export default {
   name: "TagsEditor",
   props: {
+    required: {
+      type: Boolean,
+      default: false,
+    },
     value: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
+    source: {
       type: Array,
       default() {
         return [];
@@ -31,6 +46,7 @@ export default {
   data() {
     return {
       ntag: null,
+      ntag1: null,
       tags: this.value,
     };
   },
@@ -38,7 +54,19 @@ export default {
     value: {
       handler(v) {
         this.tags = v ? [...v] : [];
+        this.ntag = null;
       },
+    },
+  },
+  computed: {
+    errMessage() {
+      if (this.required) {
+        if (this.value.length == 0) return this.$t("error.required");
+      }
+      return null;
+    },
+    items() {
+      return this.source;
     },
   },
   methods: {

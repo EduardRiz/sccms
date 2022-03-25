@@ -53,7 +53,7 @@ export default {
       this.cur = this.cur != null ? null : h;
     },
     clear() {
-      for (let i = this.cur; i < 25; i++) {
+      for (let i = this.cur; i < 24; i++) {
         this.hours.splice(i, 1, 0);
       }
       this.cur = null;

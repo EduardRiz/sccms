@@ -119,8 +119,8 @@
 </template>
 
 <script>
-import WorkoutDialog from "@/components/WorkoutDialog.vue";
-import EventWithTooltip from "@/components/EventWithTooltip.vue";
+import WorkoutDialog from "@/components/dialogs/WorkoutDialog.vue";
+import EventWithTooltip from "@/components/workout/EventWithTooltip.vue";
 import moment from "moment";
 
 export default {
@@ -208,9 +208,7 @@ export default {
     },
     getEventColor(event) {
       try {
-        return event.workout.settings.color
-          ? event.workout.settings.color
-          : "error";
+        return event.workout.color ? event.workout.color : "error";
       } catch (error) {
         return "primary";
       }
@@ -234,12 +232,9 @@ export default {
       } else {
         this.item = {
           info: { status: "OK" },
-          settings: {
-            fix: true,
-            date: event.date,
-            time: event.time,
-            duration: 60,
-          },
+          date: event.date,
+          beginat: event.beginat,
+          duration: 60,
         };
       }
       this.d_edit = true;
@@ -263,28 +258,26 @@ export default {
         if (this.room && workout.room != this.room) return;
         if (this.service && workout.service != this.service) return;
         let dates = [];
-        if (workout.settings.fix) {
-          const wodate = this.$moment(
-            workout.settings.date + " " + workout.settings.time
-          );
+        if (workout.fixdate) {
+          const wodate = this.$moment(workout.fixdate + " " + workout.beginat);
           if (wodate.isAfter(max) || wodate.isBefore(min)) return;
           dates.push(wodate.valueOf());
-        } else if (workout.settings.days) {
+        } else if (workout.dayofweek) {
           this.$moment().locale("lv");
-          let delta = this.$moment(this.sd + " " + workout.settings.time);
+          let delta = this.$moment(this.sd + " " + workout.beginat);
           while (delta.isBefore(max)) {
-            if (delta.isoWeekday() == workout.settings.days)
+            if (delta.isoWeekday() == workout.dayofweek)
               dates.push(delta.valueOf());
             delta.add(1, "day");
           }
         }
         dates.forEach((sd) => {
           try {
-            if (!workout.settings.color) workout.settings.color = "primary";
+            if (!workout.color) workout.color = "primary";
             events.push({
               name: workout.info.name,
               start: sd,
-              end: sd + parseInt(workout.settings.duration) * 60 * 1000,
+              end: sd + parseInt(workout.duration) * 60 * 1000,
               timed: true,
               workout: workout,
               color: workout.color,

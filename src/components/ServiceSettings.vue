@@ -5,7 +5,7 @@
       v-if="sett.visits"
       v-model="sett.vcount"
       type="number"
-      :label="$t('fields.serviscount')"
+      :label="$t(sett.scalar?'fields.servis_scalar':'fields.servis_visits')"
       min="1"
       class="ml-6"
     ></v-text-field>

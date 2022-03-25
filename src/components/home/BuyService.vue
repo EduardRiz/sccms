@@ -14,11 +14,21 @@
           prepend-icon="mdi-human-scooter"
           :label="$t('fields.service')"
           :placeholder="$t('fields.service')"
-          :items="$store.getters['services/tariffed']"
+          :items="availableServices"
           return-object
           item-value="idx"
           item-text="info.name"
-        ></v-select>
+        >
+          <template #item="{item}">
+            <v-icon
+              color="success"
+              class="mr-3"
+              v-show="$store.getters['session/testClubService'](item.idx)"
+            >mdi-check</v-icon>
+            <span>{{item.info.name}}</span>
+            <span>{{item.info.description}}</span>
+          </template>
+        </v-select>
         <v-select
           v-if="service2buy"
           v-model="tariff2buy"
@@ -81,7 +91,7 @@
 
 <script>
 import TariffInfo from "@/components/TariffInfo";
-import AskDateDialog from "@/components/AskDateDialog";
+import AskDateDialog from "@/components/dialogs/AskDateDialog";
 
 export default {
   name: "DialogBuyService",
@@ -89,6 +99,10 @@ export default {
   props: {
     value: Boolean,
     client: Number,
+    inclub: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -99,8 +113,22 @@ export default {
     };
   },
   computed: {
-    isActive() {
-      return this.value;
+    availableServices() {
+      let tariffed = this.$store.getters["services/tariffed"];
+      if (this.inclub) {
+        return tariffed.filter((e) => {
+          return this.$store.getters["session/testClubService"](e.idx);
+        });
+      }
+      return tariffed;
+    },
+    isActive: {
+      get() {
+        return this.value;
+      },
+      set(v) {
+        this.$emit("input", v);
+      },
     },
   },
   watch: {
@@ -110,7 +138,7 @@ export default {
       this.tariff2buy = null;
       this.service2buy = null;
       if (v) {
-        this.$store.dispatch("abonements/LOAD");
+        this.$store.dispatch("services/LOAD");
         this.$store.dispatch("tariffs/LOAD");
         this.$store.dispatch("dicts/LOAD");
       }

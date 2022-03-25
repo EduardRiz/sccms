@@ -25,14 +25,17 @@
                 :placeholder="$t('login.login')"
                 name="login"
                 outlined
+                autofocus
                 shaped
                 :rules="userRules"
                 prepend-icon="mdi-account"
+                @keypress.enter="$refs.password.focus()"
                 required
               />
               <v-text-field
                 v-model.trim="pass"
                 id="password"
+                ref="password"
                 :placeholder="$t('login.pass')"
                 outlined
                 shaped
@@ -70,9 +73,18 @@ export default {
       userRules: [(v) => !!v || this.$t("error.required")],
       pass: "",
       domen: "",
+      wsid: null
     };
   },
-  mounted() {},
+  mounted() {
+    fetch("http://localhost:8083/gettoken")
+      .then((r) => r.json())
+      .then((d) => {
+        sessionStorage.setItem("token", d.token);
+        this.wsid = d.wsid;
+      });
+    window.history.replaceState({}, document.title, "/#/login");
+  },
   methods: {
     showAlertMessage(m) {
       this.showAlert = true;
@@ -90,11 +102,13 @@ export default {
             pars: {
               username: this.user,
               pass: this.pass,
+              wsid: this.wsid
             },
             __vm: this,
           })
-        )
+        ) {
           this.$router.push("/");
+        }
       } catch (e) {
         this.showAlertMessage(e);
       }

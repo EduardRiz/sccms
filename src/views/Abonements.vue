@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="fill-height ma-2 idcs-fill-width">
+  <v-sheet class="sc-page-sheet">
     <v-row align="center" align-content="center">
       <v-spacer></v-spacer>
       <v-col cols="3">
@@ -8,39 +8,49 @@
       <v-col cols="3">
         <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" clearable></v-text-field>
       </v-col>
+      <v-btn icon class="error ma-4" dark to="/">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </v-row>
     <v-data-table
       :headers="headers"
       :items="records"
       :search="search"
       item-key="idx"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
       class="transparent table-custom"
       :footer-props="foot_props"
       :no-data-text="$t('label.nodata')"
     >
       <template v-slot:item.action="{ item }">
-        <v-btn icon @click="edit(item)">
+        <v-btn icon @click="edit(item)" v-if="$store.getters['session/testPowerUser']">
           <v-icon color="primary">mdi-pencil</v-icon>
         </v-btn>
       </template>
+      <template v-slot:item.tcount="{ item }">{{item.tariffs?item.tariffs.length:0}}</template>
       <template v-slot:item.info.status="{ item }">
         <sc-record-status :status="item.info.status" />
       </template>
       <template v-slot:item.services="{ item }">
         <sc-services-list :item="item" />
       </template>
-      <template v-slot:body.append>
-        <div class="add-button-div">
-          <v-btn fab absolute bottom @click="edit(null)" dark class="pink">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </div>
+      <template v-slot:footer.prepend>
+        <v-btn
+          fab
+          @click="edit(null)"
+          dark
+          class="pink my-1"
+          v-if="$store.getters['session/testPowerUser']"
+        >
+          <v-icon color="white">mdi-plus</v-icon>
+        </v-btn>
       </template>
     </v-data-table>
-    <v-dialog v-model="d_edit" persistent fullscreen>
+    <v-dialog v-model="d_edit" persistent fullscreen @keydown.escape="d_edit=false">
       <v-card color="yellow lighten-5">
         <v-card-title>
-          <sc-dialog-title object="abonement" :item="item" />
+          <sc-dialog-title object="abonement" :item="item" icon="abonements" />
           <v-spacer></v-spacer>
           <v-btn @click="d_edit=false" icon color="error">
             <v-icon>mdi-close-circle</v-icon>
@@ -128,11 +138,11 @@
               </v-col>
             </v-row>
             <v-divider></v-divider>
-            <TagsEditor v-model="item.info.tags" class="mt-10" />
+            <TagsEditor v-model="item.info.tags" class="mt-10" :source="tags" />
             <sc-record-audit :audit="item.audit" />"
           </v-form>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions v-if="$store.getters['session/testPowerUser']">
           <v-btn text @click="d_confirm=true" color="primary" v-if="item.idx">
             <i18n path="button.delete" />
           </v-btn>
@@ -143,8 +153,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <ConfirmDialog v-model="d_confirm" :mode="dmode" @click:ok="remove">{{$t("dialog.txt.delete")}}</ConfirmDialog>
-    <v-dialog v-model="d_editTariff" fullscreen>
+    <sc-confirm-dialog
+      v-model="d_confirm"
+      :mode="dmode"
+      @click:ok="remove"
+    >{{$t("dialog.txt.delete")}}</sc-confirm-dialog>
+    <v-dialog v-model="d_editTariff" fullscreen @keydown.escape="d_editTariff=false">
       <v-card class="orange lighten-5">
         <v-card-title>
           <v-spacer></v-spacer>
@@ -200,6 +214,8 @@ export default {
       item: { ...DEF },
       d_edit: false,
       d_editTariff: false,
+      sortBy: "idx",
+      sortDesc: true,
       filter: {},
       tariffs_hdrs: [
         {
@@ -233,18 +249,16 @@ export default {
       ],
       headers: [
         {
-          text: this.$t("fields.action"),
-          value: "action",
-          width: 70,
-          sortable: false,
+          text: "#",
+          value: "idx",
         },
         {
           text: this.$t("fields.name"),
           value: "info.name",
         },
         {
-          text: this.$t("fields.description"),
-          value: "info.description",
+          text: this.$t("fields.tariffs"),
+          value: "tcount",
         },
         {
           text: this.$t("fields.services"),
@@ -281,8 +295,7 @@ export default {
       this.item.services.forEach((e) => {
         const serv = this.$store.getters["services/item"](e);
         let servsett = {};
-        if (serv.params && serv.params.isscalar)
-          servsett = { visits: true, vcount: 30, scalar: true };
+        if (serv.scalar) servsett = { visits: true, vcount: 30, scalar: true };
         this.$set(this.item.settings, "s" + e, servsett);
       });
     },
@@ -299,6 +312,17 @@ export default {
     },
   },
   mounted() {
+    if (this.$store.getters["session/testPowerUser"]) {
+      this.headers = [
+        {
+          text: this.$t("fields.action"),
+          value: "action",
+          width: 70,
+          sortable: false,
+        },
+        ...this.headers,
+      ];
+    }
     if (!this.$store.getters["services/isItems"]) {
       this.$store.dispatch("services/LOAD");
     }

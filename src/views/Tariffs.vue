@@ -1,15 +1,15 @@
 <template>
-  <v-sheet class="fill-height ma-2 idcs-fill-width">
-    <TariffTable alltypes/>
+  <v-sheet class="sc-page-sheet">
+    <TariffTable alltypes />
   </v-sheet>
 </template>
 
 <script>
-import TariffTable from "@/components/TariffsTable.vue";
+//import TariffTable from "@/components/TariffsTable.vue";
 
 export default {
   name: "Tariffs",
-  components: { TariffTable },
+  components: { TariffTable: () => import("@/components/TariffsTable.vue") },
 };
 </script>
 

@@ -62,7 +62,7 @@
             <v-icon v-text="$t('icons.coachs')" dark class="pr-4" />
           </td>
           <td align="right">
-            <span>{{$store.getters["coachs/item"](evt.workout.coach).info.name}}</span>
+            <sc-record-info :idx="evt.workout.coach" store="coachs/item" />
           </td>
         </tr>
         <tr>
@@ -70,7 +70,7 @@
             <v-icon v-text="$t('icons.rooms')" dark />
           </td>
           <td align="right">
-            <span>{{$store.getters["rooms/item"](evt.workout.room).info.name}}</span>
+            <sc-record-info :idx="evt.workout.room" store="rooms/item" />
           </td>
         </tr>
         <tr>
@@ -78,7 +78,7 @@
             <v-icon v-text="$t('icons.services')" dark />
           </td>
           <td align="right">
-            <span>{{$store.getters["services/item"](evt.workout.service).info.name}}</span>
+            <sc-record-info :idx="evt.workout.service" store="services/item" />
           </td>
         </tr>
       </table>
@@ -105,7 +105,7 @@ export default {
   computed: {
     backColor() {
       try {
-        return this.event.workout.settings.color;
+        return this.event.workout.color;
       } catch (error) {
         return "primary";
       }

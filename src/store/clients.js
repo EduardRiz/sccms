@@ -61,7 +61,6 @@ const actions = {
     },
     DELETE: function (context, payload) {
         api.apiDeleteRequest(apiBase + "/" + payload).then(response => {
-            console.log(response)
             if (response) context.commit("deleteItem", payload);
         });
     },

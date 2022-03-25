@@ -16,11 +16,47 @@ const routes = [{
     },
   },
   {
+    path: '/chome/:idx',
+    name: 'ClientHome',
+    component: () => import('../views/ClientHome.vue'),
+    meta: {
+      role: "USER",
+      auth: true,
+    },
+  },
+  {
+    path: '/anonymhome',
+    name: 'AnonymClientHome',
+    component: () => import('../views/AnonymClientHome.vue'),
+    meta: {
+      role: "USER",
+      auth: true,
+    },
+  },
+  {
     path: '/users',
     name: 'Users',
     component: () => import('../views/Users.vue'),
     meta: {
-      role: "USER",
+      role: "ADMIN",
+      auth: true,
+    },
+  },
+  {
+    path: '/actlog',
+    name: 'Activity',
+    component: () => import('../views/ActivityLog.vue'),
+    meta: {
+      role: "ADMIN",
+      auth: true,
+    },
+  },
+  {
+    path: '/workstations',
+    name: 'Workstations',
+    component: () => import('../views/Workstations.vue'),
+    meta: {
+      role: "ADMIN",
       auth: true,
     },
   },
@@ -29,7 +65,7 @@ const routes = [{
     name: 'Groups',
     component: () => import('../views/Groups.vue'),
     meta: {
-      role: "USER",
+      role: "ADMIN",
       auth: true,
     },
   },
@@ -97,9 +133,18 @@ const routes = [{
     },
   },
   {
+    path: '/todaywo',
+    name: 'TodayWo',
+    component: () => import('@/views/TodayWo.vue'),
+    meta: {
+      role: "USER",
+      auth: true,
+    },
+  },
+  {
     path: '/soldabonements',
     name: 'SoldAbonements',
-    component: () => import('@/views/SoldAbonements.vue'),
+    component: () => import('@/views/Sales.vue'),
     meta: {
       role: "USER",
       auth: true,
@@ -107,8 +152,8 @@ const routes = [{
   },
   {
     path: '/regservs',
-    name: 'RegisteredServices',
-    component: () => import('@/views/RegisteredServices.vue'),
+    name: 'regservs',
+    component: () => import('@/views/ClientServices.vue'),
     meta: {
       role: "USER",
       auth: true,
@@ -117,7 +162,7 @@ const routes = [{
   {
     path: '/regvis',
     name: 'regvis',
-    component: () => import('@/views/RegisteredVisits.vue'),
+    component: () => import('@/views/UsedServices.vue'),
     meta: {
       role: "USER",
       auth: true,
@@ -138,6 +183,15 @@ const routes = [{
     component: () => import('@/views/Visits.vue'),
     meta: {
       role: "USER",
+      auth: true,
+    },
+  },
+  {
+    path: '/reports',
+    name: 'Reports',
+    component: () => import('@/views/Reports.vue'),
+    meta: {
+      role: "POWERUSER",
       auth: true,
     },
   },
@@ -164,7 +218,7 @@ const routes = [{
     name: 'Logs',
     component: () => import("@/views/Logs.vue"),
     meta: {
-      role: "USER",
+      role: "ADMIN",
       auth: true,
     },
   },
@@ -186,11 +240,11 @@ const router = new VueRouter({
 
 router.beforeEach(function (to, from, next) {
   if (to.meta.auth) {
-    if (store.state.session.sessionData == null) {
+    if (!api.isLogged()) {
       api.ping().then(response => {
         store.state.session.sessionData = response;
-        if (!response.user) {
-          next('/login');
+        if (!api.isLogged()) {
+          if (from != "/login") next('/login');
         } else {
           try {
             //console.log(store.state.user.sessionData.group.role, to.meta.role)
@@ -204,7 +258,7 @@ router.beforeEach(function (to, from, next) {
       });
     } else {
       try {
-        //console.log(store.state.user.sessionData.group.role, to.meta.role)
+        //console.log(store.state.session.sessionData.group.role, to.meta.role)
         if (api.testRoles(to.meta.role)) next();
       } catch (error) {
         console.log(error)

@@ -6,34 +6,15 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import i18n from './i18n'
 import VueCryptojs from 'vue-cryptojs'
-import filters from './filters.js';
-import RecordStatus from "@/components/RecordStatus.vue";
-import RecordAudit from "@/components/RecordAudit.vue";
-import TagsEditor from "@/components/TagsEditor.vue";
-import RecordInfoField from "@/components/RecordInfoField.vue";
-import ConfirmDialog from "@/components/ConfirmDialog.vue";
-import DialogTitle from "@/components/DialogTitle.vue";
-import WeekForTime from "@/components/WeekForTime.vue";
-import ServicesAsList from "@/components/ServicesAsList.vue";
+import scclub from "./scclub.js"
 
 Vue.use(VueCryptojs);
-Vue.component("sc-record-status", RecordStatus);
-Vue.component("sc-record-audit", RecordAudit);
-Vue.component("sc-dialog-title", DialogTitle);
-Vue.component("sc-confirm-dialog", ConfirmDialog);
-Vue.component("sc-record-info", RecordInfoField);
-Vue.component("sc-week-days", WeekForTime);
-Vue.component("sc-services-list", ServicesAsList, );
+Vue.use(scclub);
 
-
-Vue.component("TagsEditor", TagsEditor);
 Vue.config.productionTip = false
 Vue.prototype.$api = api;
 // for moment's filters
 Vue.use(require('vue-moment'));
-filters.forEach(f => {
-  Vue.filter(f.name, f.func)
-})
 
 const vm = new Vue({
   router,
@@ -42,4 +23,15 @@ const vm = new Vue({
   vuetify,
   render: h => h(App)
 }).$mount('#app')
+
 api.setVm(vm);
+
+Vue.prototype.$rules = {
+  required: (value) => !!value || vm.$t("error.required"),
+  counter: (value) => value.length <= 20 || "Max 20 characters",
+  email: (value) => {
+    const pattern =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return !value || pattern.test(value) || vm.$t("error.email");
+  },
+};

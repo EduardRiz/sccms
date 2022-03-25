@@ -1,13 +1,19 @@
 <template>
-  <v-sheet class="fill-height ma-2 idcs-fill-width">
+  <v-sheet class="sc-page-sheet">
     <v-row align="center" align-content="center">
       <v-spacer></v-spacer>
+      <v-col cols="2">
+        <v-switch v-model="showMyClub" :label="$t('label.myclub')"></v-switch>
+      </v-col>
       <v-col cols="3">
         <v-select v-model="filter.tag" :items="tags" :label="$t('fields.tags')" clearable></v-select>
       </v-col>
       <v-col cols="3">
         <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" clearable></v-text-field>
       </v-col>
+      <v-btn icon class="error ma-4" dark to="/">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </v-row>
     <v-data-table
       :headers="headers"
@@ -15,36 +21,39 @@
       :search="search"
       :items-per-page.sync="itemPerPage"
       item-key="idx"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
       class="transparent table-custom"
       :footer-props="foot_props"
       :no-data-text="$t('label.nodata')"
     >
       <template v-slot:item.action="{ item }">
-        <v-btn icon @click="edit(item)">
+        <v-btn icon @click="edit(item)" v-if="$store.getters['session/testPowerUser']">
           <v-icon color="primary">mdi-pencil</v-icon>
         </v-btn>
       </template>
-      <template v-slot:item.isworkout="{ item }">
-        <v-icon>{{item.params.isworkout?"mdi-check":""}}</v-icon>
+      <template v-slot:item.workout="{ item }">
+        <v-icon>{{item.workout?"mdi-check":""}}</v-icon>
       </template>
-      <template v-slot:item.isscalar="{ item }">
-        <v-icon>{{item.params.isscalar?"mdi-check":""}}</v-icon>
+      <template v-slot:item.scalar="{ item }">
+        <v-icon>{{item.scalar?"mdi-check":""}}</v-icon>
       </template>
       <template v-slot:item.info.status="{ item }">
         <sc-record-status :status="item.info.status" />
       </template>
-      <template v-slot:body.append>
-        <div class="add-button-div">
-          <v-btn fab absolute bottom @click="edit(null)" dark class="pink">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </div>
+      <template v-slot:item.idx="{item}">
+        <span>{{item.idx}}</span>
+      </template>
+      <template v-slot:footer.prepend>
+        <v-btn fab @click="edit(null)" dark class="pink my-1" v-if="$store.getters['session/testPowerUser']">
+          <v-icon color="white">mdi-plus</v-icon>
+        </v-btn>
       </template>
     </v-data-table>
-    <v-dialog v-model="d_edit" persistent fullscreen>
+    <v-dialog v-model="d_edit" persistent fullscreen @keydown.escape="d_edit=false">
       <v-card color="yellow lighten-5">
         <v-card-title>
-          <sc-dialog-title object="service" :item="item" />
+          <sc-dialog-title object="service" :item="item" icon="services" />
           <v-spacer></v-spacer>
           <v-btn @click="d_edit=false" icon color="error">
             <v-icon>mdi-close-circle</v-icon>
@@ -75,12 +84,8 @@
               auto-grow
             ></v-textarea>
             <v-row class="ml-0">
-              <v-checkbox :label="$t('fields.isWorkout')" v-model="item.params.isworkout"></v-checkbox>
-              <v-checkbox
-                :label="$t('fields.isScalar')"
-                v-model="item.params.isscalar"
-                class="ml-4"
-              ></v-checkbox>
+              <v-checkbox :label="$t('fields.aworkout')" v-model="item.workout"></v-checkbox>
+              <v-checkbox :label="$t('fields.ascalar')" v-model="item.scalar" class="ml-4"></v-checkbox>
             </v-row>
             <v-row>
               <v-col cols="12">
@@ -110,11 +115,27 @@
               </v-col>
             </v-row>
 
-            <TagsEditor v-model="item.info.tags" class="mt-10" />
+            <TagsEditor v-model="item.info.tags" class="mt-10" :source="tags" />
             <sc-record-audit :audit="item.audit" />
           </v-form>
+          <v-row>
+            <v-col>
+              <v-select
+                multiple
+                :items="clubs"
+                v-model="clubs2add"
+                :label="$t('label.clubs2add')"
+                menu-props="offsetY,closeOnContentClick"
+                chips
+                item-text="info.name"
+                item-value="idx"
+                deletable-chips
+                @change="wasChangedClubs=true"
+              ></v-select>
+            </v-col>
+          </v-row>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions v-if="$store.getters['session/testPowerUser']">
           <v-btn text @click="d_confirm=true" color="primary">
             <i18n path="button.delete" />
           </v-btn>
@@ -125,7 +146,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="d_editTariff" fullscreen>
+    <v-dialog v-model="d_editTariff" fullscreen @keydown.escape="d_editTariff=false">
       <v-card class="orange lighten-5">
         <v-card-title>
           <v-spacer></v-spacer>
@@ -138,7 +159,11 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <ConfirmDialog v-model="d_confirm" :mode="dmode" @click:ok="remove">{{$t("dialog.txt.delete")}}</ConfirmDialog>
+    <sc-confirm-dialog
+      v-model="d_confirm"
+      :mode="dmode"
+      @click:ok="remove"
+    >{{$t("dialog.txt.delete")}}</sc-confirm-dialog>
   </v-sheet>
 </template>
 
@@ -157,6 +182,11 @@ export default {
   },
   computed: {
     records() {
+      if (this.showMyClub) {
+        return this.$store.getters[store_module + "/list"](
+          this.$store.getters["session/services"]
+        );
+      }
       return this.$store.getters[store_module + "/items"];
     },
     tags() {
@@ -175,19 +205,25 @@ export default {
         return [];
       }
     },
+    clubs() {
+      return this.$store.getters["clubs/items"];
+    },
   },
   data() {
     return {
+      showMyClub: true,
+      wasChangedClubs: false,
+      clubs2add: [this.$store.getters["session/scidx"]],
       item: DEF,
       d_edit: false,
       d_editTariff: false,
+      sortBy: "idx",
+      sortDesc: true,
       filter: {},
       headers: [
         {
-          text: this.$t("fields.action"),
-          value: "action",
-          width: 70,
-          sortable: false,
+          text: "#",
+          value: "idx",
         },
         {
           text: this.$t("fields.name"),
@@ -198,12 +234,12 @@ export default {
           value: "info.description",
         },
         {
-          text: this.$t("fields.isWorkout"),
-          value: "isworkout",
+          text: this.$t("fields.aworkout"),
+          value: "workout",
         },
         {
-          text: this.$t("fields.isScalar"),
-          value: "isscalar",
+          text: this.$t("fields.ascalar"),
+          value: "scalar",
         },
         {
           text: this.$t("fields.status"),
@@ -250,6 +286,22 @@ export default {
       ],
     };
   },
+  watch: {
+    item: {
+      handler(v) {
+        this.wasChangedClubs = true;
+        if (v.idx) {
+          this.wasChangedClubs = false;
+          this.clubs2add = this.clubs.filter(
+            (e) => e.services.indexOf(v.idx) != -1
+          );
+        } else {
+          this.clubs2add = [this.$store.getters["session/scidx"]];
+        }
+      },
+      deep: true,
+    },
+  },
   methods: {
     updateTariffs(a) {
       if (!this.item.tariffs) this.item.tariffs = [];
@@ -261,9 +313,16 @@ export default {
       this.d_edit = true;
     },
     save() {
-      this.$store.dispatch(store_module + "/SAVE", this.item).then(() => {
-        this.d_edit = false;
-      });
+      if (this.wasChangedClubs) this.item.clubs = this.clubs2add;
+      this.$store
+        .dispatch(store_module + "/SAVE", {
+          item: this.item,
+          isChanged: this.wasChangedClubs,
+          vm: this,
+        })
+        .then(() => {
+          this.d_edit = false;
+        });
     },
     remove() {
       this.$store.dispatch(store_module + "/DELETE", this.item.idx).then(() => {
@@ -272,11 +331,25 @@ export default {
     },
   },
   mounted() {
+    if (this.$store.getters["session/testPowerUser"]) {
+      this.headers = [
+        {
+          text: this.$t("fields.action"),
+          value: "action",
+          width: 70,
+          sortable: false,
+        },
+        ...this.headers,
+      ];
+    }
     if (!this.$store.getters[store_module + "/isItems"]) {
       this.$store.dispatch(store_module + "/LOAD");
     }
     if (!this.$store.getters["tariffs/isItems"]) {
       this.$store.dispatch("tariffs/LOAD");
+    }
+    if (!this.$store.getters["clubs/isItems"]) {
+      this.$store.dispatch("clubs/LOAD");
     }
   },
 };

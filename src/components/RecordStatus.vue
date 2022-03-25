@@ -5,12 +5,15 @@
 <script>
 export default {
   name: "RecordStatusIcon",
-  props: {status: String},
-  computed:{
-      status_(){
-          return this.status=='OK';
+  props: { status: String, statusi: Number },
+  computed: {
+    status_() {
+      if (this.statusi) {
+        return this.statusi == 1;
       }
-  }
+      return this.status == "OK";
+    },
+  },
 };
 </script>
 

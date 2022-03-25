@@ -1,6 +1,6 @@
 import axios from "axios";
 import store from "@/store/index.js"
-const API = process.env.NODE_ENV == "development" ? "https://192.168.112.114:5678/scapi" : "https://service.elektroniskaskartes.lv/scapi";
+const API = process.env.NODE_ENV == "development" ? "https://192.168.112.114:5678/scapi" : "/scapi";
 
 const posapi = axios.create({
     crossDomain: true,
@@ -12,24 +12,46 @@ const api = {
     ping() {
         return new Promise((resolve, reject) => {
             this.apiGetRequest("ping").then(response => {
-                this.$vm.$store.commit("session/setUser", response)
-                resolve(response);
+                this.$vm.$store.commit("session/setUser", response);
+                this.$vm.$root.$emit("heartbeat", response.user && response.group && response.club);
+                if (!(this.isLogged())) {
+                    this.$vm.$store.dispatch("session/LOGOUT", this.$vm);
+                } else
+                    resolve(response);
             }).catch((error) => {
                 reject(error);
             });
         });
     },
     publicImgLink(img, def) {
-        return this.api + '/img/' + (!img && def ? "default-avatar.jpg" : img);
+        return this.api + '/photos/' + (!img && def ? "default-avatar.jpg" : img);
     },
     imageClientLink(idx) {
         return this.api + '/operator/image?path=images/client&idx=' + idx + '.jpg';
     },
     login(data) {
-        return this.apiPostRequest("login", data);
+        return new Promise((resolve, reject) => {
+            this.apiPostRequest("login", data, {
+                headers: {
+                    Authorization: "Bearer " + sessionStorage.getItem("token")
+                }
+            }).then(response => {
+                this.$vm.$root.$emit("heartbeat", response.user && response.group && response.club);
+                resolve(response);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
     },
     logout() {
-        return this.apiPostRequest("logout");
+        return new Promise((resolve, reject) => {
+            this.apiPostRequest("logout").then(response => {
+                this.$vm.$root.$emit("heartbeat", false);
+                resolve(response);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
     },
     // HOME PAGE
     addService2client(data) {
@@ -44,6 +66,17 @@ const api = {
             key: key
         });
     },
+    registerAnonymVisit(idx, key, data) {
+        return this.apiPostRequest("operator/client/anonymvisit/" + idx, {
+            services: data,
+            key: key
+        });
+    },
+
+    getTodaysWorkouts() {
+        return this.apiGetRequest("operator/todaywo");
+    },
+
     registerClientOut(client, key) {
         return this.apiPostRequest("operator/client/out", {
             client: client,
@@ -70,11 +103,31 @@ const api = {
             pattern: pattern
         });
     },
-    loadVisits() {
-        return this.apiGetRequest("operator/visits/select");
+    refreshSessionClub() {
+        return this.apiPostRequest("operator/session/refresh/club");
+    },
+    loadClientHistory(client) {
+        return this.apiGetRequest("operator/client/history/" + client);
+    },
+    loadVisits(data) {
+        return this.apiGetRequest("operator/visits/select", data);
     },
     closeVisit(idx) {
         return this.apiPostRequest("operator/visits/close/" + idx);
+    },
+    globalSearchClient(pattern) {
+        return this.apiGetRequest("operator/gsearch", {
+            pattern: pattern
+        });
+    },
+    reversalServiceBuy(us, sale) {
+        return this.apiPostRequest("operator/reversal/service", {
+            service: us,
+            sale: sale
+        });
+    },
+    getAnonymousClient() {
+        return this.apiGetRequest("operator/client/anonym");
     },
     searchClient(pattern) {
         return this.apiGetRequest("operator/client/search", {
@@ -90,26 +143,9 @@ const api = {
             idx: idx + ".jpg"
         });
     },
-    //USERS
-    // getUsers() {
-    //     return this.apiGetRequest("cms/users/select");
-    // },
-    // updateUser(data) {
-    //     return this.apiPostRequest("cms/users/save", data);
-    // },
-    // deleteUser(username) {
-    //     return this.apiPostRequest("cms/users/delete/" + username);
-    // },
-    // USER GROUPS
-    // getGroups() {
-    //     return this.apiGetRequest("cms/groups/select");
-    // },
-    // updateGroup(data) {
-    //     return this.apiPostRequest("cms/groups/save", data);
-    // },
-    // deleteGroup(username) {
-    //     return this.apiPostRequest("cms/groups/delete/" + username);
-    // },
+    getInOutInfo() {
+        return this.apiGetRequest("operator/counters");
+    },
 
     //LOG FUNCTIONAL
     getServerLog(file) {
@@ -136,7 +172,7 @@ const api = {
         return new Promise((resolve, reject) => {
             posapi.post(uri, formdata, {
                 params: pars,
-                withCredentials: true,
+                // headers: this.$vm.$store.getters["session/bearer"]
             }).then(response => {
                 resolve(response.data);
             }).catch(error => {
@@ -158,7 +194,7 @@ const api = {
         return new Promise((resolve, reject) => {
             posapi.post(uri, formdata, {
                 params: pars,
-                withCredentials: true,
+                // headers: this.$vm.$store.getters["session/bearer"]
             }).then(response => {
                 resolve(response.data);
             }).catch(error => {
@@ -172,9 +208,7 @@ const api = {
         if (typeof data == "undefined") data = null;
         pars.prevcache = new Date().getTime();
         return new Promise((resolve, reject) => {
-            posapi.post(uri, data, {
-                params: pars,
-            }).then(response => {
+            posapi.post(uri, data, pars).then(response => {
                 resolve(response.data);
             }).catch(error => {
                 this.baseReject(error);
@@ -188,12 +222,13 @@ const api = {
         return new Promise((resolve, reject) => {
             posapi.get(uri, {
                 params: pars,
-            }).then(response => {
+                // headers: this.$vm.$store.getters["session/bearer"]
+            }, ).then(response => {
                 resolve(response.data);
             }).catch(error => {
-                this.$vm.$store.commit("session/clearUser");
-                this.$vm.$router.push("/login");
                 this.baseReject(error);
+                // this.$vm.$store.commit("session/clearUser");
+                // this.$vm.$router.push("/login");
                 reject(error);
             });
         })
@@ -206,12 +241,13 @@ const api = {
             posapi.delete(uri, {
                 data: data,
                 params: pars,
+                // headers: this.$vm.$store.getters["session/bearer"]
             }).then(response => {
                 resolve(response.data);
             }).catch(error => {
-                this.$vm.$store.commit("session/clearUser");
-                this.$vm.$router.push("/login");
                 this.baseReject(error);
+                // this.$vm.$store.commit("session/clearUser");
+                // this.$vm.$router.push("/login");
                 reject(error);
             });
         })
@@ -253,6 +289,7 @@ const api = {
         }, {
             text: "clubsett",
             role: "USER",
+            side: false,
             fmenu: false,
             menu: [{
                 text: "rooms",
@@ -268,8 +305,9 @@ const api = {
                 route: "/workouts",
             }],
         }, {
-            text: "reports",
+            text: "reportsm",
             role: "USER",
+            side: false,
             fmenu: false,
             menu: [{
                 text: "soldabonements",
@@ -288,10 +326,15 @@ const api = {
                 role: "USER",
                 route: "/visits",
             }],
+        }, {
+            text: "reports",
+            role: "POWERUSER",
+            side: false,
+            route: "/reports",
         },
         {
             text: "clubs",
-            role: "USER",
+            role: "ADMIN",
             route: "/clubs",
             side: true,
         }, {
@@ -299,13 +342,18 @@ const api = {
         }, {
             text: "users",
             route: "/users",
-            role: "USER",
+            role: "ADMIN",
             side: true,
         },
         {
             text: "groups",
             route: "/groups",
-            role: "USER",
+            role: "ADMIN",
+            side: true,
+        }, {
+            text: "workstations",
+            route: "/workstations",
+            role: "ADMIN",
             side: true,
         }, {
             divider: true,
@@ -315,9 +363,14 @@ const api = {
             role: "ADMIN",
             side: true,
         }, {
+            text: "activity",
+            route: "/actlog",
+            role: "ADMIN",
+            side: true,
+        }, {
             text: "logs",
             route: "/logs",
-            role: "USER",
+            role: "ADMIN",
             side: true,
         }, {
             divider: true,
@@ -342,10 +395,11 @@ const api = {
         }).sort();
     },
 
-    updateTag(state, item) {
+    updateTag(state, item, inInfo = true) {
         try {
-            if (!item.info.tags) return;
-            item.info.tags.forEach((e) => {
+            const tags = inInfo ? item.info.tags : item.tags;
+            if (!tags) return;
+            tags.forEach((e) => {
                 if (state.tags.indexOf(e) != -1) return;
                 state.tags.push(e);
             });
@@ -359,7 +413,9 @@ const api = {
     // security 
     testRoles(roles) {
         try {
-            return roles.split(",").indexOf(store.state.session.sessionData.group.role) != -1;
+            if (store.state.session.sessionData.group.role == "ADMIN") return true;
+            if (store.state.session.sessionData.group.role == "POWERUSER" && (roles == "USER" || roles == "POWERUSER")) return true;
+            return roles == store.state.session.sessionData.group.role;
         } catch (error) {
             console.log("access error: " + store.state.session.sessionData.group.role, roles)
             return false;
@@ -375,6 +431,13 @@ const api = {
             }));
         } catch (error) {
             return {};
+        }
+    },
+    isLogged() {
+        try {
+            return this.$vm.$store.getters["session/isLogged"]
+        } catch (error) {
+            return false;
         }
     },
     toDate(from, period) {

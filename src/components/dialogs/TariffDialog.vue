@@ -1,8 +1,8 @@
 <template>
-  <v-dialog v-model="isActive" persistent fullscreen>
+  <v-dialog v-model="isActive" persistent width="1200" @keydown.escape="$emit('input', false)">
     <v-card color="yellow lighten-5">
       <v-card-title>
-          <sc-dialog-title object="tariff" :item="item" />
+        <sc-dialog-title object="tariff" :item="item" icon="tariffs" />
         <v-spacer></v-spacer>
         <v-btn @click="$emit('input', false)" icon color="error">
           <v-icon>mdi-close-circle</v-icon>
@@ -93,11 +93,11 @@
               <div class="text-h6 green--text">{{item_.time.hours | time_interval}}</div>
             </v-col>
           </v-row>
-          <TagsEditor v-model="item_.info.tags" />
+          <TagsEditor v-model="item_.info.tags" :source="tags" />
           <sc-record-audit :audit="item_.audit" />
         </v-form>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions v-if="$store.getters['session/testPowerUser']">
         <v-btn text @click="d_confirm=true" color="primary" v-if="item_.idx">
           <i18n path="button.delete" />
         </v-btn>
@@ -127,6 +127,7 @@ export default {
   name: "tariff-dialog",
   props: {
     value: Boolean,
+    type: String,
     item: Object,
   },
   components: { "sc-week-days": WeekForTime },
@@ -137,13 +138,22 @@ export default {
     };
   },
   computed: {
-    isActive() {
-      return this.value;
+    isActive: {
+      get() {
+        return this.value;
+      },
+      set(v) {
+        this.$emit("input", v);
+      },
+    },
+    tags() {
+      return this.$store.getters[store_module + "/tags"];
     },
   },
   watch: {
-    item(v) {
-      this.item_ = v ? { ...this.item } : { ...DEF_ITEM };
+    value() {
+      this.item_ = this.$api.copy(this.item, DEF_ITEM);
+      if (!this.item_.idx) this.item_.type = this.type;
       //console.log("watch", this.item_);
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="isActive" width="800">
+  <v-dialog v-model="isActive" width="800" id="maindlg-1">
     <v-card class="teal lighten-5">
       <v-card-title>
         <i18n path="dialogs.buyAbonement"></i18n>
@@ -20,6 +20,7 @@
             item-value="idx"
             item-text="info.name"
             menu-props="offsetY"
+            @change="onNewAbonement"
           >
             <template #item="{item}">
               <div>
@@ -96,7 +97,7 @@
 
 <script>
 import TariffInfo from "@/components/TariffInfo";
-import AskDateDialog from "@/components/AskDateDialog";
+import AskDateDialog from "@/components/dialogs/AskDateDialog";
 
 export default {
   name: "DialogBuyAbonement",
@@ -114,8 +115,13 @@ export default {
     };
   },
   computed: {
-    isActive() {
+    isActive: {
+      get(){
       return this.value;
+      },
+      set(v){
+        this.$emit("input", v);
+      }
     },
   },
   watch: {
@@ -132,6 +138,11 @@ export default {
     },
   },
   methods: {
+    onNewAbonement() {
+      this.date2buy = this.$moment();
+      this.tags2buy = null;
+      this.tariff2buy = null;
+    },
     buyAbonement() {
       this.$api
         .addAbonement2client({
@@ -148,6 +159,13 @@ export default {
           this.$emit("input", false);
         });
     },
+  },
+  mounted() {
+    // const elem = document.getElementById("maindlg-1");
+    // console.log(elem);
+    // elem.addEventListener("keydown", (e, k) => {
+    //   console.log("event", e, k);
+    // },true);
   },
 };
 </script>

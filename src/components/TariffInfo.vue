@@ -1,9 +1,18 @@
 <template>
   <v-row v-if="tariff">
-    <v-col :class="priceClass+' d-flex'" align-self="center" cols="2">
-      <span>{{price | currency}}</span>
+    <v-col :class="priceClass+' d-flex'" align-self="center" cols="4">
+      <span class="price-span">{{price | currency}}</span>
+      <div v-if="showCounter" class="counter-div">
+        <v-btn icon @click="--service.count" :disabled="service.count<2">
+          <v-icon>mdi-arrow-left-circle-outline</v-icon>
+        </v-btn>
+        <v-chip color="success">{{service.count}}</v-chip>
+        <v-btn icon @click="++service.count">
+          <v-icon>mdi-arrow-right-circle-outline</v-icon>
+        </v-btn>
+      </div>
     </v-col>
-    <v-col v-if="showCounter" cols="2">
+    <!-- <v-col v-if="showCounter" cols="2">
       <v-text-field
         v-model="service.count"
         prepend-icon="mdi-close"
@@ -11,7 +20,7 @@
         min="1"
         width="100"
       ></v-text-field>
-    </v-col>
+    </v-col>-->
     <v-col>
       <v-row no-gutters>
         <v-col cols="12">{{tariff.info.name}}</v-col>
@@ -52,7 +61,7 @@ export default {
     },
     showCounter() {
       try {
-        return this.service.params.isscalar;
+        return this.service.scalar;
       } catch (error) {
         return false;
       }
@@ -61,15 +70,17 @@ export default {
   watch: {
     service() {
       try {
-        if (!this.service.count) this.$set(this.service, "count", 1);
+        if (this.service && !this.service.count)
+          this.$set(this.service, "count", 1);
       } catch (error) {
-        console.log(error);
+        console.log(this.service, error);
       }
     },
   },
   mounted() {
     try {
-      if (this.service && !this.service.count) this.$set(this.service, "count", 1);
+      if (this.service && !this.service.count)
+        this.$set(this.service, "count", 1);
     } catch (error) {
       console.log(error);
     }
@@ -85,4 +96,12 @@ export default {
   letter-spacing: normal !important;
   font-family: "Roboto", sans-serif !important;
 }
+.counter-div {
+  position: absolute;
+  left: 95px;
+}
+.price-span{
+  padding-top: 3px;
+}
+
 </style>

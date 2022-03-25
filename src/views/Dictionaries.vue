@@ -1,5 +1,11 @@
 <template>
-  <v-sheet class="fill-height ma-2 idcs-fill-width">
+  <v-sheet class="sc-page-sheet">
+    <v-row>
+      <v-spacer></v-spacer>
+      <v-btn icon class="error ma-4" dark to="/">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </v-row>
     <v-tabs v-model="tab" align-with-title>
       <v-tabs-slider></v-tabs-slider>
 
@@ -8,8 +14,8 @@
       </v-tab>
     </v-tabs>
 
-    <v-tabs-items v-model="tab" class="fill-height">
-      <v-tab-item key="times" class="fill-height">
+    <v-tabs-items v-model="tab">
+      <v-tab-item key="times">
         <v-row align="center" align-content="center">
           <v-spacer></v-spacer>
           <v-col cols="3">
@@ -26,7 +32,7 @@
           :no-data-text="$t('label.nodata')"
         >
           <template v-slot:item.action="{ item }">
-            <v-btn icon @click="edit(item)">
+            <v-btn icon @click="edit(item)" v-if="$store.getters['session/testPowerUser']">
               <v-icon color="primary">mdi-pencil</v-icon>
             </v-btn>
           </template>
@@ -38,32 +44,39 @@
           <template v-slot:item.hours="{ item }">
             <span v-if="item.details">{{item.details.hours | time_interval}}</span>
           </template>
-          <template v-slot:body.append>
+          <!-- <template v-slot:body.append>
             <div class="add-button-div">
               <v-btn fab absolute bottom @click="edit(null)" dark class="pink">
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
             </div>
+          </template>-->
+          <template v-slot:footer.prepend>
+            <div v-if="$store.getters['session/testPowerUser']">
+              <v-btn fab @click="edit(null)" color="pink my-1">
+                <v-icon color="white">mdi-plus</v-icon>
+              </v-btn>
+            </div>
           </template>
         </v-data-table>
       </v-tab-item>
-      <v-tab-item key="tags" class="fill-height">
-        <div class="add-button-div">
-          <v-btn fab absolute bottom @click="editTag(null)" dark class="pink">
+      <v-tab-item key="tags">
+        <div class="py-4 pl-16">
+          <v-chip v-for="tag in tags" :key="tag.idx" class="mx-2">
+            <v-icon left @click="editTag(tag)" color="primary" v-if="$store.getters['session/testPowerUser']">mdi-pencil</v-icon>
+            <span>{{tag.name}}</span>
+            <span v-if="tag.details" class="ml-4">{{tag.details.name}}</span>
+            <v-icon right @click="(item={...tag},d_confirm=true)" color="error" v-if="$store.getters['session/testPowerUser']">mdi-delete</v-icon>
+          </v-chip>
+        </div>
+        <div class="mb-4 ml-4">
+          <v-btn fab @click="editTag(null)" dark class="pink" v-if="$store.getters['session/testPowerUser']">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
         </div>
-        <div class="py-4 pl-16">
-          <v-chip v-for="tag in tags" :key="tag.idx" class="mx-2">
-            <v-icon left @click="editTag(tag)" color="primary">mdi-pencil</v-icon>
-            <span>{{tag.name}}</span>
-            <span v-if="tag.details" class="ml-4">{{tag.details.name}}</span>
-            <v-icon right @click="(item={...tag},d_confirm=true)" color="error">mdi-delete</v-icon>
-          </v-chip>
-        </div>
       </v-tab-item>
     </v-tabs-items>
-    <v-dialog v-model="d_edit" persistent width="1200">
+    <v-dialog v-model="d_edit" persistent width="1200" @keydown.escape="d_edit=false">
       <v-card color="yellow lighten-5">
         <v-card-title>
           <i18n path="dialogs.time">
@@ -137,7 +150,11 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <ConfirmDialog v-model="d_confirm" :mode="dmode" @click:ok="remove">{{$t("dialog.txt.delete")}}</ConfirmDialog>
+    <sc-confirm-dialog
+      v-model="d_confirm"
+      :mode="dmode"
+      @click:ok="remove"
+    >{{$t("dialog.txt.delete")}}</sc-confirm-dialog>
   </v-sheet>
 </template>
 
@@ -168,12 +185,6 @@ export default {
       d_editTag: false,
       headers: [
         {
-          text: this.$t("fields.action"),
-          value: "action",
-          width: 70,
-          sortable: false,
-        },
-        {
           text: this.$t("fields.name"),
           value: "name",
         },
@@ -197,7 +208,7 @@ export default {
     },
     defrec() {
       let def = {
-        details: { days: [1, 2, 3, 4, 5, 6, 7], hours: [], type: "times" },
+        details: { days: [1, 2, 3, 4, 5, 6, 7], hours: [] },
       };
       for (let k = 0; k < 25; k++) {
         def.details.hours[k] = 0;
@@ -212,6 +223,7 @@ export default {
       if (!this.$refs.form.validate()) return;
       try {
         if (this.item.details.hours.indexOf(1) == -1) return;
+        this.item.type = "times";
         this.item.details.days.sort();
       } catch (error) {
         console.log(error);
@@ -228,7 +240,6 @@ export default {
       });
     },
     remove() {
-      console.log(this.item);
       if (this.item.idx == undefined) return;
       this.$store.dispatch(store_module + "/DELETE", this.item.idx).then(() => {
         this.d_edit = false;
@@ -237,6 +248,17 @@ export default {
     },
   },
   mounted() {
+    if (this.$store.getters["session/testPowerUser"]) {
+      this.headers = [
+        {
+          text: this.$t("fields.action"),
+          value: "action",
+          width: 70,
+          sortable: false,
+        },
+        ...this.headers,
+      ];
+    }
     if (!this.$store.getters["dicts/isItems"]) {
       this.$store.dispatch("dicts/LOAD");
     }

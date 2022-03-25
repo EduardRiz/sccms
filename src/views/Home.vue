@@ -1,563 +1,188 @@
 <template>
-  <v-sheet class="fill-height ma-2 idcs-fill-width">
-    <v-toolbar class="mb-2 orange lighten-5">
-      <i18n path="home.total">
-        <template #count>{{intoClubCount}}</template>
-      </i18n>
-      <i18n path="home.freekey" class="ml-4">
-        <template #count>{{freeKeys}}</template>
-      </i18n>
-      <v-spacer></v-spacer>
-      <v-btn icon x-small @click="tickleConnection">
-        <v-icon>{{connected?"mdi-bell":"mdi-bell-off"}}</v-icon>
-      </v-btn>
-    </v-toolbar>
-    <v-row>
-      <v-col cols="6">
+  <v-sheet class="fill-height idcs-fill-width transparent">
+    <sc-dashboard-panel />
+    <v-btn
+      absolute
+      fab
+      width="100"
+      height="100"
+      class="success mt-3"
+      @click="editClient"
+      dark
+      right
+    >
+      <v-icon x-large>mdi-account-plus</v-icon>
+    </v-btn>
+    <v-row justify="center">
+      <v-col cols="6" class="search-panel">
         <v-row>
           <v-col cols="12">
-            <v-card class="yellow lighten-4">
+            <v-card class="grey lighten-5">
               <v-card-title>
                 <v-text-field
+                  ref="client1"
                   append-icon="mdi-magnify"
                   prepend-inner-icon="mdi-account"
                   autofocus
                   v-model="searchData"
-                  :error-messages="clientSearchError"
-                  @click:append="searchClient"
-                  @keydown.enter="searchClient"
+                  :label="$t('home.findlbl')"
+                  :rules="[v=>(!!v&&v.length>2)||$t('home.finderr')]"
+                  :error-messages="searchError"
+                  @click:append="globalClientSearch"
+                  @keyup.escape="searchData=null"
+                  @keydown.enter="globalClientSearch"
+                  @keydown.tab.prevent="$refs.key1.focus()"
                   @keydown.escape="searchData=null"
                   clearable
                 ></v-text-field>
-                <v-spacer></v-spacer>
-                <v-text-field
-                  append-icon="mdi-magnify"
-                  prepend-inner-icon="mdi-key"
-                  v-model="searchKey"
-                  :error-messages="keySearchError"
-                  @click:append="searchClientKey"
-                  @keydown.enter="searchClientKey"
-                  @keydown.escape="searchKey=null"
-                  clearable
-                ></v-text-field>
+                <v-spacer v-if="$store.getters['session/isAutocard']"></v-spacer>
+                <v-btn
+                  to="/anonymhome"
+                  fab
+                  class="blue"
+                  dark
+                  v-if="$store.getters['session/isAutocard']"
+                >
+                  <v-icon x-large>mdi-incognito</v-icon>
+                </v-btn>
               </v-card-title>
-              <v-card-text v-if="foundedClients">
-                <v-list three-line class="yellow lighten-4">
-                  <template v-for="item in foundedClients">
-                    <v-list-item :key="item.idx" class="ma-1 yellow lighten-5 pointer-cursor">
-                      <v-list-item-avatar @click="getAvailableClientServices(item)">
+              <v-card-text
+                v-if="availableSearcData"
+                class="founded-items"
+                :style="{height:foundedHeight}"
+              >
+                <v-row justify="center" v-if="foundedClients.length">
+                  <v-col cols="12" dense>
+                    <div class="text-center">
+                      <i18n path="home.cllist">
+                        <template #size>{{foundedClients.length}}</template>
+                      </i18n>
+                    </div>
+                    <v-divider></v-divider>
+                  </v-col>
+                  <v-card
+                    v-for="item in foundedClients"
+                    :key="item.idx"
+                    @click.stop="gotoClientHome(item)"
+                    width="290"
+                    class="orange lighten-5 ma-2 founded-item"
+                  >
+                    <v-card-title>
+                      <v-avatar class="mr-4">
                         <v-img :src="$api.publicImgLink(item.img, true)" />
-                      </v-list-item-avatar>
-                      <v-list-item-content @click="getAvailableClientServices(item)">
-                        <v-list-item-title v-html="item.info.name"></v-list-item-title>
-                        <v-list-item-subtitle v-html="item.info.description"></v-list-item-subtitle>
-                        <v-list-item-subtitle v-html="item.card"></v-list-item-subtitle>
-                      </v-list-item-content>
-                      <v-list-item-action>
-                        <v-icon fab large>mdi-arrow-right-bold-outline</v-icon>
-                      </v-list-item-action>
-                    </v-list-item>
-                  </template>
-                </v-list>
-              </v-card-text>
-              <v-card-text v-if="foundedKeys">
-                <v-list two-line class="yellow lighten-4">
-                  <template v-for="item in foundedKeys">
-                    <v-list-item :key="item.idx" class="ma-1 yellow lighten-5 pointer-cursor">
-                      <v-list-item-avatar>
+                      </v-avatar>
+                      <span v-html="item.card"></span>
+                    </v-card-title>
+                    <v-card-text>
+                      <v-row dense>
+                        <v-col cols="12">
+                          <v-icon class="mr-1" small color="primary">mdi-account</v-icon>
+                          <span v-html="item.name"></span>
+                        </v-col>
+                        <v-col cols="12" v-if="item.phone">
+                          <v-icon class="mr-1" small color="primary">mdi-phone</v-icon>
+                          <span>{{item.phone}}</span>
+                        </v-col>
+                        <v-col cols="12" v-if="item.email">
+                          <div>
+                            <v-icon class="mr-1" small color="primary">mdi-email</v-icon>
+                            <span>{{item.email}}</span>
+                          </div>
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
+                  </v-card>
+                </v-row>
+                <v-row justify="center" v-if="foundedKeys.length">
+                  <v-col cols="12">
+                    <div class="text-center">
+                      <i18n path="home.klist">
+                        <template #size>{{foundedKeys.length}}</template>
+                      </i18n>
+                    </div>
+                    <v-divider></v-divider>
+                  </v-col>
+                  <v-card
+                    v-for="item in foundedKeys"
+                    :key="item.idx"
+                    @click="gotoClientHome(null,item)"
+                    width="290"
+                    class="blue lighten-5 ma-2 founded-item"
+                  >
+                    <v-card-title>
+                      <v-avatar class="mr-4">
                         <v-icon fab>mdi-key</v-icon>
-                      </v-list-item-avatar>
-                      <v-list-item-content @click="getAvailableClientServicesByKey(item)">
-                        <v-list-item-title v-html="item.client"></v-list-item-title>
-                        <v-list-item-subtitle>
-                          <i18n path="home.keyid">
-                            <template #keyid>{{item.keyid}}</template>
-                            <template #keyname>{{item.boxkey}}</template>
-                            <template #from>{{item.fromdate| dt-time}}</template>
-                          </i18n>
-                        </v-list-item-subtitle>
-                      </v-list-item-content>
-                      <v-list-item-action>
-                        <v-icon fab large>mdi-arrow-right-bold-outline</v-icon>
-                      </v-list-item-action>
-                    </v-list-item>
-                  </template>
-                </v-list>
+                      </v-avatar>
+                      <span v-html="item.boxkey"></span>
+                    </v-card-title>
+                    <v-card-text class="text-right">
+                      <i18n path="home.keyinfo">
+                        <template #from>{{item.fromdate| dt-time}}</template>
+                      </i18n>
+                    </v-card-text>
+                  </v-card>
+                </v-row>
               </v-card-text>
             </v-card>
-            <v-btn icon fab @click="editClient" bottom right dark class="pink mt-n7">
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-          </v-col>
-          <v-col cols="12" v-if="current_client.idx">
-            <sc-list-registered-services
-              :items="clientRegisteredServices"
-              :client="current_client"
-            />
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="6">
-        <v-card v-if="current_client.idx" class="orange lighten-4">
-          <v-card-title>
-            <v-avatar>
-              <v-img alt="Avatar" :src="$api.publicImgLink(current_client.img, true)" />
-            </v-avatar>
-            <span class="ml-6">{{current_client.info.name}}</span>
-            <v-spacer></v-spacer>
-            <v-btn icon class="error" dark @click="closeClient">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-card-title>
-          <v-card-text>
-            <v-expansion-panels v-model="panels">
-              <v-expansion-panel class="orange lighten-5">
-                <v-expansion-panel-header>
-                  <span>{{availabledClientServices.length}}</span>
-                  <i18n path="home.available" />
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <v-list three-line class="orange lighten-5">
-                    <template v-for="item in availabledClientServices">
-                      <v-list-item
-                        :key="item.idx"
-                        :class="item.sels?'yellow lighten-4':''"
-                        @click="registerServ(item)"
-                        :disabled="item.testcode>0"
-                      >
-                        <v-list-item-avatar>
-                          <v-icon fab>mdi-human-scooter</v-icon>
-                        </v-list-item-avatar>
-                        <v-list-item-content>
-                          <v-list-item-title>
-                            <v-chip
-                              v-if="item.settings&&item.settings.visits"
-                              class="mr-4"
-                              :color="item.testcode==4?'grey':'primary'"
-                              :disabled="item.testcode>0"
-                            >{{item.settings.vcount-(item.count2assign?item.count2assign:0)}}</v-chip>
-                            <sc-record-info :idx="item.service" store="services/item" class="ml-4" />
-                            <v-icon
-                              x-small
-                              v-if="item.settings.isworkout"
-                              class="mx-1 primary--text"
-                            >{{$t('icons.workouts')}}</v-icon>
-                            <sc-record-info
-                              :idx="item.workout_"
-                              store="workouts/item"
-                              class="ml-4"
-                            />
-                          </v-list-item-title>
-                          <v-list-item-subtitle>
-                            <i18n path="home.from" :class="(item.testcode==1?'red--text':'')">
-                              <template #date>{{item.fromDate|dt-only}}</template>
-                            </i18n>
-                            <i18n path="home.to" class="ml-4">
-                              <template #date>{{item.toDate|dt-only}}</template>
-                            </i18n>
-                          </v-list-item-subtitle>
-                          <v-list-item-subtitle class="d-flex">
-                            <sc-week-days
-                              v-if="item.time"
-                              :days="item.time.days"
-                              :class="'ml-n1 '+(item.testcode==2?'red--text':'')"
-                            />
-                            <i18n path="home.worktime" :class="(item.testcode==3?'red--text':'')">
-                              <template #time>{{item.time.hours | time_interval}}</template>
-                            </i18n>
-                          </v-list-item-subtitle>
-                          <v-divider></v-divider>
-                        </v-list-item-content>
-                        <v-list-item-action>
-                          <v-btn icon v-if="item.testcode<=0">
-                            <v-icon>{{item.sels?"mdi-checkbox-marked-outline":"mdi-checkbox-blank-outline"}}</v-icon>
-                          </v-btn>
-                        </v-list-item-action>
-                      </v-list-item>
-                    </template>
-                  </v-list>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-              <v-expansion-panel class="orange lighten-5">
-                <v-expansion-panel-header>
-                  <span>{{unavailabledClientServices.length}}</span>
-                  <i18n path="home.unavailable" />
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <v-list three-line class="orange lighten-5">
-                    <template v-for="item in unavailabledClientServices">
-                      <v-list-item
-                        :key="item.idx"
-                        :class="item.sels?'yellow lighten-4':''"
-                        :disabled="item.testcode>0"
-                      >
-                        <v-list-item-avatar>
-                          <v-icon fab>mdi-human-scooter</v-icon>
-                        </v-list-item-avatar>
-                        <v-list-item-content>
-                          <v-list-item-title>
-                            <v-chip
-                              v-if="item.settings&&item.settings.visits"
-                              class="mr-4"
-                              :color="item.testcode==4?'grey':'primary'"
-                              :disabled="item.testcode>0"
-                            >{{item.settings.vcount-(item.count2assign?item.count2assign:0)}}</v-chip>
-                            <sc-record-info :idx="item.service" store="services/item" class="ml-4" />
-                            <sc-record-info :idx="item.workout" store="workouts/item" class="ml-4" />
-                          </v-list-item-title>
-                          <v-list-item-subtitle>
-                            <i18n path="home.from" :class="(item.testcode==1?'red--text':'')">
-                              <template #date>{{item.fromDate|dt-only}}</template>
-                            </i18n>
-                            <i18n path="home.to" class="ml-4">
-                              <template #date>{{item.toDate|dt-only}}</template>
-                            </i18n>
-                          </v-list-item-subtitle>
-                          <v-list-item-subtitle class="d-flex">
-                            <sc-week-days
-                              v-if="item.time"
-                              :days="item.time.days"
-                              :class="'ml-n1 '+(item.testcode==2?'red--text':'')"
-                            />
-                            <i18n path="home.worktime" :class="(item.testcode==3?'red--text':'')">
-                              <template #time>{{item.time.hours | time_interval}}</template>
-                            </i18n>
-                          </v-list-item-subtitle>
-                          <v-divider></v-divider>
-                        </v-list-item-content>
-                        <v-list-item-action>
-                          <v-btn icon v-if="item.testcode<=0">
-                            <v-icon>{{item.sels?"mdi-checkbox-marked-outline":"mdi-checkbox-blank-outline"}}</v-icon>
-                          </v-btn>
-                        </v-list-item-action>
-                      </v-list-item>
-                    </template>
-                  </v-list>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn icon fab class="primary" dark @click="d_buyService=true">
-              <v-icon>mdi-human-scooter</v-icon>
-            </v-btn>
-            <v-btn icon fab class="primary" dark @click="d_buyAbonement=true">
-              <v-icon>mdi-table-multiple</v-icon>
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn
-              fab
-              icon
-              class="success"
-              dark
-              @click="registerClientOut"
-              v-if="this.foundedKeys.length"
-            >
-              <v-icon>mdi-exit-run</v-icon>
-            </v-btn>
-            <v-btn
-              :class="isAvailableRegister?'success':'grey lighten-1'"
-              @click="assignKey"
-              :disabled="!isAvailableRegister"
-              color="success"
-              class="rounded-pill elevation-10 mr-2"
-            >
-              <i18n path="button.register" />
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
     </v-row>
     <sc-client-dialog v-model="d_client" :item="item" @save="onNewClient" />
-    <sc-dialog-buy-service
-      v-model="d_buyService"
-      :client="current_client.idx"
-      @onbuy="transformAvailableService"
-    />
-    <sc-dialog-buy-abonement
-      v-model="d_buyAbonement"
-      :client="current_client.idx"
-      @onbuy="transformAvailableService"
-    />
-    <v-dialog v-model="d_preregister" persistent width="800">
-      <v-card class="teal lighten-5">
-        <v-card-title>
-          <i18n path="dialogs.assignWorkout"></i18n>
-          <v-spacer></v-spacer>
-          <v-btn @click="assignWorkout(false)" icon color="error">
-            <v-icon>mdi-close-circle</v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-card-text class="mt-10">
-          <v-select
-            v-if="isWorkoutService"
-            v-model="workout2assign"
-            prepend-icon="mdi-calendar-month"
-            :label="$t('fields.workout')"
-            :placeholder="$t('fields.workout')"
-            :items="availableWorkouts"
-            return-object
-            item-value="idx"
-            item-text="info.name"
-          ></v-select>
-          <v-slider
-            v-if="isScalarService"
-            v-model="clientServices[servIndex2assign].count2assign"
-            :label="$t('fields.count2reg')"
-            thumb-label="always"
-            thumb-color="blue"
-            track-color="success"
-            :max="clientServices[servIndex2assign].settings.vcount"
-            min="0"
-            ticks
-          ></v-slider>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            :disabled="!(servIndex2assign=>0 && clientServices[servIndex2assign].count2assign>0)"
-            text
-            @click="assignWorkout(true)"
-            class="success rounded-pill elevation-10"
-          >
-            <i18n path="button.ok" />
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="d_setkey" persistent width="400">
-      <v-card class="teal lighten-5">
-        <v-card-title>
-          <i18n path="dialogs.assignKey"></i18n>
-          <v-spacer></v-spacer>
-          <v-btn @click="d_setkey=false" icon color="error">
-            <v-icon>mdi-close-circle</v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-card-text class="mt-10">
-          <v-autocomplete
-            v-model="key2assign"
-            prepend-icon="mdi-key"
-            :label="$t('fields.key')"
-            :items="availableKeys"
-            return-object
-            item-value="idx"
-            @keydown.enter="registerVisit"
-            item-text="name"
-          ></v-autocomplete>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="registerVisit" class="success rounded-pill elevation-10">
-            <i18n path="button.ok" />
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-snackbar right absolute shaped v-model="lastEvent">{{lastEvent}}</v-snackbar>
   </v-sheet>
 </template>
 
 <script>
-import ClientDialog from "@/components/ClientDialog";
-import BuyAbonement from "@/components/home/BuyAbonement.vue";
-import BuyService from "@/components/home/BuyService.vue";
-import ListRegServices from "@/components/home/ClientRegisteredServices.vue";
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
+import ClientDialog from "@/components/dialogs/ClientDialog";
+import Dashboard from "@/components/home/DashboardPanel.vue";
 
-const default_record = { info: {} };
 export default {
   name: "Home",
   components: {
     "sc-client-dialog": ClientDialog,
-    "sc-dialog-buy-abonement": BuyAbonement,
-    "sc-dialog-buy-service": BuyService,
-    "sc-list-registered-services": ListRegServices,
+    "sc-dashboard-panel": Dashboard,
   },
   data() {
     return {
       d_client: false,
-      d_setkey: false,
-      d_buyService: false,
-      d_buyAbonement: false,
-      d_preregister: false,
-
-      lastEvent: null,
-      send_message: null,
-      connected: false,
-      intoClubCount: 0,
-      freeKeys: 0,
-
-      searchKey: null,
-      panels: 0,
       item: {},
-      key2assign: null,
-      workout2assign: null,
-      servIndex2assign: null,
       searchData: null,
       foundedClients: [],
       foundedKeys: [],
-      clientServices: [],
-      availableKeys: [],
-      availableWorkouts: [],
-      clientRegisteredServices: [],
-      current_client: default_record,
-      keySearchError: null,
-      clientSearchError: null,
+      searchError: null,
     };
   },
   watch: {
     searchData(v) {
-      this.clientSearchError = null;
+      if (v) this.clientSearchError = null;
       if (!v) {
-        this.closeClient();
-      }
-    },
-    searchKey(v) {
-      this.keySearchError = null;
-      if (!v) {
-        this.closeClient();
+        this.searchData = null;
+        this.foundedClients = [];
+        this.foundedKeys = [];
+        this.$refs.client1.focus();
       }
     },
   },
   computed: {
-    isWorkoutService() {
+    availableSearcData() {
       try {
-        if (this.servIndex2assign == null) return false;
-        return this.clientServices[this.servIndex2assign].settings.isworkout;
-      } catch (error) {
-        console.log(error);
-        return false;
-      }
-    },
-    isScalarService() {
-      try {
-        if (this.servIndex2assign == null) return false;
-        return this.clientServices[this.servIndex2assign].settings.isscalar;
+        return this.foundedClients.length + this.foundedKeys.length > 0;
       } catch (error) {
         return false;
       }
     },
-    isAvailableRegister() {
-      let result = false;
+    foundedHeight() {
       try {
-        this.clientServices.forEach((e) => {
-          if (e.sels) result = true;
-        });
+        const l = this.foundedClients.length + this.foundedKeys.length;
+        if (l < 3) return "240px";
+        if (l < 5) return "430px";
+        return "500px";
       } catch (error) {
-        console.log(error);
+        return "0px";
       }
-      return result;
-    },
-    availabledClientServices() {
-      return this.clientServices.filter((e) => e.testcode <= 0);
-    },
-    unavailabledClientServices() {
-      return this.clientServices.filter((e) => e.testcode > 0);
     },
   },
   methods: {
-    testAvailability(i) {
-      if (!i) return;
-      const from = this.$moment(i.fromDate);
-      const to = this.$moment(i.toDate);
-      this.$set(i, "testcode", 0);
-      if (from.isAfter() || to.isBefore()) {
-        this.$set(i, "testcode", 1);
-      } else if (i.time.days.indexOf(this.$moment().day()) == -1) {
-        this.$set(i, "testcode", 2);
-      } else if (i.time.hours[this.$moment().hour()] != 1) {
-        this.$set(i, "testcode", 3);
-      } else if (i.settings && i.settings.visits) {
-        this.$set(i, "testcode", i.settings.vcount <= 0 ? 4 : -4);
-      }
-    },
-    assignWorkout(confirm) {
-      try {
-        const i = this.clientServices[this.servIndex2assign];
-        if (confirm) {
-          if (this.workout2assign) {
-            i.workout_ = this.workout2assign.idx;
-            i.workout = {
-              idx: this.workout2assign.idx,
-              coach: this.workout2assign.coach,
-              room: this.workout2assign.room,
-              settings: { ...this.workout2assign.settings },
-            };
-          }
-          this.$set(i, "sels", true);
-        } else {
-          this.$set(i, "count2assign", 0);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-      this.d_preregister = false;
-    },
-    registerServ(i) {
-      this.workout2assign = null;
-      this.$set(i, "count2assign", 0);
-
-      if (i.sels) {
-        this.$set(i, "sels", false);
-      } else {
-        // not selected
-        this.servIndex2assign = this.clientServices.indexOf(i);
-        if (i.settings.visits && !i.settings.isscalar) {
-          this.$set(i, "count2assign", 1);
-        }
-        if (i.settings.isworkout || i.settings.isscalar) {
-          // to show dialog
-          this.availableWorkouts = [];
-          this.$api.getAvailableWorkouts(i.service).then((response) => {
-            this.availableWorkouts = [...response];
-          });
-          this.d_preregister = true;
-        } else if (i.settings.visits) {
-          // auto decrement vcount
-          // this.$set(i, "count2assign", 1);
-          this.$set(i, "sels", true);
-        }
-        if (!i.settings.visits) this.$set(i, "sels", true);
-      }
-    },
-    closeClient() {
-      this.panels = 0;
-      this.d_setkey = false;
-      this.searchData = null;
-      this.searchKey = null;
-      this.clientServices = [];
-      this.foundedClients = [];
-      this.foundedKeys = [];
-      this.availableWorkouts = [];
-      this.availableKeys = [];
-      this.abonement2buy = null;
-      this.service2buy = null;
-      this.tariff2buy = null;
-      this.date2buy = null;
-      this.tags2buy = null;
-      this.key2assign = null;
-      this.servIndex2assign = null;
-      this.workout2assign = null;
-      this.current_client = default_record;
-      this.show_info = false;
-    },
-    registerVisit() {
-      if(!this.key2assign.idx) return;
-      this.$api
-        .registerVisit2client(
-          this.current_client.idx,
-          this.key2assign,
-          this.clientServices.filter((e) => e.sels)
-        )
-        .then((response) => {
-          if (response != 1) console.log(response);
-        })
-        .finally(() => {
-          this.closeClient();
-        });
-    },
     editClient(cl) {
       this.item = this.$api.copy(cl, null);
       this.d_client = true;
@@ -569,158 +194,91 @@ export default {
         console.log(error);
       }
     },
-    assignKey() {
-      if (this.foundedKeys.length == 0) {
-        this.availableKeys = [];
-        this.$api
-          .getAvailableKeys()
-          .then((response) => {
-            this.availableKeys = [...response];
-          })
-          .finally(() => {
-            this.d_setkey = true;
+    globalClientSearch() {
+      this.searchError = null;
+      if (!this.searchData || this.searchData.length < 3) return;
+      this.$api.globalSearchClient(this.searchData).then((response) => {
+        this.foundedClients = [...response.clients];
+        this.foundedKeys = [...response.keys];
+        if (this.foundedClients.length == 0 && this.foundedKeys.length == 0) {
+          this.searchError = this.$t("error.clientNotFound", {
+            pattern: this.searchData,
           });
-      } else this.registerVisit();
-    },
-    searchClient() {
-      if (!this.searchData) return;
-      this.$api.searchClient(this.searchData).then((response) => {
-        this.foundedClients = [...response];
-        if (this.foundedClients.length == 0)
-          this.clientSearchError = this.$t("error.clientNotFound");
-        if (this.foundedClients.length == 1)
-          this.getAvailableClientServices(this.foundedClients[0]);
-      });
-    },
-    searchClientKey() {
-      if (!this.searchKey) return;
-      this.$api.searchOpenedVisitsByBoxKey(this.searchKey).then((response) => {
-        this.foundedKeys = [...response];
-        if (this.foundedKeys.length == 0)
-          this.keySearchError = this.$t("error.keysNotFound");
-        if (this.foundedKeys.length == 1)
-          this.getAvailableClientServicesByKey(this.foundedKeys[0]);
-      });
-    },
-    registerClientOut() {
-      if (this.foundedKeys.length == 0) return;
-      this.$api
-        .registerClientOut(this.current_client.idx, this.foundedKeys[0].bkidx)
-        .then((response) => {
-          if (!response) console.error(response);
-        })
-        .finally(() => {
-          this.closeClient();
-        });
-    },
-    getAvailableClientServicesByKey(item) {
-      //      const self = this;
-      this.$api.getClientServices(item.cidx).then((response) => {
-        this.transformAvailableService(response);
-      });
-
-      this.$api.getRegisteredClientServices(item.cidx).then((response) => {
-        this.clientRegisteredServices = [...response];
-      });
-
-      this.$api.getClientById(item.cidx).then((client) => {
-        this.current_client = { ...client };
-        this.foundedClients = [this.current_client];
-        this.foundedKeys = [this.foundedKeys[0]];
-      });
-    },
-    getRegisteredClientServices(item) {
-      this.$api
-        .getRegisteredClientServices(item.idx)
-        .then((response) => {
-          this.clientRegisteredServices = [...response];
-        })
-        .finally(() => {
-          this.current_client = { ...item };
-        });
-    },
-    transformAvailableService(response) {
-      try {
-        this.clientServices = [];
-        response.forEach((e) => this.testAvailability(e));
-        this.clientServices = [
-          ...response.sort(function (a, b) {
-            return a.testcode < b.testcode ? -1 : 1;
-          }),
-        ];
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    getAvailableClientServices(item) {
-      this.$api
-        .getClientServices(item.idx)
-        .then((response) => {
-          this.transformAvailableService(response);
-        })
-        .finally(() => {
-          this.current_client = { ...item };
-          this.foundedClients = [this.current_client];
-        });
-      this.$api.getRegisteredClientServices(item.idx).then((response) => {
-        this.clientRegisteredServices = [...response];
-      });
-    },
-    // socket support
-    send() {
-      if (this.stompClient && this.stompClient.connected) {
-        const msg = { command: this.send_message };
-        this.stompClient.send("/scapi/cmd", JSON.stringify(msg), {});
-      }
-    },
-    connect() {
-      this.socket = new SockJS(this.$api.api + "/sc-events-queue");
-      this.stompClient = Stomp.over(this.socket);
-      this.stompClient.connect(
-        {},
-        (frame) => {
-          this.connected = true;
-          console.log(frame);
-          this.stompClient.subscribe("/events", (tick) => {
-            console.log(tick);
-            this.lastEvent = { ...JSON.parse(tick.body).message };
-          });
-        },
-        (error) => {
-          console.log(error);
-          this.connected = false;
+          this.searchData = null;
         }
-      );
+        if (this.foundedClients.length + this.foundedKeys.length == 1) {
+          if (this.foundedClients.length) {
+            // this.$router.push("/chome/" + this.foundedClients[0].idx);
+            this.gotoClientHome(this.foundedClients[0]);
+          } else {
+            this.gotoClientHome(null, this.foundedKeys[0]);
+            // this.$router.push("/chome/" + this.foundedKeys[0].cidx);
+          }
+        }
+      });
     },
-    disconnect() {
-      if (this.stompClient) {
-        this.stompClient.disconnect();
+    gotoClientHome(c, k) {
+      if (c) {
+        if (
+          this.$store.getters["session/isAutocard"] &&
+          this.$store.getters["session/testAutocard"](c.card)
+        ) {
+          this.$router.push("/anonymhome");
+        } else {
+          this.$router.push("/chome/" + c.idx);
+        }
       }
-      this.connected = false;
-    },
-    tickleConnection() {
-      this.connected ? this.disconnect() : this.connect();
+      if (k) {
+        if (this.$store.getters["session/testAutocard"](k.card)) {
+          this.$router.push("/anonymhome?k=" + k.bkidx);
+        } else {
+          this.$router.push("/chome/" + k.cidx);
+        }
+      }
     },
   },
+  beforeDestroy() {
+    this.$root.$off("app-event/hid");
+  },
   mounted() {
-    if (!this.$store.getters["services/isItems"]) {
-      this.$store.dispatch("services/LOAD");
+    try {
+      this.$root.$on("app-event/hid", (e) => {
+        //        console.log(e, this.$store.getters["session/testWsid"](e.detail.wsid));
+        if (!this.$store.getters["session/testWsid"](e.detail.wsid)) return;
+        //      console.log(e.detail.data);
+        this.searchData = e.detail.data;
+        this.globalClientSearch();
+      });
+      if (this.$route.query.c) {
+        this.searchData = this.$route.query.c;
+        this.globalClientSearch();
+      }
+    } catch (error) {
+      console.log(error);
     }
-    if (!this.$store.getters["rooms/isItems"]) {
-      this.$store.dispatch("rooms/LOAD");
-    }
-    if (!this.$store.getters["coachs/isItems"]) {
-      this.$store.dispatch("coachs/LOAD");
-    }
-    if (!this.$store.getters["workouts/isItems"]) {
-      this.$store.dispatch("workouts/LOAD");
-    }
-    this.connect();
   },
 };
 </script>
 <style scoped>
 .pointer-cursor {
   cursor: pointer;
+}
+.founded-items {
+  /* height: 500px; */
+  overflow: auto;
+}
+.search-panel {
+  margin-top: 70px;
+  opacity: 0.96;
+}
+.founded-item:hover {
+  -webkit-box-shadow: 10px 10px 8px 5px rgba(34, 60, 80, 0.19);
+  -moz-box-shadow: 10px 10px 8px 5px rgba(34, 60, 80, 0.19);
+  box-shadow: 10px 10px 8px 5px rgba(34, 60, 80, 0.19);
+}
+.founded-item:focus {
+  -webkit-box-shadow: 10px 10px 8px 5px rgba(34, 60, 80, 0.19);
+  -moz-box-shadow: 10px 10px 8px 5px rgba(34, 60, 80, 0.19);
+  box-shadow: 10px 10px 8px 5px rgba(34, 60, 80, 0.19);
 }
 </style>

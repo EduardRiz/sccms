@@ -2,6 +2,7 @@
     "title": "Sportclub CMS",
     "fields": {
         "created": "Created",
+        "dsales": "Date of sale",
         "updated": "Updated",
         "action": "Actions",
         "tags": "Tags",
@@ -10,6 +11,7 @@
         "group": "Group",
         "coach": "Coach",
         "room": "Room",
+        "wsid": "Workplace",
         "avatar": "Avatar",
         "client": "Client",
         "keyid": "Key ID",
@@ -20,11 +22,18 @@
         "service": "Service",
         "days": "Days of work",
         "hours": "Hours of work",
+        "frozen": "Frozen from",
         "price": "Price",
         "time": "Time of work",
+        "license": "License",
+        "mac": "ID",
+        "atype": "Type",
         "fromDate": "From",
         "toDate": "To",
         "duration": "Duration",
+        "valid": "Valid",
+        "lastvisit": "Last visit",
+        "activeservs": "Services",
         "wofix": "Fix date or periodic",
         "wodate": "Fix date of workout",
         "wodays": "Week day of workout",
@@ -35,21 +44,28 @@
         "wodurations": "Duration",
         "duration_type": "Duration type",
         "workout": "Workout",
-        "isWorkout": "Service is a workout",
-        "isScalar": "Service is a scalar",
+        "aworkout": "Service is a workout",
+        "ascalar": "Service is a scalar",
+        "visitcontrol": "Limited visits",
+        "remainvisits": "Remain visits",
         "services": "Services",
         "card": "Card",
         "tariffs": "Tariffs",
         "tariff": "Tariff",
         "servisvisits": "Is limited visits",
         "dateofbuy": "Date of activation",
-        "serviscount": "Count of visits",
+        "servis_scalar": "Count",
+        "servis_visits": "Count of visits",
         "count2reg": "Count to register",
         "tariff_type": "Tariff type",
         "buytag": "Detail of deal",
         "place": "Place",
         "thread": "Thread",
         "key": "Key",
+        "count": "Count",
+        "saletype": "Type",
+        "sale": "Sale name",
+        "profile": "Profile",
         "visitfrom": "Client enter",
         "visitto": "Client out",
         "detail": "Detail",
@@ -58,18 +74,31 @@
         "text": "Text",
         "type": "Type",
         "login": "Login",
+        "email": "Email",
+        "phone": "Phone",
+        "date": "Date",
+        "address": "Address",
         "password": "New password",
         "color": "Color",
+        "cmsuser": "Operator",
         "name": "Name"
     },
+    "events": {
+        "counters": "Count of client changed"
+    },
     "dialogs": {
-        "ryba":"{prefix} {object} {idx}",
-        "edit":"Edit",
-        "create":"Create",
+        "ryba": "{prefix} {object} {idx}",
+        "edit": "Edit",
+        "create": "Create",
         "key": "box key",
         "group": "group",
         "user": "user",
+        "clientsservices": "List of client services",
+        "freeze": "Freeze {client}",
+        "freezefrom": "Select date to freeze from",
+        "frozen": "Client frozen from {date}",
         "room": "room",
+        "history": "Visits history",
         "client": "client",
         "club": "club",
         "service": "service",
@@ -80,7 +109,11 @@
         "assignKey": "Assign key to client",
         "buyAbonement": "Buy abonement",
         "buyService": "Buy service",
+        "addService": "Add service",
+        "prolongt": "Prolong service",
+        "prolong": "Set a new date of end of using the service",
         "tariff": "tariff",
+        "ws": "Workstation edit {wsid}",
         "workout": "workout",
         "abonement": "abonement",
         "wocalendar": "Calendar of workouts",
@@ -93,32 +126,47 @@
         "b_login": "Login"
     },
     "home": {
-        "keyid":"Key: {keyid}, key name: {keyname}.   Entered: {from}",
+        "cllist": "List of founded {size} client(s)",
+        "klist": "List of founded {size} key(s)",
+        "keyinfo": "From: {from}",
+        "findlbl": "Enter part of client or key ID",
+        "finderr": "Lenth of pattern must be 3 or more symbols",
+        "findhint": "Find clients or keys by part of card or client name or key id",
         "profile": "Client info",
         "from": "From : {date}",
+        "price": "Price : {price}",
         "to": "To : {date}",
-        "total":" Now in club is {count} clients",
-        "freekey":" Available keys {count}",
+        "total": " Now in club is {count} clients",
+        "freekey": " Available keys {count}",
         "worktime": "Time : {time}",
         "available": "Availabled services",
+        "anonymservices": "Availabled services",
         "unavailable": "Temporary unavailabled services",
         "abonement": "Current abonement"
     },
     "error": {
         "required": "Required",
+        "email": "Wrong email format",
         "login": "Authorization failed",
-        "clientNotFound":"Client not found",
-        "keyNotFound":"Key not found"
+        "noworkouts": "No active workouts",
+        "clientNotFound": "Client with content {pattern} not found",
+        "keysNotFound": "Key {key} not found"
     },
     "button": {
         "save": "update",
         "buy": "buy",
         "ok": "OK",
+        "freeze": "Freeze",
+        "unfreeze": "Unfreeze",
+        "reversal": "Cancel buy",
         "add": "Add",
+        "addservice": "Add service",
         "register": "Register visit",
         "cancel": "cancel",
         "clone": "clone",
         "back": "Back",
+        "prolong": "Prolong",
+        "block": "Block",
         "delete": "delete"
     },
     "caltypes": {
@@ -129,13 +177,20 @@
     "durations": [
         "1 month", "2 months", "3 months", "4 months", "5 months", "6 months"
     ],
+    "phone": {
+        "country": "Code",
+        "number": "Number",
+        "example": "",
+        "error": "Wrong number"
+    },
     "menu": {
         "home": "Dashboard",
+        "clienthome": "Client's dashboard",
         "login": "",
         "clubsett": "Club",
         "abnmnt": "Abonements",
         "users": "Operators",
-        "groups": "groups",
+        "groups": "User groups",
         "logs": "Log",
         "logout": "Logout",
         "config": "Settings",
@@ -147,26 +202,68 @@
         "tariffs": "Tariffs",
         "dictionaries": "Dictionaries",
         "workouts": "Workouts",
+        "todaywo": "Today workouts",
         "abonements": "Abonements",
         "regvis": "Used services",
         "reports": "Reports",
+        "reportsm": "Stats",
         "clubs": "Sport clubs",
         "visits": "Visits",
+        "activity": "Activity log",
+        "anonymclienthome": "Anonymous client",
+        "workstations": "Workstations",
         "keys": "Keys",
-        "regservs": "Availables services",
+        "regservs": "Client services",
         "dicts": "Dictionaries",
         "soldabonements": "Sold abonements"
     },
     "label": {
+        "regservnotfounds": "No registered visits today",
+        "startAt": "Start at {time}",
+        "myclub": "Filter by my club",
+        "clubs2add": "Add service to selected club(s)",
         "nodata": "Records not found",
         "selall": "Select all",
+        "blocked": "Show blocked",
         "rowPerPage": "Records per page",
         "startDate": "Start date of the action",
         "startTime": "Start time of the action",
         "endDate": "End date of the action",
         "endTime": "End time of the action",
+        "period": "Periods",
         "filter": "Filter parameters"
     },
+    "periods": [{
+            "text": "Today",
+            "value": 1
+        },
+        {
+            "text": "Yestoday",
+            "value": 2
+        }, {
+            "text": "Current week",
+            "value": 3
+        },
+        {
+            "text": "Previous week",
+            "value": 4
+        }, {
+            "text": "Current month",
+            "value": 5
+        },
+        {
+            "text": "Previous month",
+            "value": 6
+        },
+        {
+            "text": "From previous month",
+            "value": 7
+        },
+        {
+            "text": "Current year",
+            "value": 8
+        }
+    ],
     "dict": {
         "times": "Time settings",
         "tags": "Payment tags",
@@ -203,16 +300,43 @@
         "coachs": "mdi-weight-lifter",
         "workouts": "mdi-calendar-month",
         "tariffs": "mdi-grid",
+        "boxkey": "mdi-key",
+        "client": "mdi-account",
         "keys": "mdi-key-change",
         "soldabonements": "mdi-account-supervisor",
         "regvis": "mdi-star-check-outline",
         "regservs": "mdi-account-supervisor",
+        "reportsm": "mdi-server",
         "reports": "mdi-chart-multiple",
         "clubsett": "mdi-city",
         "clubs": "mdi-city-variant",
         "visits": "mdi-run",
+        "time": "mdi-clock",
+        "activity": "mdi-text-account",
+        "workstations": "mdi-lan",
         "dicts": "mdi-notebook"
     },
+    "reports": [{
+        "id": "1",
+        "title": "Client purchases",
+        "icon": "mdi-view-list-outline",
+        "text": "Any comments for report"
+    }, {
+        "id": "2",
+        "title": "Coach activity",
+        "icon": "mdi-weight-lifter",
+        "text": "Any comments for report"
+    }, {
+        "id": "3",
+        "title": "Client activity",
+        "icon": "mdi-human-scooter",
+        "text": "Any comments for report"
+    }, {
+        "id": "4",
+        "title": "Client visit activity",
+        "icon": "mdi-account",
+        "text": "Any comments for report"
+    }],
     "week": [{
         "text": "Monday",
         "short": "Mo",
@@ -270,21 +394,30 @@
             "value": "BROKEN"
         }
     ],
+    "atypes": ["Simple", "Freeze", "Prolong", "Unfreeze"],
     "dialog": {
         "ttl": {
             "delete": "Confirm action",
+            "block": "Confirm action",
+            "reversal": "Confirm action",
             "settime": "Confirm action"
         },
         "txt": {
             "delete": "Delete record ?",
+            "block": "Block record ?",
+            "reversal": "Cancel buy of the service ?",
             "settime": "Set time of client checkin manually ?"
         },
         "btn": {
             "delete": "delete",
+            "reversal": "confirm",
+            "block": "block",
             "settime": "ok"
         },
         "ico": {
             "delete": "mdi-delete",
+            "reversal": "mdi-cash-refund",
+            "block": "mdi-cancel",
             "settime": "mdi-clock-check-outline"
         }
     }

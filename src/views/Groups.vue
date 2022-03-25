@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="fill-height ma-2 idcs-fill-width">
+  <v-sheet class="sc-page-sheet">
     <v-row align="center" align-content="center">
       <v-spacer></v-spacer>
       <v-col cols="3">
@@ -8,6 +8,9 @@
       <v-col cols="3">
         <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" clearable></v-text-field>
       </v-col>
+      <v-btn icon class="error ma-4" dark to="/">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </v-row>
     <v-data-table
       :headers="headers"
@@ -40,7 +43,7 @@
         </div>
       </template>
     </v-data-table>
-    <v-dialog v-model="d_edit" persistent width="800">
+    <v-dialog v-model="d_edit" persistent width="800" @keydown.escape="d_edit=false">
       <v-card color="yellow lighten-5">
         <v-card-title>
           <sc-dialog-title object="group" :item="item" />
@@ -103,13 +106,13 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <ConfirmDialog v-model="d_confirm" :mode="dmode" @click:ok="remove">{{$t("dialog.txt.delete")}}</ConfirmDialog>
+    <sc-confirm-dialog v-model="d_confirm" :mode="dmode" @click:ok="remove">{{$t("dialog.txt.delete")}}</sc-confirm-dialog>
   </v-sheet>
 </template>
 
 <script>
 import commonmixin from "@/mixins/commonlist.js";
-import RecordRole from "@/components/RecordRole.vue"
+import RecordRole from "@/components/controls/RecordRole.vue"
 
 const store_module = "groups";
 const DEF_ITEM = {

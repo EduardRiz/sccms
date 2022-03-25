@@ -1,11 +1,11 @@
 <template>
-  <v-sheet class="fill-height ma-2 idcs-fill-width">
+  <v-sheet class="sc-page-sheet">
     <v-row align="center" align-content="center">
       <v-spacer></v-spacer>
       <v-col cols="2">
         <v-select
           v-model="filter.service"
-          :items="$store.getters['services/items']"
+          :items="$store.getters['services/list']($store.getters['session/services'])"
           :label="$t('fields.service')"
           item-text="info.name"
           item-value="idx"
@@ -38,6 +38,9 @@
       <v-col cols="2">
         <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" clearable></v-text-field>
       </v-col>
+      <v-btn icon class="error ma-4" dark to="/">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </v-row>
     <v-data-table
       :headers="headers"
@@ -50,26 +53,26 @@
       :no-data-text="$t('label.nodata')"
     >
       <template v-slot:item.action="{ item }">
-        <v-btn icon @click="edit(item)">
+        <v-btn icon @click="edit(item)" v-if="$store.getters['session/testPowerUser']">
           <v-icon color="primary">mdi-pencil</v-icon>
         </v-btn>
       </template>
       <template v-slot:item.service="{ item }">
         <sc-record-info :idx="item.service" store="services/item" />
       </template>
-      <template v-slot:item.setdate="{ item }">
-        <span v-if=item.settings.fix>{{item.settings.date | dt-only}}</span>
-        <span v-else-if="item.settings.days">{{$t("week")[item.settings.days-1].text}}</span>
+      <template v-slot:item.wodate="{ item }">
+        <span v-if="item.fixdate">{{item.fixdate | dt-only}}</span>
+        <span v-else-if="item.dayofweek">{{$t("week")[item.dayofweek-1].text}}</span>
         <span v-else>?</span>
       </template>
-      <template v-slot:item.setcol="{ item }">
-        <v-icon :color="item.settings.color?item.settings.color:'white'">mdi-circle</v-icon>
+      <template v-slot:item.color="{ item }">
+        <v-icon :color="item.color?item.color:'white'">mdi-circle</v-icon>
       </template>
-      <template v-slot:item.settime="{ item }">
-        <span>{{item.settings.time}}</span>
+      <template v-slot:item.beginat="{ item }">
+        <span>{{item.beginat}}</span>
       </template>
-      <template v-slot:item.setdur="{ item }">
-        <span>{{item.settings.duration+" min"}}</span>
+      <template v-slot:item.duration="{ item }">
+        <span>{{item.duration+" min"}}</span>
       </template>
       <template v-slot:item.coach="{ item }">
         <sc-record-info :idx="item.coach" store="coachs/item" />
@@ -80,15 +83,13 @@
       <template v-slot:item.info.status="{ item }">
         <sc-record-status :status="item.info.status" />
       </template>
-      <template v-slot:body.append>
-        <div class="add-button-div">
-          <v-btn fab absolute bottom @click="edit(null)" dark class="pink">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-          <v-btn fab absolute bottom color="primary" class="ml-16" @click="d_showcalendar=true">
-            <v-icon fab>mdi-calendar</v-icon>
-          </v-btn>
-        </div>
+      <template v-slot:footer.prepend>
+        <v-btn fab @click="edit(null)" dark class="pink my-1" v-if="$store.getters['session/testPowerUser']">
+          <v-icon color="white">mdi-plus</v-icon>
+        </v-btn>
+        <v-btn fab color="primary" class="ml-2 my-1" @click="d_showcalendar=true">
+          <v-icon fab>mdi-calendar</v-icon>
+        </v-btn>
       </template>
     </v-data-table>
     <WorkoutCalendar v-model="d_showcalendar" />
@@ -98,8 +99,8 @@
 
 <script>
 import commonmixin from "@/mixins/commonlist.js";
-import WorkoutCalendar from "@/components/WorkoutCalendar.vue";
-import WorkoutDialog from "@/components/WorkoutDialog.vue";
+import WorkoutCalendar from "@/components/workout/WorkoutCalendar.vue";
+import WorkoutDialog from "@/components/dialogs/WorkoutDialog.vue";
 
 const store_module = "workouts";
 const DEF = { info: { status: "OK" }, settings: {} };
@@ -123,34 +124,28 @@ export default {
       filter: {},
       headers: [
         {
-          text: this.$t("fields.action"),
-          value: "action",
-          width: 70,
-          sortable: false,
-        },
-        {
           text: this.$t("fields.name"),
           value: "info.name",
         },
         {
           text: "",
           sortable: false,
-          value: "setcol",
+          value: "color",
           align: "center",
         },
         {
           text: this.$t("fields.wodates"),
-          value: "setdate",
+          value: "wodate",
           align: "center",
         },
         {
           text: this.$t("fields.wotimes"),
-          value: "settime",
+          value: "beginat",
           align: "center",
         },
         {
           text: this.$t("fields.wodurations"),
-          value: "setdur",
+          value: "duration",
           align: "center",
         },
         {
@@ -210,6 +205,17 @@ export default {
     },
   },
   mounted() {
+    if (this.$store.getters["session/testPowerUser"]) {
+      this.headers = [
+        {
+          text: this.$t("fields.action"),
+          value: "action",
+          width: 70,
+          sortable: false,
+        },
+        ...this.headers,
+      ];
+    }
     if (!this.$store.getters["coachs/isItems"]) {
       this.$store.dispatch("coachs/LOAD");
     }

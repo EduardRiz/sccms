@@ -36,6 +36,23 @@ const filters = [{
         }
     },
     {
+        name: "currencyEur",
+        func: (val) => {
+            let v = parseInt(val);
+            if (isNaN(v)) return "";
+            v = v * 100;
+            let nStr = (v / 100).toString();
+            let x = nStr.split('.');
+            let x1 = x[0];
+            let x2 = x.length > 1 ? ('.' + x[1] + (x[1].length == 1 ? '0' : '')) : '';
+            let rgx = /(\d+)(\d{3})/;
+            while (rgx.test(x1)) {
+                x1 = x1.replace(rgx, '$1' + ' ' + '$2');
+            }
+            return x1 + x2 + " €";
+        }
+    },
+    {
         name: "currency4",
         func: (val) => {
             let v = parseInt(val);
@@ -76,8 +93,7 @@ const filters = [{
     },
     {
         name: "dt-time",
-        func: (val) => 
-        {
+        func: (val) => {
             if (!val) return "";
             moment.locale(api.getSavedLocaleAsStr());
             if (val && val.constructor.name === 'Moment') return moment(val.toDate()).format("DD MMM YYYY HH:mm");
@@ -166,20 +182,20 @@ const filters = [{
             if (!hours) return "";
             let str = "";
             let it = [];
-            for (let i = 0; i < 25; i++) {
+            for (let i = 0; i < hours.length; i++) {
                 if (hours[i]) {
                     it.push(i);
                 } else {
                     if (it.length) {
                         if (str) str += ", ";
-                        str += it[0] + ":00-" + it[it.length - 1] + ":00";
+                        str += it[0] + ":00-" + it[it.length - 1] + ":59";
                     }
                     it = [];
                 }
             }
             if (it.length) {
                 if (str) str += ", ";
-                str += it[0] + ":00-" + it[it.length - 1] + ":00";
+                str += it[0] + ":00-" + it[it.length - 1] + ":59";
             }
             return str;
         },

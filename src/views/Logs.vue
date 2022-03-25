@@ -1,5 +1,5 @@
 <template>
-  <v-main class="fill-height pa-2 idcs-main-list">
+  <v-sheet class="sc-page-sheet">
     <v-row align="center" align-content="center">
       <v-col cols="12" sm="3">
         <v-select :items="logs" v-model="logfile" @change="loadLog" menu-props="offsetY"></v-select>
@@ -8,6 +8,9 @@
       <v-col cols="12" sm="3">
         <v-text-field v-model="search" clearable :label="$t('fields.detail')"></v-text-field>
       </v-col>
+      <v-btn icon class="error ma-4" dark to="/">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </v-row>
     <v-data-table
       :headers="headers"
@@ -39,7 +42,7 @@
         </td>
       </template>
     </v-data-table>
-  </v-main>
+  </v-sheet>
 </template>
 
 <script>

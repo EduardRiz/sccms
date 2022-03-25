@@ -1,9 +1,12 @@
 <template>
-  <v-sheet class="fill-height ma-2 idcs-fill-width">
-    <v-card-title>
+  <v-sheet class="sc-page-sheet">
+    <v-row class="my-2">
       <v-spacer></v-spacer>
       <v-switch v-model="opened" label="opened"></v-switch>
-    </v-card-title>
+      <v-btn icon class="error ma-4" dark to="/">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </v-row>
     <v-data-table
       :headers="headers"
       :items="items"
@@ -28,7 +31,7 @@
         <span>{{$moment.duration($moment(item.todate).diff($moment(item.fromdate))).asMinutes() | minutes}}</span>
       </template>
     </v-data-table>
-    <ConfirmDialog v-model="d_confirm" mode="settime" @click:ok="remove" />
+    <sc-confirm-dialog v-model="d_confirm" mode="settime" @click:ok="remove" />
   </v-sheet>
 </template>
 
@@ -96,23 +99,25 @@ export default {
     };
   },
   methods: {
-    closeVisit(i) {
-      console.log(i);
-    },
     remove(i) {
       this.d_confirm = i ? true : false;
       if (!i) {
         this.$api.closeVisit(this.id).then((r) => {
-          console.log(r);
+          if (r == "ok") {
+            this.loadData();
+          }
         });
       }
       this.id = i ? i.idx : null;
     },
+    loadData() {
+      this.$api.loadVisits().then((r) => {
+        this.items = [...r];
+      });
+    },
   },
   mounted() {
-    this.$api.loadVisits().then((r) => {
-      this.items = [...r];
-    });
+    this.loadData();
   },
 };
 </script>

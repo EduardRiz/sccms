@@ -3,11 +3,15 @@ import api from '@/api.js'
 const apiBase = "cms/boxkeys";
 const state = {
     items: [],
+    tags:[]
 }
 
 const getters = {
     items: state => {
         return state.items;
+    },
+    tags: state => {
+        return state.tags;
     },
     isItems: state => {
         return state.items.length;
@@ -58,6 +62,7 @@ const mutations = {
         } else if(!payload.empty) {
             state.items = [...payload];
         }
+        api.updateTags(state, false);
     },
     saveItem: (state, payload) => {
         const index = state.items.findIndex(e => e.idx == payload.idx);
@@ -68,6 +73,7 @@ const mutations = {
         } else {
             Object.assign(state.items[index], payload);
         }
+        api.updateTag(state, payload, false);
     },
     deleteItem: (state, payload) => {
         const index = state.items.findIndex(e => e.idx == payload);
