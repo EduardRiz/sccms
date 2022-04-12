@@ -91,30 +91,40 @@
           <v-divider vertical :key="item.text"></v-divider>
         </template>
         <template v-else-if="item.menu && $api.testRoles(item.role)">
-          <v-menu v-model="item.fmenu" offset-y :key="item.text">
-            <template #activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" text>
-                <v-icon class="mr-1">{{$t('icons.'+item.text)}}</v-icon>
-                <i18n :path="'menu.'+item.text" class="hidden-md-and-down" />
-                <v-icon>mdi-chevron-down</v-icon>
-              </v-btn>
+          <v-tooltip bottom :key="item.text">
+            <template #activator="{on: onTt}">
+              <v-menu v-model="item.fmenu" offset-y>
+                <template #activator="{ on: onM, attrs }">
+                  <v-btn v-bind="attrs" v-on="{ ... onM, ...onTt}" text>
+                    <v-icon class="mr-1">{{$t('icons.'+item.text)}}</v-icon>
+                    <i18n :path="'menu.'+item.text" class="hidden-md-and-down" />
+                    <v-icon>mdi-chevron-down</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <template v-for="(subitem, index) in item.menu">
+                    <v-tooltip bottom :key="index">
+                      <template #activator="{on: onTt}">
+                        <v-list-item
+                          v-if="$api.testRoles(subitem.role)"
+                          link
+                          :to="subitem.route"
+                          v-on="onTt"
+                        >
+                          <v-list-item-icon>
+                            <v-icon>{{$t('icons.'+subitem.text)}}</v-icon>
+                          </v-list-item-icon>
+                          <v-list-item-content>{{$t('menu.'+subitem.text)}}</v-list-item-content>
+                        </v-list-item>
+                      </template>
+                      <i18n :path="'tt.sm_'+subitem.text" />
+                    </v-tooltip>
+                  </template>
+                </v-list>
+              </v-menu>
             </template>
-            <v-list>
-              <template v-for="(subitem, index) in item.menu">
-                <v-list-item
-                  v-if="$api.testRoles(subitem.role)"
-                  :key="index"
-                  link
-                  :to="subitem.route"
-                >
-                  <v-list-item-icon>
-                    <v-icon>{{$t('icons.'+subitem.text)}}</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>{{$t('menu.'+subitem.text)}}</v-list-item-content>
-                </v-list-item>
-              </template>
-            </v-list>
-          </v-menu>
+            <i18n :path="'tt.m_'+item.text" />
+          </v-tooltip>
         </template>
         <template v-else-if="!item.side && $api.testRoles(item.role)">
           <v-btn text class="ml-2" :key="item.text" :to="item.route">
@@ -138,7 +148,7 @@ export default {
   data() {
     return {
       drawer: false,
-      upperMenu: this.$api.upper_menu,
+      upperMenu: this.$scclub.upper_menu,
     };
   },
   computed: {

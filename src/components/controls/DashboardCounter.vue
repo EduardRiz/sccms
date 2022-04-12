@@ -5,15 +5,29 @@
     </v-row>
     <v-divider></v-divider>
     <v-row dense>
-      <v-col class="col-center">
-        <v-icon x-small class="mr-1" color="primary">mdi-account</v-icon>
-        <span>{{clients}}</span>
-      </v-col>
+      <v-tooltip bottom>
+        <template #activator="{on}">
+          <v-col class="col-center" v-on="on">
+            <v-icon x-small class="mr-1" color="primary">mdi-account</v-icon>
+            <span>{{clients}}</span>
+          </v-col>
+        </template>
+        <i18n path="tt.pandbcl">
+          <template #tag>{{name}}</template>
+        </i18n>
+      </v-tooltip>
       <v-divider vertical></v-divider>
-      <v-col class="col-center">
-        <v-icon x-small class="mr-1" color="primary">mdi-key</v-icon>
-        <span>{{remain}}</span>
-      </v-col>
+      <v-tooltip bottom>
+        <template #activator="{on}">
+          <v-col class="col-center" v-on="on">
+            <v-icon x-small class="mr-1" color="primary">mdi-key</v-icon>
+            <span>{{remain}}</span>
+          </v-col>
+        </template>
+        <i18n path="tt.pandbk">
+          <template #tag>{{name}}</template>
+        </i18n>
+      </v-tooltip>
     </v-row>
   </div>
 </template>

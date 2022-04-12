@@ -47,6 +47,9 @@
       <template v-slot:item.duration="{ item }">
         <span>{{item.duration | duration_filter}}</span>
       </template>
+      <template v-slot:item.spend="{ item }">
+        <span>{{item.duration | spend_filter}}</span>
+      </template>
       <template v-slot:item.price="{ item }">{{item.price*100 | currency}}</template>
       <template v-slot:item.status="{ item }">
         <sc-record-status :status="item.info.status" />
@@ -140,6 +143,10 @@ export default {
         {
           text: this.$t("fields.duration"),
           value: "duration",
+        },
+        {
+          text: this.$t("fields.spend"),
+          value: "spend",
         },
         {
           text: this.$t("fields.price"),

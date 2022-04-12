@@ -30,7 +30,13 @@
         <sc-record-info :idx="item.sportclub" store="clubs/item" />
       </template>
       <template v-slot:footer.prepend>
-        <v-btn fab @click="edit(null)" dark class="pink my-1" v-if="$store.getters['session/testPowerUser']">
+        <v-btn
+          fab
+          @click="edit(null)"
+          dark
+          class="pink my-1"
+          v-if="$store.getters['session/testPowerUser']"
+        >
           <v-icon color="white">mdi-plus</v-icon>
         </v-btn>
       </template>
@@ -51,7 +57,11 @@
               :label="$t('fields.keyid')"
               :rules="[v=>!!v||$t('error.required')]"
             ></v-text-field>
-            <v-text-field v-model="item.name" :label="$t('fields.name')"></v-text-field>
+            <v-text-field
+              v-model="item.name"
+              :label="$t('fields.name')"
+              :rules="[v=>!!v||$t('error.required')]"
+            ></v-text-field>
             <v-select
               v-model="item.sportclub"
               :items="$store.getters['clubs/items']"
@@ -87,10 +97,10 @@
 import commonmixin from "@/mixins/commonlist.js";
 
 const store_module = "keys";
-const DEF_ITEM = {};
+const DEF_ITEM = { tags: [] };
 
 export default {
-  name: "Users",
+  name: "BoxKeys",
   mixins: [commonmixin],
   computed: {
     records() {
@@ -136,7 +146,7 @@ export default {
     },
     save() {
       if (!this.$refs.form.validate()) return;
-      if (this.item.tags.length == 0) return;
+      if (!this.item.tags || this.item.tags.length == 0) return;
       this.$store.dispatch(store_module + "/SAVE", this.item).then(() => {
         this.d_edit = false;
       });

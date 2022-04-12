@@ -210,6 +210,17 @@ const filters = [{
             }
         },
     },
+    {
+        name: "spend_filter",
+        func: (v) => {
+            try {
+                if (v.spendmin) return v.spendmin + " min";
+                return "";
+            } catch (error) {
+                return "";
+            }
+        },
+    },
 
 
     {

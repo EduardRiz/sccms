@@ -66,10 +66,11 @@ const api = {
             key: key
         });
     },
-    registerAnonymVisit(idx, key, data) {
+    registerAnonymVisit(idx, key, boxkey, data) {
         return this.apiPostRequest("operator/client/anonymvisit/" + idx, {
             services: data,
-            key: key
+            key: key,
+            boxkey: boxkey
         });
     },
 
@@ -109,6 +110,9 @@ const api = {
     loadClientHistory(client) {
         return this.apiGetRequest("operator/client/history/" + client);
     },
+    loadClientPurchases(client) {
+        return this.apiGetRequest("operator/client/purchases/" + client);
+    },
     loadVisits(data) {
         return this.apiGetRequest("operator/visits/select", data);
     },
@@ -120,14 +124,19 @@ const api = {
             pattern: pattern
         });
     },
+    reversalSale(sale) {
+        return this.apiPostRequest("operator/client/purchase/remove/" + sale);
+    },
     reversalServiceBuy(us, sale) {
         return this.apiPostRequest("operator/reversal/service", {
             service: us,
             sale: sale
         });
     },
-    getAnonymousClient() {
-        return this.apiGetRequest("operator/client/anonym");
+    getAnonymousClient(boxkey) {
+        return this.apiPostRequest("operator/client/anonym", {
+            boxkey: boxkey
+        });
     },
     searchClient(pattern) {
         return this.apiGetRequest("operator/client/search", {
@@ -252,130 +261,6 @@ const api = {
             });
         })
     },
-    upper_menu: [{
-            text: "clients",
-            fmenu: false,
-            role: "USER",
-            menu: [{
-                text: "clients",
-                role: "USER",
-                route: "/clients",
-            }, {
-                text: "keys",
-                role: "USER",
-                route: "/keys",
-            }],
-        }, {
-            text: "abnmnt",
-            fmenu: false,
-            role: "USER",
-            menu: [{
-                text: "services",
-                role: "USER",
-                route: "/clserv",
-            }, {
-                text: "abonements",
-                role: "USER",
-                route: "/abonements",
-            }, {
-                text: "tariffs",
-                role: "USER",
-                route: "/tariffs",
-            }, {
-                text: "dicts",
-                role: "USER",
-                route: "/dicts",
-            }],
-        }, {
-            text: "clubsett",
-            role: "USER",
-            side: false,
-            fmenu: false,
-            menu: [{
-                text: "rooms",
-                role: "USER",
-                route: "/rooms",
-            }, {
-                text: "coachs",
-                role: "USER",
-                route: "/coachs",
-            }, {
-                text: "workouts",
-                role: "USER",
-                route: "/workouts",
-            }],
-        }, {
-            text: "reportsm",
-            role: "USER",
-            side: false,
-            fmenu: false,
-            menu: [{
-                text: "soldabonements",
-                role: "USER",
-                route: "/soldabonements",
-            }, {
-                text: "regvis",
-                role: "USER",
-                route: "/regvis",
-            }, {
-                text: "regservs",
-                role: "USER",
-                route: "/regservs",
-            }, {
-                text: "visits",
-                role: "USER",
-                route: "/visits",
-            }],
-        }, {
-            text: "reports",
-            role: "POWERUSER",
-            side: false,
-            route: "/reports",
-        },
-        {
-            text: "clubs",
-            role: "ADMIN",
-            route: "/clubs",
-            side: true,
-        }, {
-            divider: true,
-        }, {
-            text: "users",
-            route: "/users",
-            role: "ADMIN",
-            side: true,
-        },
-        {
-            text: "groups",
-            route: "/groups",
-            role: "ADMIN",
-            side: true,
-        }, {
-            text: "workstations",
-            route: "/workstations",
-            role: "ADMIN",
-            side: true,
-        }, {
-            divider: true,
-        }, {
-            text: "events",
-            route: "/events",
-            role: "ADMIN",
-            side: true,
-        }, {
-            text: "activity",
-            route: "/actlog",
-            role: "ADMIN",
-            side: true,
-        }, {
-            text: "logs",
-            route: "/logs",
-            role: "ADMIN",
-            side: true,
-        }, {
-            divider: true,
-        }
-    ],
     //TAG supprot for store
 
     updateTags(state, inInfo = true) {

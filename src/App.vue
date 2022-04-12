@@ -127,18 +127,32 @@ export default {
     },
   },
   mounted() {
+    this.$root.$off("set_footer_message");
     this.$root.$on("set_footer_message", (m) => {
       this.footer = m;
     });
+    this.$root.$off("app-events");
     this.$root.$on("app-events", (m) => {
       this.footer = m;
     });
+    this.$root.$off("app-event/refresh");
     this.$root.$on("app-event/refresh", (e) => {
       try {
-        if (this.$store.getters["session/testUser"](e.user)) return;
+        console.log("refresh", e);
+        if (this.$store.getters["session/testUser"](e.user)) {
+          // if services need update session info
+          switch (e.detail) {
+            case "service":
+              this.$store.dispatch("session/REFRESHCLUB");
+          }
+          return;
+        }
         // Synchro club Object
         if (this.$store.getters["session/testClub"](e.club)) {
           switch (e.detail) {
+            case "club":
+              this.$store.dispatch("session/REFRESHCLUB");
+              break;
             case "rooms":
               this.$store.dispatch("rooms/LOAD");
               break;
@@ -159,6 +173,8 @@ export default {
             this.$store.dispatch("abonements/LOAD");
             break;
           case "services":
+            // update ssession info
+            this.$store.dispatch("session/REFRESHCLUB");
             this.$store.dispatch("services/LOAD");
             break;
           case "tariffs":
@@ -169,6 +185,7 @@ export default {
         console.log(e, error);
       }
     });
+    // this.$root.$off("heartbeat");
     this.$root.$on("heartbeat", (m) => {
       if (this.hb && !m) clearInterval(this.hb);
       if (m) {
@@ -178,6 +195,7 @@ export default {
         this.hb = null;
       }
     });
+    this.$root.$off("showmsg");
     this.$root.$on("showmsg", (e) => {
       this.showSnap(e);
     });
@@ -188,6 +206,9 @@ export default {
 <style>
 tbody tr:nth-of-type(odd) {
   background-color: cornsilk;
+}
+tbody tr:nth-of-type(even) {
+  background-color: rgb(230, 224, 202);
 }
 thead {
   background-color: #bfe0df;
@@ -233,5 +254,26 @@ thead {
   position: absolute;
   padding-top: 58px;
   margin-left: 10px;
+}
+
+.used-services-panel-header {
+  background-color: #1672a3;
+  color: rgb(255, 255, 255);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.available-services-panel-header {
+  background-color: #4caf50;
+  color: rgb(255, 255, 255);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.unavailable-services-panel-header {
+  background-color: #c29e00;
+  color: rgb(255, 255, 255);
+  /*letter-spacing: 0.15em;
+  font-weight: 600;*/
 }
 </style>

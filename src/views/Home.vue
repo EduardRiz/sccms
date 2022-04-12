@@ -1,18 +1,24 @@
 <template>
   <v-sheet class="fill-height idcs-fill-width transparent">
     <sc-dashboard-panel />
-    <v-btn
-      absolute
-      fab
-      width="100"
-      height="100"
-      class="success mt-3"
-      @click="editClient"
-      dark
-      right
-    >
-      <v-icon x-large>mdi-account-plus</v-icon>
-    </v-btn>
+    <v-tooltip bottom>
+      <template #activator="{on}">
+        <v-btn
+          absolute
+          fab
+          width="100"
+          height="100"
+          class="success mt-3"
+          @click="editClient"
+          dark
+          right
+          v-on="on"
+        >
+          <v-icon x-large>mdi-account-plus</v-icon>
+        </v-btn>
+      </template>
+      <i18n path="tt.cladd" />
+    </v-tooltip>
     <v-row justify="center">
       <v-col cols="6" class="search-panel">
         <v-row>
@@ -36,15 +42,21 @@
                   clearable
                 ></v-text-field>
                 <v-spacer v-if="$store.getters['session/isAutocard']"></v-spacer>
-                <v-btn
-                  to="/anonymhome"
-                  fab
-                  class="blue"
-                  dark
-                  v-if="$store.getters['session/isAutocard']"
-                >
-                  <v-icon x-large>mdi-incognito</v-icon>
-                </v-btn>
+                <v-tooltip bottom>
+                  <template #activator="{on}">
+                    <v-btn
+                      to="/anonymhome"
+                      fab
+                      class="blue"
+                      dark
+                      v-if="$store.getters['session/isAutocard']"
+                      v-on="on"
+                    >
+                      <v-icon x-large>mdi-incognito</v-icon>
+                    </v-btn>
+                  </template>
+                  <i18n path="tt.clanon" />
+                </v-tooltip>
               </v-card-title>
               <v-card-text
                 v-if="availableSearcData"
@@ -189,7 +201,10 @@ export default {
     },
     onNewClient(item) {
       try {
-        if (item) this.foundedClients.push(item);
+        if (item) {
+          this.foundedClients.push(item);
+          this.d_client = false;
+        }
       } catch (error) {
         console.log(error);
       }

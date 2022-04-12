@@ -83,7 +83,7 @@ export default {
         sessionStorage.setItem("token", d.token);
         this.wsid = d.wsid;
       });
-    window.history.replaceState({}, document.title, "/#/login");
+    //window.history.replaceState({}, document.title, "/#/login");
   },
   methods: {
     showAlertMessage(m) {
@@ -110,6 +110,7 @@ export default {
           this.$router.push("/");
         }
       } catch (e) {
+        console.dir(e);
         this.showAlertMessage(e);
       }
     },

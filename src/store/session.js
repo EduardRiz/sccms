@@ -144,7 +144,7 @@ const actions = {
                 return true;
             }
         } catch (e) {
-            console.log(e);
+            if (e.response && e.response.status == 511) throw vm.$t("error.accessToken");
         }
         context.commit('clearUser');
         throw vm.$t("error.login");

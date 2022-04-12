@@ -30,7 +30,8 @@
         "atype": "Type",
         "fromDate": "From",
         "toDate": "To",
-        "duration": "Duration",
+        "duration": "Valid during",
+        "spendmin": "Spended time in minutes",
         "valid": "Valid",
         "lastvisit": "Last visit",
         "activeservs": "Services",
@@ -42,10 +43,12 @@
         "wodates": "Planed",
         "wotimes": "Start",
         "wodurations": "Duration",
-        "duration_type": "Duration type",
+        "duration_type": "Valid during type",
         "workout": "Workout",
         "aworkout": "Service is a workout",
         "ascalar": "Service is a scalar",
+        "atimed": "Service is a timed",
+        "spend": "Timed on",
         "visitcontrol": "Limited visits",
         "remainvisits": "Remain visits",
         "services": "Services",
@@ -54,8 +57,9 @@
         "tariff": "Tariff",
         "servisvisits": "Is limited visits",
         "dateofbuy": "Date of activation",
-        "servis_scalar": "Count",
-        "servis_visits": "Count of visits",
+        "servis_timed": "Duration of visit in minutes",
+        "servis_scalar": "Number of uses",
+        "servis_visits": "Number of visits",
         "count2reg": "Count to register",
         "tariff_type": "Tariff type",
         "buytag": "Detail of deal",
@@ -117,7 +121,8 @@
         "workout": "workout",
         "abonement": "abonement",
         "wocalendar": "Calendar of workouts",
-        "coach": "coach"
+        "coach": "coach",
+        "clients_purchases": "Client purchases"
     },
     "login": {
         "title": "Autorize to system",
@@ -132,16 +137,22 @@
         "findlbl": "Enter part of client or key ID",
         "finderr": "Lenth of pattern must be 3 or more symbols",
         "findhint": "Find clients or keys by part of card or client name or key id",
+        "scalar": "{count} of {total}",
         "profile": "Client info",
         "from": "From : {date}",
         "price": "Price : {price}",
         "to": "To : {date}",
         "total": " Now in club is {count} clients",
         "freekey": " Available keys {count}",
+        "clfrom": "Client from {created}",
         "worktime": "Time : {time}",
         "available": "Availabled services",
-        "anonymservices": "Availabled services",
+        "usedservs": "Current active services",
+        "anonymservices": "Current active services",
         "unavailable": "Temporary unavailabled services",
+        "clientin": "Client in",
+        "stime": "Spended time (minutes)",
+        "ptime": "Purchased time (minutes)",
         "abonement": "Current abonement"
     },
     "error": {
@@ -150,7 +161,41 @@
         "login": "Authorization failed",
         "noworkouts": "No active workouts",
         "clientNotFound": "Client with content {pattern} not found",
-        "keysNotFound": "Key {key} not found"
+        "keysNotFound": "Key {key} not found",
+        "accessToken": "Access token is expired, please refresh and try again! " 
+    },
+    "tt": {
+        "extratime": "Differece between purchased and elapsed time",
+        "pandbcl": "Count of clients in the club with key for {tag}",
+        "pandbk": "Remains keys in the club for {tag}",
+        "panclin": "Count of clients in the club",
+        "pankeyava": "Available keys in the club",
+        "panwoava": "Available workouts in the club today",
+        "buyserv": "Register purchase of a service",
+        "buyabn": "Register purchase of a abonement",
+        "clanon": "Serve a client who is not a member of the club",
+        "cladd": "Add a new client",
+        "cledit": "Edit client data",
+        "clservs": "Show client available services",
+        "clpurch": "Show client purchases",
+        "clhist": "Show client visit history",
+        "m_clients": "The club clients and keys",
+        "m_abnmnt": "The club abonemetns and services detail",
+        "m_clubsett": "The club objects",
+        "m_reportsm": "The club operational statistic",
+        "sm_clients": "List of club's clients",
+        "sm_keys": "List of club's keys",
+        "sm_services": "List of club's services",
+        "sm_abonements": "List of club's abonements",
+        "sm_tariffs": "List of club's tariffs",
+        "sm_dicts": "List of club's variables",
+        "sm_rooms": "List of club's rooms",
+        "sm_coachs": "List of club's coachs",
+        "sm_workouts": "List of club's workouts",
+        "sm_soldabonements": "List of sold abonements",
+        "sm_regvis": "List of used services by clients",
+        "sm_regservs": "List of registered services to clients",
+        "sm_visits": "List of clients visits"
     },
     "button": {
         "save": "update",
@@ -166,8 +211,17 @@
         "clone": "clone",
         "back": "Back",
         "prolong": "Prolong",
+        "filter": "Filter",
+        "unfilter": "All data",
         "block": "Block",
         "delete": "delete"
+    },
+    "servs": {
+        "label": "Type of service",
+        "hint": "Select type of service",
+        "normal": "Simple",
+        "scalar": "Scalar",
+        "timed": "Timed"
     },
     "caltypes": {
         "month": "Month",
@@ -316,27 +370,6 @@
         "workstations": "mdi-lan",
         "dicts": "mdi-notebook"
     },
-    "reports": [{
-        "id": "1",
-        "title": "Client purchases",
-        "icon": "mdi-view-list-outline",
-        "text": "Any comments for report"
-    }, {
-        "id": "2",
-        "title": "Coach activity",
-        "icon": "mdi-weight-lifter",
-        "text": "Any comments for report"
-    }, {
-        "id": "3",
-        "title": "Client activity",
-        "icon": "mdi-human-scooter",
-        "text": "Any comments for report"
-    }, {
-        "id": "4",
-        "title": "Client visit activity",
-        "icon": "mdi-account",
-        "text": "Any comments for report"
-    }],
     "week": [{
         "text": "Monday",
         "short": "Mo",
@@ -420,6 +453,40 @@
             "block": "mdi-cancel",
             "settime": "mdi-clock-check-outline"
         }
+    },
+    "report": {
+        "group": {
+            "clients": "Clients",
+            "finances": "Finances",
+            "club": "Club"
+        },
+        "title": {
+            "purchases": "Client purchases",
+            "coachsact": "Coach activity",
+            "clientsact": "Client activity",
+            "clientsvis": "Client visit activity"
+        },
+        "icons": {
+            "purchases": "mdi-view-list-outline",
+            "coachsact": "mdi-weight-lifter",
+            "clientsact": "mdi-human-scooter",
+            "clientsvis": "mdi-account"
+        },
+        "text": {
+            "purchases": "Any comments for report",
+            "coachsact": "Any comments for report",
+            "clientsact": "Any comments for report",
+            "clientsvis": "Any comments for report"
+        },
+        "created": "Report created at {ts}",
+        "range": "Select date range of the report",
+        "period": "Period of selection: {st} - {ed}",
+        "filterby": "Filter of selection",
+        "filterBySportclub": "Select to filter by sportclub",
+        "filterBySale": "Select to filter by sale",
+        "filterByTariff": "Select to filter by tariff",
+        "total": "Total: {total}",
+        "rows": "Rows: {rows}"
     }
 
 }

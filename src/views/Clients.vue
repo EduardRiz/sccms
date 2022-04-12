@@ -61,7 +61,7 @@
         </v-btn>
       </template>
     </v-data-table>
-    <sc-client-dialog v-model="d_edit" :item="item" @save="onsave" />
+    <sc-client-dialog v-model="d_edit" :item="item" @save="onsave" @remove="onremove" />
     <sc-client-services-dialog v-model="d_clservs" :items="services" canProlong />
   </v-sheet>
 </template>
@@ -139,6 +139,13 @@ export default {
     onsave(ni) {
       const i = this.items.indexOf(this.item);
       if (i != -1) this.items.splice(i, 1, ni);
+      else this.items.push(ni);
+      this.d_edit = false;
+    },
+    onremove(di) {
+      const i = this.items.findIndex((e) => e.idx == di);
+      if (i != -1) this.items.splice(i, 1);
+      this.d_edit = false;
     },
     showServs(i) {
       this.services = [];

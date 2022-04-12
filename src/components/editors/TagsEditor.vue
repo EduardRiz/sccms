@@ -13,6 +13,7 @@
           :error-messages="errMessage"
           :label="$t('fields.tags')"
           @keypress.enter="add"
+          @update:search-input="onchange"
         ></v-autocomplete>
       </v-col>
       <v-col cols="8" align-self="center">
@@ -55,6 +56,7 @@ export default {
       handler(v) {
         this.tags = v ? [...v] : [];
         this.ntag = null;
+        this.ntag1 = null;
       },
     },
   },
@@ -70,6 +72,13 @@ export default {
     },
   },
   methods: {
+    onchange() {
+      if (!this.tags) this.tags = [];
+      if (this.ntag1 && this.tags.indexOf(this.ntag1) == -1) {
+        this.tags.push(this.ntag1);
+        this.$emit("input", this.tags);
+      }
+    },
     add() {
       if (!this.tags) this.tags = [];
       if (this.ntag && this.tags.indexOf(this.ntag) == -1) {

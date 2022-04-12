@@ -7,13 +7,18 @@
       </v-btn>
     </v-row>
     <v-row justify="center">
-      <v-card v-for="w in items" :key="w.idx" class="ma-4" width="300">
+      <v-card
+        v-for="w in items"
+        :key="w.idx"
+        width="300"
+        :class="(w.status!=1?'error':'success')+ ' lighten-5 ma-4'"
+      >
         <v-card-title :style="{'background-color':`${w.color}`}">
-          <span>{{w.display_name}}</span>
+          <div class="text-break" style="width:220px;">{{w.display_name}}</div>
           <v-spacer></v-spacer>
           <v-chip>{{w.clients}}</v-chip>
         </v-card-title>
-        <v-card-text :class="(w.status!=1?'error':'success')+ ' lighten-5'">
+        <v-card-text>
           <div class="text-center text-h6 pt-4">{{tm(w)}}</div>
           <div class="my-2">
             <v-icon class="mr-2">{{$t("icons.services")}}</v-icon>

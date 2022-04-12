@@ -12,10 +12,18 @@
     </v-row>
     <v-row align="center" align-content="center">
       <sc-dates-range v-model="range" class="ml-3" />
-      <!-- <v-spacer></v-spacer>
-      <span width="300px">
-        <v-text-field v-model="search" append-icon="mdi-magnify" class="mr-3"></v-text-field>
-      </span>-->
+      <v-spacer></v-spacer>
+      <v-btn icon :disabled="items.length==0" @click.prevent="d_print=true">
+        <v-icon>mdi-printer</v-icon>
+      </v-btn>
+      <export-excel :data="items">
+        <v-btn icon :disabled="items.length==0">
+          <v-icon>mdi-microsoft-excel</v-icon>
+        </v-btn>
+      </export-excel>
+      <v-btn icon>
+        <v-icon>mdi-xml</v-icon>
+      </v-btn>
     </v-row>
     <v-row>
       <v-data-table
@@ -38,6 +46,13 @@
         </template>
       </v-data-table>
     </v-row>
+    <sc-printdata-dialog
+      :items="items"
+      :headers="headers"
+      v-model="d_print"
+      :report="report"
+      :range="range"
+    />
   </v-sheet>
 </template>
 
@@ -51,6 +66,7 @@ export default {
   data() {
     return {
       range: [],
+      d_print: false,
       headers: [
         {
           text: this.$t("fields.created"),

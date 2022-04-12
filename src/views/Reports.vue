@@ -2,6 +2,20 @@
   <v-sheet class="sc-page-sheet">
     <v-sheet v-if="!d_report">
       <v-row class="my-2">
+        <v-col align-self="center">
+          <v-chip-group v-model="selgroups" column multiple>
+            <v-chip
+              v-for="g in $scclub.groups"
+              :key="g"
+              filter
+              outlined
+              class="mx-1 teal lighten-5"
+            >
+              <v-icon class="mr-1" color="yellow darken-3">mdi-folder</v-icon>
+              <span>{{$t("report.group."+g)}}</span>
+            </v-chip>
+          </v-chip-group>
+        </v-col>
         <v-spacer></v-spacer>
         <v-btn icon class="error ma-4" dark to="/">
           <v-icon>mdi-close</v-icon>
@@ -9,7 +23,7 @@
       </v-row>
       <v-row justify="center" class="mt-10">
         <v-card
-          v-for="r in $t('reports')"
+          v-for="r in selectedReports"
           :key="r.id"
           ripple
           raised
@@ -21,15 +35,15 @@
           @click.prevent="openReport(r)"
         >
           <v-card-title>
-            <v-icon color="white" x-large class="mr-2">{{r.icon}}</v-icon>
-            <span>{{r.title}}</span>
+            <v-icon color="white" x-large class="mr-2">{{$t("report.icons."+r.label)}}</v-icon>
+            <span>{{$t("report.title."+r.label)}}</span>
             <v-spacer></v-spacer>
             <v-btn icon>
               <v-icon>mdi-arrow-right</v-icon>
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <div>{{r.text}}</div>
+            <div>{{$t("report.text."+r.label)}}</div>
           </v-card-text>
           <v-card-actions></v-card-actions>
         </v-card>
@@ -48,10 +62,29 @@ export default {
   components: { ...Reports },
   data() {
     return {
+      selgroups: [],
       d_report: false,
       report: null,
       editType: null,
     };
+  },
+  computed: {
+    selectedReports() {
+      try {
+        return this.$scclub.reports.filter((r) => {
+          try {
+            this.selgroups.forEach((s) => {
+              if (r.groups.indexOf(this.$scclub.groups[s]) != -1)
+                throw new Error("is");
+            });
+          } catch (error) {
+            return true;
+          }
+        });
+      } catch (error) {
+        return [];
+      }
+    },
   },
   methods: {
     openReport(r) {
@@ -59,6 +92,12 @@ export default {
       this.editType = "Report-" + r.id;
       this.d_report = true;
     },
+    filterBy(cat) {
+      console.log(cat, this.$scclub);
+    },
+  },
+  mounted() {
+    this.$scclub.groups.forEach((e, i) => this.selgroups.push(i));
   },
 };
 </script>

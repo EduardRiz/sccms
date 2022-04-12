@@ -2,7 +2,7 @@
   <v-dialog v-model="isActive" persistent width="1200" @keydown.escape="$emit('input', false)">
     <v-card color="yellow lighten-5">
       <v-card-title>
-        <sc-dialog-title object="tariff" :item="item" icon="tariffs" />
+        <sc-dialog-title object="tariff" :item="item_" icon="tariffs" />
         <v-spacer></v-spacer>
         <v-btn @click="$emit('input', false)" icon color="error">
           <v-icon>mdi-close-circle</v-icon>
@@ -51,7 +51,7 @@
                 :rules="[v=>!!v||$t('error.required')]"
               ></v-text-field>
             </v-col>
-            <v-col cols="5" class="d-flex">
+            <v-col cols="4" class="d-flex">
               <v-select
                 v-model="item_.duration.type"
                 :items="$t('duration_types')"
@@ -68,7 +68,16 @@
                 :rules="[v=>!!v||$t('error.required')]"
               ></v-text-field>
             </v-col>
-            <v-col cols="5">
+            <v-col cols="3">
+              <v-text-field
+                v-if="item_.type=='SERVICE'"
+                v-model="item_.duration.spendmin"
+                type="number"
+                clearable
+                :label="$t('fields.spendmin')"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="3">
               <v-select
                 v-model="item_.time"
                 :items="$store.getters['dicts/times']"
@@ -98,11 +107,17 @@
         </v-form>
       </v-card-text>
       <v-card-actions v-if="$store.getters['session/testPowerUser']">
-        <v-btn text @click="d_confirm=true" color="primary" v-if="item_.idx">
+        <v-btn text @click="d_confirm=true" color="error" v-if="item.idx">
+          <v-icon class="mr-1">mdi-delete</v-icon>
           <i18n path="button.delete" />
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn text @click="save" color="primary">
+        <v-btn text @click="clone" color="primary">
+          <v-icon class="mr-1">mdi-content-copy</v-icon>
+          <i18n path="button.clone" />
+        </v-btn>
+        <v-btn text @click="save" color="success">
+          <v-icon class="mr-1">mdi-content-save</v-icon>
           <i18n path="button.save" />
         </v-btn>
       </v-card-actions>
@@ -158,6 +173,9 @@ export default {
     },
   },
   methods: {
+    clone() {
+      this.$delete(this.item_, "idx");
+    },
     setTime() {
       this.item_.time = {
         ...this.item_.time.details,
@@ -166,6 +184,7 @@ export default {
     },
     save() {
       if (!this.$refs.form.validate()) return;
+      if (this.item_.type == "ABONEMENT") delete this.item_.duration.spendmin;
 
       this.$store
         .dispatch(store_module + "/SAVE", this.item_)

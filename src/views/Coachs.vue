@@ -32,7 +32,13 @@
         <sc-record-status :status="item.info.status" />
       </template>
       <template v-slot:footer.prepend>
-        <v-btn fab @click="edit(null)" dark class="pink my-1" v-if="$store.getters['session/testPowerUser']">
+        <v-btn
+          fab
+          @click="edit(null)"
+          dark
+          class="pink my-1"
+          v-if="$store.getters['session/testPowerUser']"
+        >
           <v-icon color="white">mdi-account-plus</v-icon>
         </v-btn>
       </template>
@@ -79,13 +85,17 @@
                 <sc-record-audit :audit="item.audit" />
               </v-form>
               <v-row v-if="$store.getters['session/testPowerUser']">
-                <v-btn text @click="d_confirm=true" color="primary">
-                  <v-icon color="error" class="mr-2">mdi-cancel</v-icon>
-                  <i18n path="button.block" />
+                <v-btn text @click="d_confirm=true" color="error">
+                  <v-icon class="mr-1">mdi-delete</v-icon>
+                  <i18n path="button.delete" />
                 </v-btn>
                 <v-spacer></v-spacer>
-                <v-btn text @click="save" color="primary">
-                  <v-icon color="success" class="mr-2">mdi-content-save</v-icon>
+                <v-btn text @click="clone" color="primary">
+                  <v-icon class="mr-1">mdi-content-copy</v-icon>
+                  <i18n path="button.clone" />
+                </v-btn>
+                <v-btn text @click="save" color="success">
+                  <v-icon class="mr-1">mdi-content-save</v-icon>
                   <i18n path="button.save" />
                 </v-btn>
               </v-row>
@@ -99,9 +109,9 @@
     </v-dialog>
     <sc-confirm-dialog
       v-model="d_confirm"
-      mode="block"
+      mode="delete"
       @click:ok="remove"
-    >{{$t("dialog.txt.block")}}</sc-confirm-dialog>
+    >{{$t("dialog.txt.delete")}}</sc-confirm-dialog>
   </v-sheet>
 </template>
 
@@ -161,6 +171,9 @@ export default {
     };
   },
   methods: {
+    clone() {
+      this.$delete(this.item, "idx");
+    },
     edit(i) {
       this.item = this.$api.copy(i, DEF_ITEM);
       this.workouts = [];
@@ -180,18 +193,17 @@ export default {
       });
     },
     remove() {
-      this.item.info.status = "BLOCKED";
-      this.$store.dispatch(store_module + "/SAVE", this.item).then(() => {
-        this.$api
-          .apiPostRequest("/cms/workouts/block/coach/" + this.item.idx)
-          .then((response) => {
-            console.log(response);
-            this.d_edit = false;
-          });
-      });
-      // this.$store.dispatch(store_module + "/DELETE", this.item.idx).then(() => {
-      //   this.d_edit = false;
+      // this.item.info.status = "BLOCKED";
+      // this.$store.dispatch(store_module + "/SAVE", this.item).then(() => {
+      //   this.$api
+      //     .apiPostRequest("/cms/workouts/block/coach/" + this.item.idx)
+      //     .then((response) => {
+      //       this.d_edit = false;
+      //     });
       // });
+      this.$store.dispatch(store_module + "/DELETE", this.item.idx).then(() => {
+        this.d_edit = false;
+      });
     },
   },
   mounted() {

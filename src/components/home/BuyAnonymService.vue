@@ -18,6 +18,7 @@
           return-object
           item-value="idx"
           item-text="info.name"
+          @change="onService2addchanged"
         >
           <template #item="{item}">
             <v-icon
@@ -93,7 +94,7 @@
           :max="service2add.remainscalar"
           min="0"
           ticks
-        ></v-slider> -->
+        ></v-slider>-->
         <v-select
           v-if="tariff2add"
           v-model="tags2buy"
@@ -157,11 +158,11 @@ export default {
       return (
         this.tariff2add &&
         this.service2add &&
-        ( this.service2add.workout ? this.workout2assign : true)
+        (this.service2add.workout ? this.workout2assign : true)
       );
     },
     availableServices() {
-      let tariffed = this.$store.getters["services/tariffed"];
+      const tariffed = this.$store.getters["services/tariffed"];
       if (this.inclub) {
         return tariffed.filter((e) => {
           return this.$store.getters["session/testClubService"](e.idx);
@@ -189,17 +190,6 @@ export default {
         this.$store.dispatch("dicts/LOAD");
       }
     },
-    service2add(v) {
-      if (!v) return;
-      this.tags2buy = null;
-      this.serviceTariffs = this.$store.getters["tariffs/list"](
-        this.service2add.tariffs
-      );
-      this.tariff2add =
-        this.serviceTariffs.length == 1 ? { ...this.serviceTariffs[0] } : null;
-      this.workout2assign = null;
-      this.registerServ();
-    },
   },
   mounted() {
     if (!this.$store.getters["services/isItems"])
@@ -210,6 +200,17 @@ export default {
       this.$store.dispatch("dicts/LOAD");
   },
   methods: {
+    onService2addchanged(v) {
+      if (!v) return;
+      this.tags2buy = null;
+      this.serviceTariffs = this.$store.getters["tariffs/list"](
+        this.service2add.tariffs
+      );
+      this.tariff2add =
+        this.serviceTariffs.length == 1 ? { ...this.serviceTariffs[0] } : null;
+      this.workout2assign = null;
+      this.registerServ();
+    },
     addService() {
       let wo = {};
       if (this.workout2assign) {
@@ -248,13 +249,12 @@ export default {
             this.availableWorkouts = [
               ...response.filter((e) => {
                 try {
-                  const s = e.settings;
-                  if (s.fix) {
-                    const from = this.$moment(s.date).startOf("day");
+                  if (e.fixdate) {
+                    const from = this.$moment(e.fixdate).startOf("day");
                     const to = from.clone().endOf("day");
                     if (now.isAfter(from) && now.isBefore(to)) return true;
                   } else {
-                    if (s.days == now.day()) return true;
+                    if (e.dayofweek == now.day()) return true;
                   }
                   return false;
                 } catch (error) {
@@ -266,9 +266,9 @@ export default {
               this.workout2assign = { ...this.availableWorkouts[0] };
           });
         this.d_preregister = true;
-      // } else if (this.service2add.visitcontrol) {
-      //   // auto decrement vcount
-      //   this.$set(this.service2add, "sels", true);
+        // } else if (this.service2add.visitcontrol) {
+        //   // auto decrement vcount
+        //   this.$set(this.service2add, "sels", true);
       }
       // if (!this.service2add.visitcontrol) {
       //   this.$set(this.service2add, "sels", true);

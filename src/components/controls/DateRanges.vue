@@ -15,6 +15,8 @@
           readonly
           class="right-align-date"
           v-bind="attrs"
+          :hint="$t('report.range')"
+          persistent-hint
           v-on="on"
           @click:append.prevent="apply(false)"
         ></v-text-field>

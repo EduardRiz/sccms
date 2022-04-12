@@ -27,12 +27,12 @@
             <td>{{ item.info.name }}</td>
             <td>
               <sc-time-interval
-                :start="item.settings.time"
-                :duration="item.settings.duration"
-                :color="item.settings.color"
+                :start="item.beginat"
+                :duration="item.duration"
+                :color="item.color"
               />
             </td>
-            <td>{{ item.settings.fix?item.settings.date:$t("week")[item.settings.days-1].text }}</td>
+            <td>{{ item.fixdate?item.fixdate:$t("week")[item.dayofweek-1].text }}</td>
             <td>
               <sc-record-status :status="item.info.status" />
             </td>
@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     workouts() {
-      return this.items;
+      return this.items ? this.items : [];
     },
   },
 };

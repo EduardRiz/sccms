@@ -15,7 +15,7 @@ export default {
             lvSearch: "",
             itemPerPage: 14,
             foot_props: {
-                itemsPerPageOptions: [14, 20, 50, 100], // -> Add this example
+                itemsPerPageOptions: [10, 14, 20, 50, 100], // -> Add this example
                 showFirstLastPage: true,
                 firstIcon: "mdi-arrow-collapse-left",
                 lastIcon: "mdi-arrow-collapse-right",

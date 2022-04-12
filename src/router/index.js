@@ -251,9 +251,11 @@ router.beforeEach(function (to, from, next) {
             if (api.testRoles(to.meta.role)) next();
           } catch (error) {
             console.log(error)
+            if (from != "/login") next('/login');
           }
         }
-      }).catch(() => {
+      }).catch((error) => {
+        console.log(error)
         if (from != "/login") next('/login');
       });
     } else {

@@ -1,22 +1,49 @@
 <template>
   <v-toolbar class="mb-2 orange lighten-5">
     <v-row dense>
-      <v-chip class="mt-2 mr-3" color="success" to="/visits">
-        <v-icon class="mr-1">mdi-account</v-icon>
-        <span>{{clients}}</span>
-      </v-chip>
-      <v-chip class="mt-2 mr-3" color="blue lighten-3" to="/keys">
-        <v-icon class="mr-1">mdi-key</v-icon>
-        <span>{{keys}}</span>
-      </v-chip>
+      <v-tooltip bottom>
+        <template #activator="{on, attrs}">
+          <v-chip
+            class="mt-2 mr-3"
+            color="success"
+            :to="clients?'/visits':''"
+            v-on="on"
+            v-bind="attrs"
+          >
+            <v-icon class="mr-1">mdi-account</v-icon>
+            <span>{{clients}}</span>
+          </v-chip>
+        </template>
+        <i18n path="tt.panclin" />
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template #activator="{on, attrs}">
+          <v-chip
+            class="mt-2 mr-3"
+            color="blue lighten-3"
+            :to="keys?'/keys':''"
+            v-on="on"
+            v-bind="attrs"
+          >
+            <v-icon class="mr-1">mdi-key</v-icon>
+            <span>{{keys}}</span>
+          </v-chip>
+        </template>
+        <i18n path="tt.pankeyava" />
+      </v-tooltip>
       <template v-for="(v,n) in counters">
         <sc-counter :item="counters[n]" :key="n" :name="n" class="mr-2" />
       </template>
       <v-spacer></v-spacer>
-      <v-chip class="mt-2" to="/todaywo">
-        <v-icon small class="mr-1">{{$t("icons.workouts")}}</v-icon>
-        <span>{{workouts}}</span>
-      </v-chip>
+      <v-tooltip bottom>
+        <template #activator="{on, attrs}">
+          <v-chip class="mt-2" :to="workouts?'/todaywo':''" v-on="on" v-bind="attrs">
+            <v-icon small class="mr-1">{{$t("icons.workouts")}}</v-icon>
+            <span>{{workouts}}</span>
+          </v-chip>
+        </template>
+        <i18n path="tt.panwoava" />
+      </v-tooltip>
     </v-row>
   </v-toolbar>
 </template>

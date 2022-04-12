@@ -39,7 +39,7 @@ const actions = {
     SAVE: function (context, payload) {
         const tags = payload.info.tags;
         if (tags && tags.length) payload.tagsStr = tags.join(",");
-        return new Promise((resolve) =>{
+        return new Promise((resolve) => {
             api.apiPostRequest(apiBase, payload).then(response => {
                 if (response) {
                     // for transit created
@@ -61,7 +61,7 @@ const mutations = {
         if (payload.cause) {
             state.items = [];
             api.showMessage(payload.message, true);
-        } else if(!payload.empty) {
+        } else if (!payload.empty) {
             state.items = [...payload];
             api.updateTags(state);
         }
@@ -82,6 +82,22 @@ const mutations = {
         if (index == -1) return;
         state.items.splice(index, 1)
     },
+    updateClubsServices: (state, payload) => {
+        if (!payload.clubs) return;
+        state.items.forEach(e => {
+            const founded = e.services.indexOf(payload.idx);
+            if (payload.clubs.indexOf(e.idx) == -1) {
+                if (founded != -1) {
+                    e.services.splice(founded, 1)
+                }
+            } else {
+                if (founded == -1) {
+                    e.services.push(payload.idx)
+                }
+            }
+        })
+    }
+
 }
 
 const Data = {

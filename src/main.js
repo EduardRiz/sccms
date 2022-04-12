@@ -7,9 +7,11 @@ import vuetify from './plugins/vuetify'
 import i18n from './i18n'
 import VueCryptojs from 'vue-cryptojs'
 import scclub from "./scclub.js"
+import excel from 'vue-excel-export'
 
 Vue.use(VueCryptojs);
 Vue.use(scclub);
+Vue.use(excel);
 
 Vue.config.productionTip = false
 Vue.prototype.$api = api;

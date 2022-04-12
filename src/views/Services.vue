@@ -38,6 +38,9 @@
       <template v-slot:item.scalar="{ item }">
         <v-icon>{{item.scalar?"mdi-check":""}}</v-icon>
       </template>
+      <template v-slot:item.timed="{ item }">
+        <v-icon>{{item.timed?"mdi-check":""}}</v-icon>
+      </template>
       <template v-slot:item.info.status="{ item }">
         <sc-record-status :status="item.info.status" />
       </template>
@@ -45,7 +48,13 @@
         <span>{{item.idx}}</span>
       </template>
       <template v-slot:footer.prepend>
-        <v-btn fab @click="edit(null)" dark class="pink my-1" v-if="$store.getters['session/testPowerUser']">
+        <v-btn
+          fab
+          @click="edit(null)"
+          dark
+          class="pink my-1"
+          v-if="$store.getters['session/testPowerUser']"
+        >
           <v-icon color="white">mdi-plus</v-icon>
         </v-btn>
       </template>
@@ -66,7 +75,7 @@
                 <v-text-field
                   v-model="item.info.name"
                   :label="$t('fields.name')"
-                  :rules="[v=>!!v||$t('error.required')]"
+                  :rules="[$rules.required]"
                 ></v-text-field>
               </v-col>
               <v-col cols="4">
@@ -85,7 +94,19 @@
             ></v-textarea>
             <v-row class="ml-0">
               <v-checkbox :label="$t('fields.aworkout')" v-model="item.workout"></v-checkbox>
-              <v-checkbox :label="$t('fields.ascalar')" v-model="item.scalar" class="ml-4"></v-checkbox>
+              <!-- <v-checkbox :label="$t('fields.ascalar')" v-model="item.scalar" class="ml-4"></v-checkbox> -->
+              <v-radio-group
+                row
+                class="ml-4"
+                :hint="$t('servs.hint')"
+                persistent-hint
+                v-model="servtype"
+                :label="$t('servs.label')"
+              >
+                <v-radio value="normal" :label="$t('servs.normal')"></v-radio>
+                <v-radio value="scalar" :label="$t('servs.scalar')"></v-radio>
+                <v-radio value="timed" :label="$t('servs.timed')"></v-radio>
+              </v-radio-group>
             </v-row>
             <v-row>
               <v-col cols="12">
@@ -136,11 +157,17 @@
           </v-row>
         </v-card-text>
         <v-card-actions v-if="$store.getters['session/testPowerUser']">
-          <v-btn text @click="d_confirm=true" color="primary">
+          <v-btn text @click="d_confirm=true" color="error" v-if="item.idx">
+            <v-icon class="mr-1">mdi-delete</v-icon>
             <i18n path="button.delete" />
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn text @click="save" color="primary">
+          <v-btn text @click="clone" color="primary">
+            <v-icon class="mr-1">mdi-content-copy</v-icon>
+            <i18n path="button.clone" />
+          </v-btn>
+          <v-btn text @click="save" color="success">
+            <v-icon class="mr-1">mdi-content-save</v-icon>
             <i18n path="button.save" />
           </v-btn>
         </v-card-actions>
@@ -181,6 +208,25 @@ export default {
     TariffTable,
   },
   computed: {
+    servtype: {
+      get() {
+        try {
+          if (this.item.scalar) return "scalar";
+          if (this.item.timed) return "timed";
+          return "normal";
+        } catch (error) {
+          return "normal";
+        }
+      },
+      set(v) {
+        try {
+          this.item.scalar = v == "scalar";
+          this.item.timed = v == "timed";
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    },
     records() {
       if (this.showMyClub) {
         return this.$store.getters[store_module + "/list"](
@@ -238,6 +284,10 @@ export default {
           value: "workout",
         },
         {
+          text: this.$t("fields.atimed"),
+          value: "timed",
+        },
+        {
           text: this.$t("fields.ascalar"),
           value: "scalar",
         },
@@ -292,9 +342,10 @@ export default {
         this.wasChangedClubs = true;
         if (v.idx) {
           this.wasChangedClubs = false;
-          this.clubs2add = this.clubs.filter(
-            (e) => e.services.indexOf(v.idx) != -1
-          );
+          this.clubs2add = this.clubs.filter((e) => {
+            //console.log(v.idx, e.services, e.services.indexOf(v.idx));
+            return e.services.indexOf(v.idx) != -1;
+          });
         } else {
           this.clubs2add = [this.$store.getters["session/scidx"]];
         }
@@ -303,6 +354,9 @@ export default {
     },
   },
   methods: {
+    clone() {
+      this.$delete(this.item, "idx");
+    },
     updateTariffs(a) {
       if (!this.item.tariffs) this.item.tariffs = [];
       this.item.tariffs = [...a];
@@ -313,6 +367,7 @@ export default {
       this.d_edit = true;
     },
     save() {
+      if (!this.$refs.form.validate()) return;
       if (this.wasChangedClubs) this.item.clubs = this.clubs2add;
       this.$store
         .dispatch(store_module + "/SAVE", {

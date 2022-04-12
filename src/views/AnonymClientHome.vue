@@ -3,7 +3,7 @@
     <sc-dashboard-panel />
     <v-main class="vertical-center raduis-25">
       <v-row justify="center">
-        <v-col cols="8">
+        <v-col cols="10">
           <v-card class="main-card raduis-25">
             <v-card-title>
               <v-spacer></v-spacer>
@@ -13,12 +13,17 @@
             </v-card-title>
             <v-card-text>
               <v-row justify="space-around">
-                <v-col cols="11">
+                <v-col :cols="(boxkey && !isAvailableRegister)?10:11">
                   <v-card class="services-card raduis-25 orange lighten-5">
-                    <v-card-title>
+                    <v-card-title class="used-services-panel-header">
                       <i18n path="home.anonymservices" />
                     </v-card-title>
                     <v-card-text>
+                      <sc-list-registered-services
+                        :services="registeredClientServices"
+                        :visitlog="current_visitlog"
+                        v-if="registeredClientServices.length"
+                      />
                       <v-list three-line class="orange lighten-5">
                         <template v-for="item in availabledClientServices">
                           <v-list-item :key="item.service.idx" class="selected-service">
@@ -68,6 +73,18 @@
                                 </i18n>
                               </v-list-item-subtitle>-->
                               <v-list-item-subtitle>
+                                <span>{{item.tariff.info.name}}</span>
+                                <span
+                                  v-if="item.service.timed"
+                                  class="ml-4"
+                                >{{item.tariff.duration.spendmin+'min'}}</span>
+                                <i18n path="home.price" class="ml-4 text-h6">
+                                  <template
+                                    #price
+                                  >{{item.tariff.price*item.service.count | currencyEur}}</template>
+                                </i18n>
+                              </v-list-item-subtitle>
+                              <v-list-item-subtitle>
                                 <sc-week-days
                                   v-if="item.tariff.time"
                                   :days="item.tariff.time.days"
@@ -78,11 +95,6 @@
                                   :class="(item.testcode==3?'red--text':'')"
                                 >
                                   <template #time>{{item.tariff.time.hours | time_interval}}</template>
-                                </i18n>
-                                <i18n path="home.price" class="ml-4 text-h6">
-                                  <template
-                                    #price
-                                  >{{item.tariff.price*item.service.count | currencyEur}}</template>
                                 </i18n>
                               </v-list-item-subtitle>
                               <v-divider></v-divider>
@@ -101,9 +113,9 @@
                         <v-icon>mdi-human-scooter</v-icon>
                       </v-btn>
                       <v-spacer></v-spacer>
-                      <v-btn v-if="boxkey" @click="registerClientOut" fab>
+                      <!-- <v-btn v-if="boxkey && !isAvailableRegister" @click="registerClientOut" fab>
                         <v-icon>mdi-exit-run</v-icon>
-                      </v-btn>
+                      </v-btn>-->
                       <v-btn
                         :class="isAvailableRegister?'success':'grey lighten-1'"
                         @click="assignKey"
@@ -111,10 +123,21 @@
                         color="success"
                         class="rounded-pill elevation-10 mr-2"
                       >
+                        <v-icon class="mx-1">mdi-checkbox-multiple-marked-outline</v-icon>
                         <i18n path="button.register" />
                       </v-btn>
                     </v-card-actions>
                   </v-card>
+                </v-col>
+                <v-col cols="1" v-if="boxkey && !isAvailableRegister" align-self="center">
+                  <v-img
+                    src="~@/assets/Exit_red.png"
+                    class="exit-btn"
+                    max-width="80px"
+                    width="80px"
+                    @click="registerClientOut"
+                    :style="{visibility:!isAvailableRegister?'visible':'hidden'}"
+                  ></v-img>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -140,6 +163,7 @@
 <script>
 import Dashboard from "@/components/home/DashboardPanel.vue";
 import BuyAnonymService from "@/components/home/BuyAnonymService.vue";
+import ListRegisteredService from "@/components/home/RegisteredClientServices.vue";
 import SetKey from "@/components/home/SetKey.vue";
 
 export default {
@@ -148,6 +172,7 @@ export default {
     "sc-dialog-buy-anonym-service": BuyAnonymService,
     "sc-dialog-set-key": SetKey,
     "sc-dashboard-panel": Dashboard,
+    "sc-list-registered-services": ListRegisteredService,
   },
   data() {
     return {
@@ -159,6 +184,8 @@ export default {
       item: { service: {} },
       panels: 0,
       clientServices: [],
+      registeredClientServices: [],
+      current_visitlog: {},
       keys: [],
       current_client: {},
     };
@@ -173,11 +200,9 @@ export default {
     boxkey() {
       return this.$route.query.k;
     },
+    // test , is client in zale
     isAssignedKeys() {
-      return this.keys.length > 0;
-    },
-    assignedKey() {
-      return this.keys.length ? this.keys[0].keyname : null;
+      return !!this.$route.query.k;
     },
   },
   methods: {
@@ -214,7 +239,12 @@ export default {
     registerVisit(key) {
       if (key && !key.idx) return;
       this.$api
-        .registerAnonymVisit(this.current_client.idx, key, this.clientServices)
+        .registerAnonymVisit(
+          this.current_client.idx,
+          key,
+          this.boxkey,
+          this.clientServices
+        )
         .then((response) => {
           if (response != 1) console.log(response);
         })
@@ -252,10 +282,16 @@ export default {
       this.current_client = {};
       this.clientServices = [];
       this.keys = [];
-      this.$api.getAnonymousClient().then((response) => {
-        this.current_client = { ...response };
+      this.$api.getAnonymousClient(this.boxkey).then((response) => {
+        try {
+          this.current_client = { ...response.client };
+          this.registeredClientServices = [...response.services];
+          this.current_visitlog = { ...response.visitlog };
+        } catch (error) {
+          console.log();
+        }
       });
-      if (!this.$route.query.k) this.d_buyService = true;
+      if (!this.boxkey) this.d_buyService = true;
     },
   },
   mounted() {

@@ -2,8 +2,9 @@
   <div>
     <v-chip v-for="s in item.services" :key="s" class="mr-1">
       <span>{{name(s)}}</span>
-      <v-icon v-if="isWorkout(s)" class="ml-2" color="orange darken-4" small>mdi-calendar-month</v-icon>
-      <v-icon v-if="aScalar(s)" class="ml-2" color="orange darken-4" small>mdi-progress-clock</v-icon>
+      <v-icon v-if="aWorkout(s)" class="ml-2" color="orange darken-4" small>mdi-calendar-month</v-icon>
+      <v-icon v-if="aTimed(s)" class="ml-2" color="orange darken-4" small>mdi-progress-clock</v-icon>
+      <v-icon v-if="aScalar(s)" class="ml-2" color="orange darken-4" small>mdi-counter</v-icon>
       <span v-if="vcount(s)" class="ml-2 vcount rounded-l">{{vcount(s)}}</span>
     </v-chip>
   </div>
@@ -21,7 +22,7 @@ export default {
         return "unnamed";
       }
     },
-    isWorkout(idx) {
+    aWorkout(idx) {
       try {
         return this.$store.getters["services/item"](idx).workout;
       } catch (error) {
@@ -35,8 +36,18 @@ export default {
         return false;
       }
     },
+    aTimed(idx) {
+      try {
+        return this.$store.getters["services/item"](idx).timed;
+      } catch (error) {
+        return false;
+      }
+    },
     vcount(idx) {
       try {
+        if (this.aTimed(idx))
+          return this.item.settings["s" + idx].spendmin + "min";
+        if (this.aScalar(idx)) return this.item.settings["s" + idx].vcount;
         return this.item.settings["s" + idx].visits
           ? this.item.settings["s" + idx].vcount
           : false;

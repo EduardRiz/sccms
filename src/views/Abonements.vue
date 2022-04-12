@@ -143,11 +143,17 @@
           </v-form>
         </v-card-text>
         <v-card-actions v-if="$store.getters['session/testPowerUser']">
-          <v-btn text @click="d_confirm=true" color="primary" v-if="item.idx">
+          <v-btn text @click="d_confirm=true" color="error" v-if="item.idx">
+            <v-icon class="mr-1">mdi-delete</v-icon>
             <i18n path="button.delete" />
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn text @click="save" color="primary">
+          <v-btn text @click="clone" color="primary">
+            <v-icon class="mr-1">mdi-content-copy</v-icon>
+            <i18n path="button.clone" />
+          </v-btn>
+          <v-btn text @click="save" color="success">
+            <v-icon class="mr-1">mdi-content-save</v-icon>
             <i18n path="button.save" />
           </v-btn>
         </v-card-actions>
@@ -280,6 +286,9 @@ export default {
     };
   },
   methods: {
+    clone() {
+      this.$delete(this.item, "idx");
+    },
     updateTariffs(a) {
       if (!this.item.tariffs) this.item.tariffs = [];
       this.item.tariffs = [...a];
@@ -290,14 +299,23 @@ export default {
       this.d_edit = true;
     },
     addService() {
-      //      console.log(a, this.item.services);
       if (!this.item.settings) this.$set(this.item, "settings", {});
       this.item.services.forEach((e) => {
+        const id = "s" + e;
         const serv = this.$store.getters["services/item"](e);
-        let servsett = {};
-        if (serv.scalar) servsett = { visits: true, vcount: 30, scalar: true };
-        this.$set(this.item.settings, "s" + e, servsett);
+        if (!this.item.settings[id]) {
+          let servsett = {};
+          if (serv.scalar) {
+            servsett = { visits: true, vcount: 30, scalar: true };
+          } else if (serv.timed) servsett = { spendmin: 1 };
+          this.$set(this.item.settings, id, servsett);
+        }
       });
+      for (var key in this.item.settings) {
+        const id = parseInt(key.substring(1));
+        if (this.item.services.indexOf(id) == -1)
+          delete this.item.settings[key];
+      }
     },
     save() {
       if (!this.$refs.form.validate()) return;

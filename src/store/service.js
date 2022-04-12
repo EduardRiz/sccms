@@ -56,6 +56,7 @@ const actions = {
                 response.audit.created = response.audit.created ? response.audit.created : item.audit.created;
                 context.commit("saveItem", response);
                 if(payload.isChanged){
+                    context.commit("clubs/updateClubsServices", item, { root: true });
                     payload.vm.$store.dispatch("session/REFRESHCLUB");
                 } 
             }
@@ -93,6 +94,7 @@ const mutations = {
         if (index == -1) return;
         state.items.splice(index, 1)
     },
+
 }
 
 const Data = {

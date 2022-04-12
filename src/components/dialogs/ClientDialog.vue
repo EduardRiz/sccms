@@ -126,8 +126,8 @@
       </v-card-text>
       <v-card-actions>
         <v-btn text @click="d_confirm=true" color="primary">
-          <v-icon color="error" class="mr-2">mdi-cancel</v-icon>
-          <i18n path="button.block" />
+          <v-icon color="error" class="mr-2">mdi-delete</v-icon>
+          <i18n path="button.delete" />
         </v-btn>
         <v-btn v-if="!isFrozen" text @click="d_freeze=true" color="primary">
           <v-icon class="mr-2">mdi-snowflake</v-icon>
@@ -138,7 +138,7 @@
           <i18n path="button.unfreeze" />
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn text @click="save" color="primary">
+        <v-btn text @click.stop="save" color="primary">
           <v-icon color="success" class="mr-2">mdi-content-save</v-icon>
           <i18n path="button.save" />
         </v-btn>
@@ -173,8 +173,8 @@
     <sc-confirm-dialog
       v-model="d_confirm"
       @click:ok="remove"
-      mode="block"
-    >{{$t("dialog.txt.block")}}</sc-confirm-dialog>
+      mode="delete"
+    >{{$t("dialog.txt.delete")}}</sc-confirm-dialog>
   </v-dialog>
 </template>
 
@@ -236,26 +236,31 @@ export default {
   },
   watch: {
     value() {
-      this.item_ = this.$api.copy(this.item, DEF);
-      if (!this.item_.profile) this.item_.profile = {};
-      if (!this.item_.name) this.item_.name = this.item.display_name;
-      if (!this.item_.audit) {
-        this.item_.audit = {
-          created: this.item.created,
-          updated: this.item.updated,
-        };
-      }
-      if (this.item_.statusi) {
-        try {
-          this.item_.status = this.$t("statuses")[this.item_.statusi - 1].value;
-        } catch (error) {
-          this.item_.status = this.$t("statuses")[2].value;
+      if (!this.item) this.item_ = { ...DEF };
+      else {
+        this.item_ = this.$api.copy(this.item, DEF);
+        if (!this.item_.profile) this.item_.profile = {};
+        if (!this.item_.name)
+          this.item_.name = this.item ? this.item.display_name : "";
+        if (!this.item_.audit) {
+          this.item_.audit = {
+            created: this.item.created,
+            updated: this.item.updated,
+          };
         }
-      }
-      if (this.item_.profile.frozenfrom) {
-        this.frozenfrom = this.item_.profile.frozenfrom;
-      } else {
-        this.frozenfrom = this.$moment().format("YYYY-MM-DD");
+        if (this.item_.statusi) {
+          try {
+            this.item_.status =
+              this.$t("statuses")[this.item_.statusi - 1].value;
+          } catch (error) {
+            this.item_.status = this.$t("statuses")[2].value;
+          }
+        }
+        if (this.item_.profile.frozenfrom) {
+          this.frozenfrom = this.item_.profile.frozenfrom;
+        } else {
+          this.frozenfrom = this.$moment().format("YYYY-MM-DD");
+        }
       }
       this.allowExistsCard = false;
       this.img = null;
@@ -331,11 +336,15 @@ export default {
       });
     },
     remove() {
-      this.item_.status = "BLOCKED";
-      this.$api.apiPostRequest("cms/clients", this.item_).then((response) => {
-        this.$emit("save", response);
-        this.close();
-      });
+      //this.item_.status = "BLOCKED";
+      this.$api
+        .apiDeleteRequest("cms/clients/" + this.item_.idx)
+        .then((response) => {
+          if (response) {
+            this.$emit("remove", this.item_.idx);
+            this.close();
+          }
+        });
     },
     onStarted() {
       this.isCameraActive = true;
@@ -362,7 +371,7 @@ export default {
   },
   beforeDestroy() {
     this.$root.$off("app-event/hid");
-//    console.log("event off")
+    //    console.log("event off")
   },
   mounted() {
     try {

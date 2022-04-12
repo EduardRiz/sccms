@@ -45,7 +45,7 @@
               <v-select
                 v-model="item.service"
                 :label="$t('fields.service')"
-                :items="$store.getters['services/list']($store.getters['session/services'])"
+                :items="availableWorkouts"
                 item-text="info.name"
                 item-value="idx"
                 :rules="[v=>!!v||$t('error.required')]"
@@ -104,7 +104,7 @@
                 :label="$t('fields.wodays')"
                 :items="$t('week')"
                 clearable
-                :rules="[v=>!!v||$t('error.required')]"
+                :rules="[$rules.required]"
               ></v-select>
             </v-col>
             <v-col cols="3">
@@ -122,6 +122,7 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
                     v-model="item.beginat"
+                    :rules="[$rules.required]"
                     :label="$t('fields.wotime')"
                     prepend-icon="mdi-clock-time-four-outline"
                     v-bind="attrs"
@@ -139,7 +140,12 @@
               </v-menu>
             </v-col>
             <v-col cols="3">
-              <v-text-field type="number" v-model="item.duration" :label="$t('fields.woduration')"></v-text-field>
+              <v-text-field
+                type="number"
+                :rules="[$rules.required]"
+                v-model="item.duration"
+                :label="$t('fields.woduration')"
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-textarea
@@ -154,13 +160,16 @@
       </v-card-text>
       <v-card-actions v-if="$store.getters['session/testPowerUser']">
         <v-btn text @click="d_confirm=true" color="error" v-if="item.idx">
+          <v-icon class="mr-1">mdi-delete</v-icon>
           <i18n path="button.delete" />
         </v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="clone" color="primary">
+          <v-icon class="mr-1">mdi-content-copy</v-icon>
           <i18n path="button.clone" />
         </v-btn>
         <v-btn text @click="save" color="success">
+          <v-icon class="mr-1">mdi-content-save</v-icon>
           <i18n path="button.save" />
         </v-btn>
       </v-card-actions>
@@ -192,7 +201,7 @@ export default {
     record: {
       handler(v) {
         this.item = this.record ? JSON.parse(JSON.stringify(v)) : { ...DEF };
-        this.fix = this.item.fixdate;
+        this.fix = !!this.item.fixdate;
         if (!this.item.color)
           this.item.color = this.$store.getters["sysvars/nextcolor"]();
       },
@@ -200,6 +209,28 @@ export default {
     },
   },
   computed: {
+    availableWorkouts() {
+      try {
+        const list = this.$store.getters["services/list"](
+          this.$store.getters["session/services"]
+        );
+        return list
+          .filter((e) => {
+            return e.workout;
+          })
+          .sort((a, b) => {
+            if (a.info.name > b.info.name) {
+              return 1;
+            }
+            if (a.info.name < b.info.name) {
+              return -1;
+            }
+            return 0;
+          });
+      } catch (error) {
+        return [];
+      }
+    },
     isActive() {
       return this.value;
     },

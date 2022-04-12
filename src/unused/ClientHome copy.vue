@@ -165,18 +165,18 @@
                       >
                         <v-icon>mdi-exit-run</v-icon>
                       </v-btn>-->
-                      <!-- <v-img
+                      <v-img
                         src="~@/assets/Exit_red.png"
                         max-width="50px"
                         class="exit-btn"
                         @click="registerClientOut"
                         :style="{visibility:!isAvailableRegister?'visible':'hidden'}"
                         v-if="isAssignedKeys"
-                      ></v-img>-->
+                      ></v-img>
                     </v-card-actions>
                   </v-card>
                 </v-col>
-                <v-col :cols="isAssignedKeys?6:7" v-if="!isFrozen">
+                <v-col cols="7" v-if="!isFrozen">
                   <v-card class="services-card raduis-25">
                     <v-card-text>
                       <v-expansion-panels v-model="panels">
@@ -184,7 +184,7 @@
                           class="orange lighten-5 radius-12"
                           v-if="used_services.length"
                         >
-                          <v-expansion-panel-header class="used-services-panel-header">
+                          <v-expansion-panel-header>
                             <span>{{used_services.length}}</span>
                             <i18n path="home.usedservs" />
                           </v-expansion-panel-header>
@@ -196,7 +196,7 @@
                           </v-expansion-panel-content>
                         </v-expansion-panel>
                         <v-expansion-panel class="orange lighten-5 radius-12">
-                          <v-expansion-panel-header class="available-services-panel-header">
+                          <v-expansion-panel-header>
                             <span>{{availabledClientServices.length}}</span>
                             <i18n path="home.available" />
                           </v-expansion-panel-header>
@@ -226,12 +226,6 @@
                                         </i18n>
                                       </v-chip>
                                       <v-chip
-                                        v-else-if="item.timed"
-                                        class="mr-4"
-                                        :color="item.testcode==4?'grey':'primary'"
-                                        :disabled="item.testcode>0"
-                                      >{{item.spendmin+ " min"}}</v-chip>
-                                      <v-chip
                                         v-else-if="item.visitcontrol"
                                         class="mr-4"
                                         :color="item.testcode==4?'grey':'primary'"
@@ -254,19 +248,22 @@
                                         class="ml-4"
                                       />
                                     </v-list-item-title>
-                                    <v-list-item-subtitle>
+                                    <v-list-item-subtitle v-if="item.tariff">
                                       <span>{{item.tariff.info.name}}</span>
-                                      <span v-if="item.timed" class="ml-4">{{item.spendmin+'min'}}</span>
+                                      <span
+                                        v-if="item.service.timed"
+                                        class="ml-4"
+                                      >{{item.tariff.duration.spendmin+'min'}}</span>
                                     </v-list-item-subtitle>
                                     <v-list-item-subtitle>
                                       <i18n
                                         path="home.from"
                                         :class="(item.testcode==1?'red--text':'')"
                                       >
-                                        <template #date>{{item.fromdate|dt-only}}</template>
+                                        <template #date>{{item.fromDate|dt-only}}</template>
                                       </i18n>
                                       <i18n path="home.to" class="ml-4">
-                                        <template #date>{{item.todate|dt-only}}</template>
+                                        <template #date>{{item.toDate|dt-only}}</template>
                                       </i18n>
                                     </v-list-item-subtitle>
                                     <v-list-item-subtitle class="d-flex">
@@ -295,7 +292,7 @@
                           </v-expansion-panel-content>
                         </v-expansion-panel>
                         <v-expansion-panel class="orange lighten-5 radius-12">
-                          <v-expansion-panel-header class="unavailable-services-panel-header">
+                          <v-expansion-panel-header>
                             <span>{{unavailabledClientServices.length}}</span>
                             <i18n path="home.unavailable" />
                           </v-expansion-panel-header>
@@ -333,10 +330,10 @@
                                         path="home.from"
                                         :class="(item.testcode==1?'red--text':'')"
                                       >
-                                        <template #date>{{item.fromdate|dt-only}}</template>
+                                        <template #date>{{item.fromDate|dt-only}}</template>
                                       </i18n>
                                       <i18n path="home.to" class="ml-4">
-                                        <template #date>{{item.todate|dt-only}}</template>
+                                        <template #date>{{item.toDate|dt-only}}</template>
                                       </i18n>
                                     </v-list-item-subtitle>
                                     <v-list-item-subtitle class="d-flex">
@@ -407,21 +404,10 @@
                         color="success"
                         class="rounded-pill elevation-10 mr-2"
                       >
-                        <v-icon class="mx-1">mdi-checkbox-multiple-marked-outline</v-icon>
                         <i18n path="button.register" />
                       </v-btn>
                     </v-card-actions>
                   </v-card>
-                </v-col>
-                <v-col cols="1" align-self="center" v-if="isAssignedKeys">
-                  <v-img
-                    src="~@/assets/Exit_red.png"
-                    max-width="80px"
-                    width="80px"
-                    class="exit-btn"
-                    @click="registerClientOut"
-                    :style="{visibility:!isAvailableRegister?'visible':'hidden'}"
-                  ></v-img>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -595,6 +581,7 @@ export default {
         if (this.servIndex2assign == null) return false;
         return this.clientServices[this.servIndex2assign].workout;
       } catch (error) {
+        console.log(error);
         return false;
       }
     },
@@ -643,8 +630,8 @@ export default {
   methods: {
     testAvailability(i) {
       if (!i) return;
-      const from = this.$moment(i.fromdate);
-      const to = this.$moment(i.todate);
+      const from = this.$moment(i.fromDate);
+      const to = this.$moment(i.toDate);
       this.$set(i, "testcode", 0);
       this.$set(i, "scalarcount", 0);
       if (this.$store.getters["session/services"].indexOf(i.service) == -1) {
@@ -806,14 +793,7 @@ export default {
         this.current_client = { ...response.client, today: response.today };
         this.keys = [...response.keys];
         if (response.used_services) {
-          response.used_services.forEach((us) => {
-            if (us.tariff.type == "ABONEMENT") {
-              const serv = this.$store.getters["services/item"](us.service);
-              us.details.timed = serv.timed;
-            }
-            this.used_services.push(us);
-          });
-          this.panels = 2;
+          this.used_services = [...response.used_services];
         }
         try {
           this.transformAvailableService(response.services);
