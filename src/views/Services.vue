@@ -1,6 +1,10 @@
 <template>
   <v-sheet class="sc-page-sheet">
     <v-row align="center" align-content="center">
+      <i18n
+        :path="'menu.'+$route.name.toLowerCase()"
+        class="ml-4 primary--text text-uppercase text-h4"
+      ></i18n>
       <v-spacer></v-spacer>
       <v-col cols="2">
         <v-switch v-model="showMyClub" :label="$t('label.myclub')"></v-switch>
@@ -97,15 +101,22 @@
               <!-- <v-checkbox :label="$t('fields.ascalar')" v-model="item.scalar" class="ml-4"></v-checkbox> -->
               <v-radio-group
                 row
-                class="ml-4"
-                :hint="$t('servs.hint')"
+                class="ml-14 type-radio-grp"
+                :hint="$t('servs.hint.'+servtype)"
                 persistent-hint
                 v-model="servtype"
-                :label="$t('servs.label')"
               >
-                <v-radio value="normal" :label="$t('servs.normal')"></v-radio>
-                <v-radio value="scalar" :label="$t('servs.scalar')"></v-radio>
-                <v-radio value="timed" :label="$t('servs.timed')"></v-radio>
+                <template #default>
+                  <v-radio value="normal" :label="$t('servs.normal')"></v-radio>
+                  <v-radio value="scalar" :label="$t('servs.scalar')"></v-radio>
+                  <v-radio value="timed" :label="$t('servs.timed')"></v-radio>
+                </template>
+                <template #message="{key, message}">
+                  <div>
+                    <v-icon small color="warning" class="mr-2">mdi-information-outline</v-icon>
+                    <span class="primary--text">{{message}}</span>
+                  </div>
+                </template>
               </v-radio-group>
             </v-row>
             <v-row>
@@ -175,14 +186,14 @@
     </v-dialog>
     <v-dialog v-model="d_editTariff" fullscreen @keydown.escape="d_editTariff=false">
       <v-card class="orange lighten-5">
-        <v-card-title>
+        <!-- <v-card-title>
           <v-spacer></v-spacer>
           <v-btn @click="d_editTariff=false" icon color="error">
             <v-icon>mdi-close-circle</v-icon>
           </v-btn>
-        </v-card-title>
+        </v-card-title> -->
         <v-card-text>
-          <TariffTable :sels="tariffs" isSelectable @onSave="updateTariffs" type="SERVICE" />
+          <TariffTable :sels="tariffs" isSelectable @onSave="updateTariffs" type="SERVICE" @onClose="d_editTariff=false"/>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -215,13 +226,14 @@ export default {
           if (this.item.timed) return "timed";
           return "normal";
         } catch (error) {
+          console.log(error);
           return "normal";
         }
       },
       set(v) {
         try {
-          this.item.scalar = v == "scalar";
-          this.item.timed = v == "timed";
+          this.$set(this.item, "scalar", v == "scalar");
+          this.$set(this.item, "timed", v == "timed");
         } catch (error) {
           console.log(error);
         }
@@ -410,5 +422,5 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 </style>

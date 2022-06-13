@@ -196,7 +196,6 @@ export default {
   methods: {
     refresh() {
       if (!this.$refs.calendar) return;
-      //console.log("refresh");
       this.getEvents();
       this.$refs.calendar.checkChange();
     },

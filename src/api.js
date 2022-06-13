@@ -24,7 +24,8 @@ const api = {
         });
     },
     publicImgLink(img, def) {
-        return this.api + '/photos/' + (!img && def ? "default-avatar.jpg" : img);
+        if(!img && def) return "/img/default-avatar.jpg";
+        return this.api + '/photos/' + img;
     },
     imageClientLink(idx) {
         return this.api + '/operator/image?path=images/client&idx=' + idx + '.jpg';

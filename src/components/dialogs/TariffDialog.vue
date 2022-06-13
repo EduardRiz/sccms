@@ -15,14 +15,14 @@
               <v-text-field
                 v-model="item_.info.name"
                 :label="$t('fields.name')"
-                :rules="[v=>!!v||$t('error.required')]"
+                :rules="[$rules.required]"
               ></v-text-field>
             </v-col>
             <v-col cols="3">
               <v-select
                 v-model="item_.type"
                 :items="$t('tariff_types')"
-                :rules="[v=>!!v||$t('error.required')]"
+                :rules="[$rules.required]"
                 :label="$t('fields.tariff_type')"
               ></v-select>
             </v-col>
@@ -48,14 +48,14 @@
                 clearable
                 prefix="€"
                 :label="$t('fields.price')"
-                :rules="[v=>!!v||$t('error.required')]"
+                :rules="[$rules.required]"
               ></v-text-field>
             </v-col>
             <v-col cols="4" class="d-flex">
               <v-select
                 v-model="item_.duration.type"
                 :items="$t('duration_types')"
-                :rules="[v=>!!v||$t('error.required')]"
+                :rules="[$rules.required]"
                 :label="$t('fields.duration_type')"
                 class="mr-4"
               ></v-select>
@@ -65,7 +65,7 @@
                 type="number"
                 clearable
                 :label="$t('fields.duration')"
-                :rules="[v=>!!v||$t('error.required')]"
+                :rules="[$rules.required]"
               ></v-text-field>
             </v-col>
             <v-col cols="3">
@@ -84,7 +84,7 @@
                 return-object
                 item-value="idx"
                 item-text="name"
-                :rules="[v=>!!v||$t('error.required')]"
+                :rules="[$rules.required]"
                 :label="$t('fields.time')"
                 @change="setTime"
               ></v-select>
@@ -150,6 +150,12 @@ export default {
     return {
       d_confirm: false,
       item_: { ...DEF_ITEM },
+      rules: {
+        required(v) {
+          console.log(v);
+          return !!v;
+        },
+      },
     };
   },
   computed: {

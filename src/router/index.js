@@ -106,6 +106,15 @@ const routes = [{
     },
   },
   {
+    path: '/keys/free',
+    name: 'Keys',
+    component: () => import('@/views/BoxKeys.vue'),
+    meta: {
+      role: "USER",
+      auth: true,
+    },
+  },
+  {
     path: '/coachs',
     name: 'Coachs',
     component: () => import('@/views/Coachs.vue'),
@@ -206,7 +215,7 @@ const routes = [{
   },
   {
     path: '/dicts',
-    name: 'Dictionaries',
+    name: 'Dicts',
     component: () => import('@/views/Dictionaries.vue'),
     meta: {
       role: "USER",

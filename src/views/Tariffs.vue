@@ -1,6 +1,6 @@
 <template>
   <v-sheet class="sc-page-sheet">
-    <TariffTable alltypes />
+    <TariffTable alltypes @onClose="$router.push('/')"/>
   </v-sheet>
 </template>
 

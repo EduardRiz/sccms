@@ -84,12 +84,30 @@
         <sc-record-status :status="item.info.status" />
       </template>
       <template v-slot:footer.prepend>
-        <v-btn fab @click="edit(null)" dark class="pink my-1" v-if="$store.getters['session/testPowerUser']">
+        <v-btn
+          fab
+          @click="edit(null)"
+          dark
+          class="pink my-1"
+          v-if="$store.getters['session/testPowerUser']"
+        >
           <v-icon color="white">mdi-plus</v-icon>
         </v-btn>
-        <v-btn fab color="primary" class="ml-2 my-1" @click="d_showcalendar=true">
-          <v-icon fab>mdi-calendar</v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+          <template #activator="{on, attrs}">
+            <v-btn
+              fab
+              color="primary"
+              class="ml-2 my-1"
+              @click="d_showcalendar=true"
+              v-on="on"
+              v-bind="attrs"
+            >
+              <v-icon fab>mdi-calendar</v-icon>
+            </v-btn>
+          </template>
+          <i18n path="tt.workoutcalendar" />
+        </v-tooltip>
       </template>
     </v-data-table>
     <WorkoutCalendar v-model="d_showcalendar" />

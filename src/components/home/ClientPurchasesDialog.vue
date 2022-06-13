@@ -21,14 +21,21 @@
             <span>{{item.price | currency}}</span>
           </template>
           <template #item.action="{ item }">
-            <v-btn
-              icon
-              v-if="!item.usedat && item.sportclub==$store.getters['session/scidx'] && $moment().isSameOrBefore(item.to_date, 'date')"
-              color="error"
-              @click.stop="reversal(item)"
-            >
-              <v-icon>mdi-cart-remove</v-icon>
-            </v-btn>
+            <v-tooltip bottom>
+              <template #activator="{on, attrs}">
+                <v-btn
+                  icon
+                  v-if="!item.usedat && item.sportclub==$store.getters['session/scidx'] && $moment().isSameOrBefore(item.to_date, 'date')"
+                  color="error"
+                  v-on="on"
+                  v-bind="attrs"
+                  @click.stop="reversal(item)"
+                >
+                  <v-icon>mdi-cart-remove</v-icon>
+                </v-btn>
+              </template>
+              <i18n path="tt.reversal" />
+            </v-tooltip>
           </template>
         </v-data-table>
       </v-card-text>

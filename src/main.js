@@ -8,7 +8,9 @@ import i18n from './i18n'
 import VueCryptojs from 'vue-cryptojs'
 import scclub from "./scclub.js"
 import excel from 'vue-excel-export'
+import VueApexCharts from 'vue-apexcharts'
 
+Vue.use(VueApexCharts)
 Vue.use(VueCryptojs);
 Vue.use(scclub);
 Vue.use(excel);
@@ -17,6 +19,7 @@ Vue.config.productionTip = false
 Vue.prototype.$api = api;
 // for moment's filters
 Vue.use(require('vue-moment'));
+Vue.component('apexchart', VueApexCharts)
 
 const vm = new Vue({
   router,

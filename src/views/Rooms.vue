@@ -1,8 +1,12 @@
 <template>
   <v-sheet class="sc-page-sheet">
     <v-row align="center" align-content="center">
-      <v-switch v-model="blocked" :label="$t('label.blocked')" class="ml-3"></v-switch>
+      <i18n
+        :path="'menu.'+$route.name.toLowerCase()"
+        class="ml-4 primary--text text-uppercase text-h4"
+      ></i18n>
       <v-spacer></v-spacer>
+      <v-switch v-model="blocked" :label="$t('label.blocked')" class="ml-3"></v-switch>
       <v-col cols="3">
         <v-select v-model="filter.tag" :items="tags" :label="$t('fields.tags')" clearable></v-select>
       </v-col>
@@ -32,7 +36,13 @@
         <sc-record-status :status="item.info.status" />
       </template>
       <template v-slot:footer.prepend>
-        <v-btn fab @click="edit(null)" dark class="pink my-1" v-if="$store.getters['session/testPowerUser']">
+        <v-btn
+          fab
+          @click="edit(null)"
+          dark
+          class="pink my-1"
+          v-if="$store.getters['session/testPowerUser']"
+        >
           <v-icon color="white">mdi-plus</v-icon>
         </v-btn>
       </template>
@@ -75,7 +85,7 @@
                 <TagsEditor v-model="item.info.tags" :source="tags" />
                 <sc-record-audit :audit="item.audit" />
               </v-form>
-              <v-row v-if="$store.getters['session/testPowerUser']">
+              <v-row v-if="$store.getters['session/testPowerUser']" class="mt-8">
                 <v-btn text @click="d_confirm=true" color="error">
                   <v-icon class="mr-1">mdi-delete</v-icon>
                   <i18n path="button.delete" />

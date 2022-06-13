@@ -1,6 +1,6 @@
-import api from '@/api.js'
+//import api from '@/api.js'
 
-const apiBase = "/";
+//const apiBase = "/";
 const state = {
     colors: [],
 }
@@ -23,8 +23,10 @@ const getters = {
 }
 const actions = {
     LOAD_COLORS: function (context) {
-        api.apiGetRequest(apiBase + "colors.json", null, true).then(response => {
-            context.commit("setColors", response);
+        fetch("/colors.json")
+        .then((r) => r.json())
+        .then((d) => {
+            context.commit("setColors", d);
         });
     },
 }

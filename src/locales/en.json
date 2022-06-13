@@ -32,10 +32,11 @@
         "toDate": "To",
         "duration": "Valid during",
         "spendmin": "Spended time in minutes",
+        "scalarcount": "Number of uses",
         "valid": "Valid",
         "lastvisit": "Last visit",
         "activeservs": "Services",
-        "wofix": "Fix date or periodic",
+        "wofix": "Day of week / Fix date",
         "wodate": "Fix date of workout",
         "wodays": "Week day of workout",
         "wotime": "Start of workout",
@@ -66,6 +67,7 @@
         "place": "Place",
         "thread": "Thread",
         "key": "Key",
+        "keyname": "Key",
         "count": "Count",
         "saletype": "Type",
         "sale": "Sale name",
@@ -162,7 +164,7 @@
         "noworkouts": "No active workouts",
         "clientNotFound": "Client with content {pattern} not found",
         "keysNotFound": "Key {key} not found",
-        "accessToken": "Access token is expired, please refresh and try again! " 
+        "accessToken": "Access token is expired, please refresh and try again! "
     },
     "tt": {
         "extratime": "Differece between purchased and elapsed time",
@@ -195,7 +197,10 @@
         "sm_soldabonements": "List of sold abonements",
         "sm_regvis": "List of used services by clients",
         "sm_regservs": "List of registered services to clients",
-        "sm_visits": "List of clients visits"
+        "sm_visits": "List of clients visits",
+        "clientout": "Close client's visit manually",
+        "workoutcalendar": "Show workouts calendars",
+        "reversal": "Purchase anulation"
     },
     "button": {
         "save": "update",
@@ -218,7 +223,11 @@
     },
     "servs": {
         "label": "Type of service",
-        "hint": "Select type of service",
+        "hint": {
+            "normal": "Service with the possibility of limiting the count of visits in the abonement (example: gym, training)",
+            "scalar": "Service with a obligatory indication of the quantity of use (example: solarium per minute)",
+            "timed": "Service with a defined maximum duration time of use per visit (for example: water park, SPA)"
+        },
         "normal": "Simple",
         "scalar": "Scalar",
         "timed": "Timed"
@@ -253,8 +262,12 @@
         "services": "Services",
         "rooms": "Rooms",
         "coachs": "Coachs",
-        "tariffs": "Tariffs",
-        "dictionaries": "Dictionaries",
+        "tariffs": "Tariff plans",
+        "tariff":{
+            "tariffs": "Tariff plans",
+            "services": "Service tariffs",
+            "abonements": "Abonement tariffs"
+        },
         "workouts": "Workouts",
         "todaywo": "Today workouts",
         "abonements": "Abonements",
@@ -267,8 +280,8 @@
         "anonymclienthome": "Anonymous client",
         "workstations": "Workstations",
         "keys": "Keys",
-        "regservs": "Client services",
-        "dicts": "Dictionaries",
+        "regservs": "Active services",
+        "dicts": "Additional settings",
         "soldabonements": "Sold abonements"
     },
     "label": {
@@ -285,6 +298,8 @@
         "endDate": "End date of the action",
         "endTime": "End time of the action",
         "period": "Periods",
+        "activeat": "on selected date",
+        "freekey": "show only free keys",
         "filter": "Filter parameters"
     },
     "periods": [{
@@ -357,14 +372,14 @@
         "boxkey": "mdi-key",
         "client": "mdi-account",
         "keys": "mdi-key-change",
-        "soldabonements": "mdi-account-supervisor",
+        "soldabonements": "mdi-cart-variant",
         "regvis": "mdi-star-check-outline",
-        "regservs": "mdi-account-supervisor",
+        "regservs": "mdi-human-scooter",
         "reportsm": "mdi-server",
         "reports": "mdi-chart-multiple",
         "clubsett": "mdi-city",
         "clubs": "mdi-city-variant",
-        "visits": "mdi-run",
+        "visits": "mdi-account-supervisor",
         "time": "mdi-clock",
         "activity": "mdi-text-account",
         "workstations": "mdi-lan",
@@ -458,25 +473,38 @@
         "group": {
             "clients": "Clients",
             "finances": "Finances",
-            "club": "Club"
+            "club": "Club",
+            "chart": "Chart"
         },
         "title": {
             "purchases": "Client purchases",
             "coachsact": "Coach activity",
             "clientsact": "Client activity",
-            "clientsvis": "Client visit activity"
+            "clientsvis": "Client visit activity",
+            "chartvis": "Client visit activity"
         },
         "icons": {
-            "purchases": "mdi-view-list-outline",
+            "purchases": "mdi-cart-outline",
             "coachsact": "mdi-weight-lifter",
             "clientsact": "mdi-human-scooter",
-            "clientsvis": "mdi-account"
+            "clientsvis": "mdi-account",
+            "chartvis": "mdi-chart-bar"
         },
         "text": {
-            "purchases": "Any comments for report",
-            "coachsact": "Any comments for report",
-            "clientsact": "Any comments for report",
-            "clientsvis": "Any comments for report"
+            "purchases": "Sales report for the specified period. With filtering by name and client.",
+            "coachsact": "Report on training sessions for the period indicating the coach and the number of visitors",
+            "clientsact": "A report on the use of club services by clients indicating the training, time of use or the number of units of the service used",
+            "clientsvis": "Report on the duration of visits to the club, indicating the keys and detailing the client",
+            "chartvis": "The chart displays the number of club visitors by the club's opening hours"
+        },
+        "chartvis": {
+            "title": "Intensity of visits over time",
+            "yaxis": "Count of clients",
+            "xaxis": "Time of the day",
+            "hint": "Client in the club: "
+        },
+        "clientsvis": {
+            "spendtime": "Spended time"
         },
         "created": "Report created at {ts}",
         "range": "Select date range of the report",
@@ -485,8 +513,23 @@
         "filterBySportclub": "Select to filter by sportclub",
         "filterBySale": "Select to filter by sale",
         "filterByTariff": "Select to filter by tariff",
+        "filterByCoach": "Select to filter by coach",
+        "filterByWorkout": "Select to filter by workout",
+        "filterByService": "Select to filter by service",
+        "filterByClient": "Select to filter by client",
+        "filterByKey": "Select to filter by keys name",
         "total": "Total: {total}",
+        "totaldur": "Total: {total}, average: {average}",
         "rows": "Rows: {rows}"
+    },
+    "testcode": {
+        "0": "Service is available",
+        "5": "Service is unavailable in the club",
+        "1": "Service is unavailable. Wrong valid date",
+        "2": "Service is available. Wrong day of week.",
+        "3": "Service is available. Wrong hours of service.",
+        "92": "Service is available. Visits was used",
+        "93": "Service is available. Counter of service was used"
     }
 
 }

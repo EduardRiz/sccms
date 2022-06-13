@@ -1,6 +1,10 @@
 <template>
   <v-sheet class="sc-page-sheet">
-    <v-row>
+    <v-row align="center" align-content="center" style="margin:0;">
+      <i18n
+        :path="'menu.'+$route.name.toLowerCase()"
+        class="ml-4 primary--text text-uppercase text-h4"
+      ></i18n>
       <v-spacer></v-spacer>
       <v-btn icon class="error ma-4" dark to="/">
         <v-icon>mdi-close</v-icon>
@@ -8,7 +12,6 @@
     </v-row>
     <v-tabs v-model="tab" align-with-title>
       <v-tabs-slider></v-tabs-slider>
-
       <v-tab v-for="item in items" :key="item">
         <i18n :path="'dict.'+item" />
       </v-tab>
@@ -210,7 +213,7 @@ export default {
       let def = {
         details: { days: [1, 2, 3, 4, 5, 6, 7], hours: [] },
       };
-      for (let k = 0; k < 25; k++) {
+      for (let k = 0; k < 24; k++) {
         def.details.hours[k] = 0;
       }
       return def;

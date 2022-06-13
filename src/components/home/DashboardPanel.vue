@@ -21,7 +21,7 @@
           <v-chip
             class="mt-2 mr-3"
             color="blue lighten-3"
-            :to="keys?'/keys':''"
+            :to="keys?'/keys/free':''"
             v-on="on"
             v-bind="attrs"
           >

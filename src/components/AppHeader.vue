@@ -83,7 +83,7 @@
           :color="$store.getters['session/isConnected']?'success lighten-3':'error'"
         >{{$store.getters['session/isConnected']?"mdi-broadcast":"mdi-broadcast-off"}}</v-icon>
         <span>{{$store.getters['session/scname']}}</span>
-        <i18n :path="'menu.'+$route.name.toLowerCase()" class="ml-4"></i18n>
+        <i18n v-if="isShowTitle" :path="'menu.'+$route.name.toLowerCase()" class="ml-4"></i18n>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <template v-for="item in upperMenu">
@@ -154,6 +154,9 @@ export default {
   computed: {
     isLogged() {
       return this.$store.getters["session/isLogged"];
+    },
+    isShowTitle() {
+      return ["Home", "ClientHome", "AnonymClientHome"].indexOf(this.$route.name) != -1;
     },
   },
   mounted() {

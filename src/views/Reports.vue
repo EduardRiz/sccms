@@ -1,7 +1,11 @@
 <template>
   <v-sheet class="sc-page-sheet">
     <v-sheet v-if="!d_report">
-      <v-row class="my-2">
+      <v-row class="my-2" align="center" align-content="center">
+        <i18n
+          :path="'menu.'+$route.name.toLowerCase()"
+          class="ml-4 primary--text text-uppercase text-h4"
+        ></i18n>
         <v-col align-self="center">
           <v-chip-group v-model="selgroups" column multiple>
             <v-chip
@@ -31,16 +35,16 @@
           rounded="xl"
           width="300"
           height="200"
-          class="orange div-as-button ma-4"
+          :class="(r.aclass?r.aclass:'orange')+' div-as-button ma-4'"
           @click.prevent="openReport(r)"
         >
           <v-card-title>
             <v-icon color="white" x-large class="mr-2">{{$t("report.icons."+r.label)}}</v-icon>
             <span>{{$t("report.title."+r.label)}}</span>
-            <v-spacer></v-spacer>
+            <!-- <v-spacer></v-spacer>
             <v-btn icon>
               <v-icon>mdi-arrow-right</v-icon>
-            </v-btn>
+            </v-btn>-->
           </v-card-title>
           <v-card-text>
             <div>{{$t("report.text."+r.label)}}</div>
@@ -89,7 +93,7 @@ export default {
   methods: {
     openReport(r) {
       this.report = r;
-      this.editType = "Report-" + r.id;
+      this.editType = r.id;
       this.d_report = true;
     },
     filterBy(cat) {
@@ -102,5 +106,6 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+
 </style>

@@ -1,50 +1,97 @@
 <template>
   <v-sheet class="radius-25">
     <v-row>
-      <v-col>
-        <v-icon class="mr-4">{{report.icon}}</v-icon>
-        <span>{{report.title}}</span>
+      <v-col align-self="center">
+        <v-icon class="mr-4">{{$t("report.icons."+report.label)}}</v-icon>
+        <span>{{$t("report.title."+report.label)}}</span>
       </v-col>
+      <sc-dates-range v-model="range" class="ml-3" />
       <v-spacer></v-spacer>
       <v-btn @click="$emit('input',false)" icon color="primary">
         <v-icon>mdi-arrow-u-left-top-bold</v-icon>
       </v-btn>
     </v-row>
     <v-row align="center" align-content="center">
-      <sc-dates-range v-model="range" class="ml-3" />
+      <v-select
+        v-model="filter.club"
+        :items="sportclubs"
+        class="px-2 filter-select"
+        clearable
+        :label="$t('report.filterBySportclub')"
+      ></v-select>
+      <v-select
+        v-model="filter.client"
+        :items="clients"
+        class="px-2 filter-select"
+        clearable
+        :label="$t('report.filterByClient')"
+      ></v-select>
+      <v-select
+        v-model="filter.keyname"
+        :items="keys"
+        class="px-2 filter-select"
+        clearable
+        :label="$t('report.filterByKey')"
+      ></v-select>
       <v-spacer></v-spacer>
-      <v-btn icon :disabled="items.length==0" @click.prevent="d_print=true">
+      <v-btn icon :disabled="data.length==0" @click.prevent="d_print=true">
         <v-icon>mdi-printer</v-icon>
       </v-btn>
-      <export-excel :data="items">
-        <v-btn icon :disabled="items.length==0">
+      <export-excel :data="data" :fields="excel_fields" :title="excel_title" :footer="excel_footer">
+        <v-btn icon :disabled="data.length==0">
           <v-icon>mdi-microsoft-excel</v-icon>
         </v-btn>
       </export-excel>
-      <v-btn icon>
-        <v-icon>mdi-xml</v-icon>
-      </v-btn>
     </v-row>
     <v-row>
       <v-data-table
         :headers="headers"
-        :items="items"
-        :search="search"
+        :items="data"
         item-key="idx"
         class="idcs-fill-width"
         :footer-props="foot_props"
         :no-data-text="$t('label.nodata')"
       >
         <template #item.duration="{item}">{{item | fduration}}</template>
+        <template #item.position="{ item }">
+          <span>{{data.indexOf(item)+1}}</span>
+        </template>
+        <template #body.append="{headers, pagination}">
+          <tr v-if="pagination.itemsLength">
+            <td :colspan="headers.length-3">
+              <i18n path="report.rows">
+                <template #rows>{{pagination.itemsLength}}</template>
+              </i18n>
+            </td>
+            <td align="right" :colspan="3">
+              <i18n path="report.totaldur">
+                <template #total>{{total|tduration}}</template>
+                <template #average>{{total/pagination.itemsLength|aduration}}</template>
+              </i18n>
+            </td>
+          </tr>
+        </template>
       </v-data-table>
     </v-row>
     <sc-printdata-dialog
-      :items="items"
+      :items="data"
       :headers="headers"
       v-model="d_print"
       :report="report"
       :range="range"
-    />
+      :filter="filter"
+    >
+      <template #tablefooter>
+        <tr>
+          <td :colspan="headers.length"></td>
+          <td align="right">
+            <i18n path="report.total">
+              <template #total>{{total|tduration}}</template>
+            </i18n>
+          </td>
+        </tr>
+      </template>
+    </sc-printdata-dialog>
   </v-sheet>
 </template>
 
@@ -60,7 +107,27 @@ export default {
     return {
       range: [],
       d_print: false,
+
+      allTotal: 0,
+      filteredTotal: 0,
+      filtered: [],
+      clients: [],
+      keys: [],
+      sportclubs: [],
+      filter: { club: null, client: null, keyname: null },
+
       headers: [
+        {
+          text: "#",
+          excelIgnore: true,
+          value: "position",
+          align: "right",
+          width: "50",
+        },
+        {
+          text: this.$t("fields.club"),
+          value: "club",
+        },
         {
           text: this.$t("fields.fromDate"),
           value: "fromdate",
@@ -68,10 +135,6 @@ export default {
         {
           text: this.$t("fields.toDate"),
           value: "todate",
-        },
-        {
-          text: this.$t("fields.duration"),
-          value: "duration",
         },
         {
           text: this.$t("fields.client"),
@@ -97,35 +160,134 @@ export default {
           text: this.$t("fields.tags"),
           value: "ktags",
         },
+        {
+          text: this.$t("report.clientsvis.spendtime"),
+          value: "duration",
+          align: "center",
+        },
       ],
     };
   },
   filters: {
     fduration(i) {
       try {
-        return moment.duration(moment(i.todate).diff(moment(i.fromdate))).humanize();
+        return moment
+          .duration(moment(i.todate).diff(moment(i.fromdate)))
+          .humanize();
+      } catch (error) {
+        return "";
+      }
+    },
+    tduration(i) {
+      try {
+        return moment.duration(i, "minutes").humanize();
+      } catch (error) {
+        return "";
+      }
+    },
+    aduration(i) {
+      try {
+        return moment.duration(i, "minutes").humanize();
       } catch (error) {
         return "";
       }
     },
   },
   computed: {
+    excel_fields() {
+      let f = {};
+      this.headers.forEach((e) => {
+        if (e.excelIgnore) return;
+        f[e.text] = e.value;
+      });
+      return f;
+    },
+    excel_title() {
+      let titles = [];
+      titles.push(this.$t("report.title." + this.report.label));
+      titles.push(
+        this.$t("report.period", { st: this.range[0], ed: this.range[1] })
+      );
+      if (this.isFiltered) {
+        titles.push(this.$t("report.filterby"));
+        for (const k in this.filter) {
+          if (this.filter[k]) {
+            titles.push(this.$t("fields." + k) + ": " + this.filter[k]);
+          }
+        }
+      }
+      return titles;
+    },
+    excel_footer() {
+      return this.$t("report.created", {
+        ts: this.$moment().format("YYYY-MM-DD HH:mm"),
+      });
+    },
+    isFiltered() {
+      for (const k in this.filter) {
+        if (this.filter[k]) return true;
+      }
+      return false;
+    },
+    total() {
+      if (this.isFiltered) return this.filteredTotal;
+      return this.allTotal;
+    },
+    data() {
+      if (this.isFiltered) return this.filtered;
+      return this.items;
+    },
     report() {
       return this.item ? this.item : {};
     },
   },
   watch: {
+    filter: {
+      handler() {
+        this.filterData();
+      },
+      deep: true,
+    },
     range() {
       this.loadData();
     },
   },
   methods: {
+    filterData() {
+      this.filteredTotal = 0;
+      this.filtered = this.items.filter((i) => {
+        let tofilter = true;
+        for (const k in this.filter) {
+          if (this.filter[k]) {
+            tofilter = tofilter && i[k] == this.filter[k];
+          }
+        }
+        if (tofilter) {
+          this.filteredTotal += this.$moment
+            .duration(moment(i.todate).diff(moment(i.fromdate)))
+            .as("minutes");
+        }
+        return tofilter;
+      });
+    },
     loadData() {
-      this.total = 0;
+      this.allTotal = 0;
+      this.sportclubs = [];
+      this.coachs = [];
+      this.workouts = [];
+      this.filter = {};
       this.$api
         .apiGetRequest("/cms/reports/4", { range: this.range.join("~") })
         .then((data) => {
           this.items = [...data];
+          this.items.forEach((e) => {
+            if (!this.sportclubs.includes(e.club)) this.sportclubs.push(e.club);
+            if (!this.clients.includes(e.client)) this.clients.push(e.client);
+            if (!this.keys.includes(e.keyname)) this.keys.push(e.keyname);
+            this.allTotal += this.$moment
+              .duration(moment(e.todate).diff(moment(e.fromdate)))
+              .as("minutes");
+          });
         });
     },
   },

@@ -14,9 +14,17 @@
         :class="(w.status!=1?'error':'success')+ ' lighten-5 ma-4'"
       >
         <v-card-title :style="{'background-color':`${w.color}`}">
-          <div class="text-break" style="width:220px;">{{w.display_name}}</div>
+          <v-tooltip bottom>
+            <template #activator="{on, attrs}">
+              <div v-on="on" v-bind="attrs" class="workout-title"><span :style="{color: invert(w.color)}">{{w.display_name}}</span></div>
+            </template>
+            <span>{{w.display_name}}</span>
+          </v-tooltip>
           <v-spacer></v-spacer>
-          <v-chip>{{w.clients}}</v-chip>
+          <v-chip>
+            <v-icon small class="mr-2" color="primary">mdi-account-multiple</v-icon>
+            <span>{{w.clients}}</span>
+          </v-chip>
         </v-card-title>
         <v-card-text>
           <div class="text-center text-h6 pt-4">{{tm(w)}}</div>
@@ -39,6 +47,8 @@
 </template>
 
 <script>
+import colors from "@/colorfunc.js";
+
 export default {
   name: "TodayWorkouts",
   data() {
@@ -46,7 +56,11 @@ export default {
       items: [],
     };
   },
+
   methods: {
+    invert(c) {
+      return colors.invertColor(c, true);
+    },
     tm(i) {
       const b = this.$moment(i.beginat, "HH:mm");
       //console.log(b, b.add("minutes", i.duration));
@@ -64,4 +78,10 @@ export default {
 </script>
 
 <style scoped>
+.workout-title {
+  width: 200px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
 </style>

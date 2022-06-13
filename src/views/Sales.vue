@@ -1,6 +1,10 @@
 <template>
   <v-sheet class="sc-page-sheet">
-    <v-row class="my-2">
+    <v-row class="my-2" align="center" align-content="center">
+      <i18n
+        :path="'menu.'+$route.name.toLowerCase()"
+        class="ml-4 primary--text text-uppercase text-h4"
+      ></i18n>
       <sc-dates-range v-model="range" class="ml-3" />
       <v-spacer></v-spacer>
       <span width="300px">
@@ -36,7 +40,7 @@
         <span>{{item.fromdate | dt-only}}</span>
       </template>
       <template v-slot:item.created="{ item }">
-        <span>{{item.created | dt-only}}</span>
+        <span>{{item.created | dt-time}}</span>
       </template>
       <template v-slot:item.sportclub="{ item }">
         <sc-record-info :idx="item.sportclub" store="clubs/item" />
@@ -51,8 +55,8 @@
         <span>{{(item.tariff.price*100) | currency}}</span>
       </template>
       <template v-slot:item.image="{ item }">
-        <v-avatar v-if="item.image">
-          <v-img alt="Avatar" :src="$api.publicImgLink(item.image)" />
+        <v-avatar v-if="item.image" class="my-1">
+          <v-img alt="Avatar" :src="$api.publicImgLink(item.image)"/>
         </v-avatar>
       </template>
     </v-data-table>
@@ -88,7 +92,7 @@ export default {
       filter: {},
       headers: [
         {
-          text: this.$t("fields.created"),
+          text: this.$t("fields.dsales"),
           value: "created",
         },
         {

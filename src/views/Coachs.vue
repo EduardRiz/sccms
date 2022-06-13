@@ -1,8 +1,12 @@
 <template>
   <v-sheet class="sc-page-sheet">
     <v-row align="center" align-content="center">
-      <v-switch v-model="blocked" :label="$t('label.blocked')" class="ml-3"></v-switch>
+      <i18n
+        :path="'menu.'+$route.name.toLowerCase()"
+        class="ml-4 primary--text text-uppercase text-h4"
+      ></i18n>
       <v-spacer></v-spacer>
+      <v-switch v-model="blocked" :label="$t('label.blocked')" class="ml-3"></v-switch>
       <v-col cols="3">
         <v-select v-model="filter.tag" :items="tags" :label="$t('fields.tags')" clearable></v-select>
       </v-col>

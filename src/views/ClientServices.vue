@@ -1,7 +1,33 @@
 <template>
   <v-sheet class="sc-page-sheet">
-    <v-row class="my-2">
-      <sc-dates-range v-model="valid" class="ml-3" />
+    <v-row align="center" align-content="center" class="my-2">
+      <i18n
+        :path="'menu.'+$route.name.toLowerCase()"
+        class="ml-4 primary--text text-uppercase text-h4"
+      ></i18n>
+      <div style="width: 200px" class="ml-10">
+        <v-menu
+          v-model="tdmenu"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="todate"
+              prepend-inner-icon="mdi-calendar"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+              class="to-date-input"
+              :hint="$t('label.activeat')"
+              persistent-hint
+            ></v-text-field>
+          </template>
+          <v-date-picker v-model="todate" no-title></v-date-picker>
+        </v-menu>
+      </div>
       <v-spacer></v-spacer>
       <span width="300px">
         <v-text-field
@@ -75,19 +101,16 @@
 
 <script>
 import commonmixin from "@/mixins/commonlist.js";
-import DateValid from "@/components/controls/DateValid.vue";
 
 export default {
   name: "ClientServices",
   mixins: [commonmixin],
-  components: {
-    "sc-dates-range": DateValid,
-  },
   data() {
     return {
       filter: {},
       current_page: 0,
-      valid: "",
+      tdmenu: false,
+      todate: this.$moment().format("YYYY-MM-DD"),
       sortby: "idx",
       sortdesc: true,
       headers: [
@@ -150,8 +173,9 @@ export default {
     current_page() {
       this.loadData();
     },
-    range(v) {
+    todate(v) {
       console.log(v);
+      this.tdmenu = false;
       if (this.current_page == 0) {
         this.loadData();
       } else {
@@ -166,7 +190,7 @@ export default {
       this.$api
         .apiGetRequest("cms/clserv", {
           search: this.search,
-          range: this.valid,
+          ts: this.todate,
           page: this.pagination.page - 1,
           size: this.itemPerPage,
           sort: this.sortByParam("idx"),
@@ -181,5 +205,8 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.to-date-input >>> input{
+  text-align: right;
+}
 </style>

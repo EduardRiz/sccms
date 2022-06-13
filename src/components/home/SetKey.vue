@@ -79,15 +79,26 @@ export default {
             if (e.name.toLowerCase() == s || e.keyid.toLowerCase() == s)
               return e;
           });
-          if (this.key2assign != null){
-             this.$emit("onKey", this.key2assign);
-             return;
+          if (this.key2assign != null) {
+            this.$emit("onKey", this.key2assign);
+            return;
           }
         }
         this.error = this.$t("error.keysNotFound", { key: this.searchInput });
         this.searchInput = null;
       }
     },
+  },
+  beforeDestroy() {
+    this.$root.$off("app-event/hid");
+  },
+  mounted() {
+    this.$root.$on("app-event/hid", (e) => {
+      if (!this.$store.getters["session/testWsid"](e.detail.wsid)) return;
+      const key = e.detail.data.replaceAll("\r","");
+      this.searchInput = key;
+      this.acceptKey();
+    });
   },
 };
 </script>

@@ -1,6 +1,10 @@
 <template>
   <v-sheet class="sc-page-sheet">
     <v-row align="center" align-content="center">
+      <i18n
+        :path="'menu.'+$route.name.toLowerCase()"
+        class="ml-4 primary--text text-uppercase text-h4"
+      ></i18n>
       <v-spacer></v-spacer>
       <v-col cols="3">
         <v-select v-model="filter.tag" :items="tags" :label="$t('fields.tags')" clearable></v-select>
@@ -166,14 +170,14 @@
     >{{$t("dialog.txt.delete")}}</sc-confirm-dialog>
     <v-dialog v-model="d_editTariff" fullscreen @keydown.escape="d_editTariff=false">
       <v-card class="orange lighten-5">
-        <v-card-title>
+        <!-- <v-card-title>
           <v-spacer></v-spacer>
           <v-btn @click="d_editTariff=false" icon color="error">
             <v-icon>mdi-close-circle</v-icon>
           </v-btn>
-        </v-card-title>
+        </v-card-title> -->
         <v-card-text>
-          <TariffTable :sels="tariffs" isSelectable @onSave="updateTariffs" type="ABONEMENT" />
+          <TariffTable :sels="tariffs" isSelectable @onSave="updateTariffs" type="ABONEMENT" @onClose="d_editTariff=false"/>
         </v-card-text>
       </v-card>
     </v-dialog>

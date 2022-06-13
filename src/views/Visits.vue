@@ -1,6 +1,10 @@
 <template>
   <v-sheet class="sc-page-sheet">
-    <v-row class="my-2">
+    <v-row class="my-2" align="center" align-content="center">
+      <i18n
+        :path="'menu.'+$route.name.toLowerCase()"
+        class="ml-4 primary--text text-uppercase text-h4"
+      ></i18n>
       <v-spacer></v-spacer>
       <v-switch v-model="opened" label="opened"></v-switch>
       <v-btn icon class="error ma-4" dark to="/">
@@ -17,9 +21,14 @@
       :no-data-text="$t('label.nodata')"
     >
       <template v-slot:item.action="{ item }">
-        <v-btn icon @click="remove(item)" v-if="!item.todate">
-          <v-icon color="primary">mdi-clock-check-outline</v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+          <template #activator="{on, attrs}">
+            <v-btn icon @click="remove(item)" v-if="!item.todate" v-on="on" v-bind="attrs">
+              <v-icon color="primary">mdi-clock-check-outline</v-icon>
+            </v-btn>
+          </template>
+          <i18n path="tt.clientout" />
+        </v-tooltip>
       </template>
       <template v-slot:item.fromdate="{ item }">
         <span>{{item.fromdate | dt-time}}</span>

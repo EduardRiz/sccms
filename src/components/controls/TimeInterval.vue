@@ -1,5 +1,5 @@
 <template>
-  <v-chip :color="colorCode">
+  <v-chip :color="colorCode" :text-color="textColor">
     <span>{{startTime}}</span>
     <span class="mx-1">-</span>
     <span>{{endTime}}</span>
@@ -7,6 +7,8 @@
 </template>
 
 <script>
+import colors from "@/colorfunc.js";
+
 export default {
   name: "TimeInterval",
   props: ["start", "duration", "color"],
@@ -23,6 +25,9 @@ export default {
     colorCode() {
       return this.color;
     },
+    textColor(){
+      return colors.invertColor(this.color, true);
+    }
   },
 };
 </script>

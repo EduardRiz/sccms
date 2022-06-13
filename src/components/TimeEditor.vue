@@ -38,12 +38,26 @@ export default {
   watch: {
     value() {
       this.hours = this.value;
+      if (this.hours.length == 25) this.hours.splice(this.hours.length - 1, 1);
     },
   },
   methods: {
-    save() {
-      this.$emit("input", this.hours);
-    },
+    // normalize() {
+    //   try {
+    //     console.log(this.hours.length);
+    //     if (this.hours.length == 25)
+    //       this.hours.splice(this.hours.length - 1, 1);
+    //     if (this.value.length == 25)
+    //       this.value.splice(this.value.length - 1, 1);
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // },
+    // save() {
+    //   this.normalize();
+    //   console.log(this.hours.length);
+    //   this.$emit("input", this.hours);
+    // },
     toggle(h) {
       if (this.cur != null) {
         for (let i = this.cur; i <= h; i++) {
@@ -53,15 +67,16 @@ export default {
       this.cur = this.cur != null ? null : h;
     },
     clear() {
+      // this.normalize();
       for (let i = this.cur; i < 24; i++) {
         this.hours.splice(i, 1, 0);
       }
       this.cur = null;
     },
   },
-  mounted(){
-      this.hours = this.value;
-  }
+  mounted() {
+    this.hours = this.value;
+  },
 };
 </script>
 

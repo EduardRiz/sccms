@@ -1,6 +1,10 @@
 <template>
   <v-sheet class="sc-page-sheet">
-    <v-row class="my-2">
+    <v-row align="center" align-content="center">
+      <i18n
+        :path="'menu.'+$route.name.toLowerCase()"
+        class="ml-4 primary--text text-uppercase text-h4"
+      ></i18n>
       <v-spacer></v-spacer>
       <v-col cols="3">
         <v-text-field
@@ -41,7 +45,7 @@
       </template>
       <template v-slot:item.image="{ item }">
         <v-avatar v-if="item.img">
-          <v-img alt="Avatar" :src="$api.publicImgLink(item.img)" />
+          <v-img alt="Avatar" :src="$api.publicImgLink(item.img)"  lazy-src="/img/default-avatar.jpg"/>
         </v-avatar>
       </template>
       <!-- <template v-slot:item.display_name="{ item }">{{item.display_name}}</template> -->
@@ -122,10 +126,10 @@ export default {
           text: this.$t("fields.lastvisit"),
           value: "lastvisit",
         },
-        {
+        /*{
           text: this.$t("fields.activeservs"),
           value: "activeservices",
-        },
+        },*/
         {
           text: this.$t("fields.status"),
           value: "status",

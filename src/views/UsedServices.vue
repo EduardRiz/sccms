@@ -1,6 +1,10 @@
 <template>
   <v-sheet class="sc-page-sheet">
-    <v-row class="my-2">
+    <v-row class="my-2" align="center" align-content="center">
+      <i18n
+        :path="'menu.'+$route.name.toLowerCase()"
+        class="ml-4 primary--text text-uppercase text-h4"
+      ></i18n>
       <sc-dates-range v-model="range" class="ml-3" />
       <v-spacer></v-spacer>
       <span width="300px">

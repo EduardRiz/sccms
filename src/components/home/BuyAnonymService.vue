@@ -218,7 +218,9 @@ export default {
           idx: this.workout2assign.idx,
           coach: this.workout2assign.coach,
           room: this.workout2assign.room,
-          settings: { ...this.workout2assign.settings },
+          beginat: this.workout2assign.beginat,
+          duration: this.workout2assign.duration,
+          color: this.workout2assign.color,
         };
       }
       if (!this.service2add.count) {

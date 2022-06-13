@@ -265,6 +265,8 @@ export default {
       this.allowExistsCard = false;
       this.img = null;
       this.isExistsCard = false;
+      this.isCapturedImage = false;
+      this.isCameraActive = false;
       this.d_confirm = false;
     },
     camera: function (id) {
@@ -353,7 +355,8 @@ export default {
       this.isCameraActive = false;
     },
     onStop() {
-      if (this.isCameraActive) this.$refs.webcam.stop();
+      //console.log("stop", this.isCameraActive);
+      /*if (this.isCameraActive)*/ this.$refs.webcam.stop();
     },
     onStart() {
       if (!this.isCameraActive) this.$refs.webcam.start();

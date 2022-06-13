@@ -41,7 +41,7 @@ const actions = {
             api.apiPostRequest(apiBase, payload).then(response => {
                 if (response) {
                     // for transit created
-                    response.audit.created = response.audit.created ? response.audit.created : payload.audit.created;
+                    response.audit.created = response.audit.created ? response.audit.created : payload.created;
                     context.commit("saveItem", response);
                     resolve(response)
                 }

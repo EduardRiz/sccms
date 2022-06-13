@@ -1,1 +1,535 @@
-{}
+{
+    "title": "Sportclub CMS",
+    "fields": {
+        "created": "Izveidots",
+        "dsales": "Pārdošanas datums",
+        "updated": "Pēdējās izmaiņas",
+        "action": "Darījums",
+        "tags": "Tags",
+        "status": "Statuss",
+        "description": "Apraksts",
+        "group": "Grupa",
+        "coach": "Treneris",
+        "room": "Zāle",
+        "wsid": "Nodarbības dati",
+        "avatar": "Foto",
+        "client": "Klients",
+        "keyid": "Atslēgas ID",
+        "role": "Role",
+        "club": "Klubs",
+        "abonement": "Abonements",
+        "cardExists": "Karte jau eksistē. Vai izveidot kopiju?",
+        "service": "Pakalpojums",
+        "days": "Nedēļas diena",
+        "hours": "Darba stundas",
+        "frozen": "Iesaldēts ar",
+        "price": "Cena",
+        "time": "Laiks",
+        "license": "Licence",
+        "mac": "ID",
+        "atype": "Veids",
+        "fromDate": "Sākums",
+        "toDate": "Beigas",
+        "duration": "Derīguma termiņš",
+        "spendmin": "Apmeklējuma laiks (min)",
+        "scalarcount": "Izmantots (vien.)",
+        "valid": "Klubā pavadītais laiks",
+        "lastvisit": "Pēdējais apmeklējums",
+        "activeservs": "Pieejamie pakalpojumi",
+        "wofix": "Nedēļas diena / Datums",
+        "wodate": "Norādiet datumu",
+        "wodays": "Norādiet nedēļas dienu",
+        "wotime": "Nodarbības sākums",
+        "woduration": "Ilgums minūtēs",
+        "wodates": "Datums vai nedēļas diena",
+        "wotimes": "Sākums",
+        "wodurations": "Ilgums",
+        "duration_type": "Ilguma mērvienība",
+        "workout": "Nodarbība",
+        "aworkout": "Kā nodarbība",
+        "ascalar": "Daudzuma pakalpojums",
+        "atimed": "Ar laika ierobežojumu",
+        "spend": "Ilgums",
+        "visitcontrol": "Apmeklējuma laika ierobežojums",
+        "remainvisits": "Pieejamo apmeklējumu skaits",
+        "services": "Pakalpojums",
+        "card": "Kartes nr.",
+        "tariffs": "Tarifi",
+        "tariff": "Tarifs",
+        "servisvisits": "Apmeklējumu ierobežojums",
+        "dateofbuy": "Pirkuma datums",
+        "servis_timed": "Ilgums minūtēs",
+        "servis_scalar": "Izmantošanas reižu skaits",
+        "servis_visits": "Apmeklējumu skaits",
+        "count2reg": "Count to register",
+        "tariff_type": "Tarifa veids",
+        "buytag": "Papildus informācija par pirkumu",
+        "place": "Place",
+        "thread": "Thread",
+        "key": "Atslēga",
+        "keyname": "Atslēgas nosaukums",
+        "count": "Skaits",
+        "saletype": "Veids",
+        "sale": "Pārdošanas nosaukums",
+        "profile": "Profils",
+        "visitfrom": "Ienāca",
+        "visitto": "Izgāja",
+        "detail": "Papildus informācija",
+        "clubstart": "Darba sākuma laiks",
+        "clubstop": "Darba beigšanas laiks",
+        "text": "Teksts",
+        "type": "Veids",
+        "login": "Login",
+        "email": "e-pasts",
+        "phone": "Tālr.",
+        "date": "Datums",
+        "address": "Adrese",
+        "password": "Jauna parole",
+        "color": "Krāsa",
+        "cmsuser": "Operators",
+        "name": "Vārds"
+    },
+    "events": {
+        "counters": "Count of client changed"
+    },
+    "dialogs": {
+        "ryba": "{prefix} {object} (#{idx})",
+        "edit": "Mainīt",
+        "create": "Izveidot jaunu",
+        "key": "Atslēga",
+        "group": "Grupa",
+        "user": "Lietotājs",
+        "clientsservices": "Pieejamo pakalpojumu saraksts",
+        "freeze": "Klienta darbība ir iesaldēta {client}",
+        "freezefrom": "Norādiet iesaldēšanas datumu",
+        "frozen": "Klienta darbība ir iesaldēta ar {date}",
+        "room": "Zāle",
+        "history": "Apmeklējumu vēsture",
+        "client": "Klients",
+        "club": "Klubs",
+        "service": "Pakalpojumi",
+        "newrec": "Jauns ieraksts",
+        "tag": "Mainīt tagu ({idx})",
+        "time": "Mainīt laiku ({idx})",
+        "assignWorkout": "Izvēlēties nodarbību",
+        "assignKey": "Izsniegt atslēgu",
+        "buyAbonement": "Nopirkt abonementu",
+        "buyService": "Nopirkt pakalpojumu",
+        "addService": "Piepirkt pakalpojumu",
+        "prolongt": "Pagarināt derīguma termiņu",
+        "prolong": "Norādiet pakalpojuma jaunu beigu datumu",
+        "tariff": "Tarifs",
+        "ws": "Darba vietas datu maiņa {wsid}",
+        "workout": "Darba vieta",
+        "abonement": "abonements",
+        "wocalendar": "Nodarbību kalendārs",
+        "coach": "treneris",
+        "clients_purchases": "Klienta pirkumi"
+    },
+    "login": {
+        "title": "Autorizācija",
+        "login": "Lietotājs",
+        "pass": "Parole",
+        "b_login": "Ienākt"
+    },
+    "home": {
+        "cllist": "Atrasti klienti {size} ",
+        "klist": "Atrastas atslēgas {size}",
+        "keyinfo": "No: {from}",
+        "findlbl": "Meklēšana pēc klienta vai atslēgas ID",
+        "finderr": "ne mazāk par 3 simboliem",
+        "findhint": "Meklēšana pēc daļējiem klienta vai atslēgas datiem",
+        "scalar": "{count} no {total}",
+        "profile": "Klienta dati",
+        "from": "No : {date}",
+        "price": "Cena : {price}",
+        "to": "Līdz : {date}",
+        "total": " Patreiz kluba apmeklētāju skaits {count}",
+        "freekey": " Pieejamo atslēgu skaits {count}",
+        "clfrom": "Kluba klients no {created}",
+        "worktime": "Laiks : {time}",
+        "available": "Pieejamie pakalpojumi",
+        "usedservs": "Tekošā apmeklējuma jau izmantotie pakalpojumi",
+        "anonymservices": "Reģistrēt izmantošanu",
+        "unavailable": "Pašlaik nepieejamie pakalpojumi",
+        "clientin": "Klients ienāca klubā",
+        "stime": "Uzturēšanās laiks klubā (min)",
+        "ptime": "Apmaksātais laiks (min)",
+        "abonement": "Tekošais abonements"
+    },
+    "error": {
+        "required": "Obligāti aizpildīt",
+        "email": "Nepareizs e-pasts",
+        "login": "Klūda lietotāja vārdā vai parolē",
+        "noworkouts": "Nav pieejamu nodarbību",
+        "clientNotFound": "Klients nav atrasts",
+        "keysNotFound": "Atslēga {key} nav atrasta",
+        "accessToken": "Jūsu sesija ir beigusies. Atjaunojiet lapu un mēģiniet vēlreiz"
+    },
+    "tt": {
+        "extratime": "Apmaksātā laika bilance (+/-)",
+        "pandbcl": "Klientu skaits pēc taga {tag}",
+        "pandbk": "Neizmantotas atslēgas {tag}",
+        "panclin": "Kluba apmekletāji",
+        "pankeyava": "Pieejamas atslēgas",
+        "panwoava": "Šodienas nodarbību skaits",
+        "buyserv": "Pakalpojuma pirkšana",
+        "buyabn": "Abonementa pirkšana",
+        "clanon": "Anonīmu apmeklētāju apkalpošana",
+        "cladd": "Jauna klienta profila izveidošana",
+        "cledit": "Klienta profila izmaiņas",
+        "clservs": "Parādīt pieejamos pakalpojumus",
+        "clpurch": "Parādīt visus pirkumus",
+        "clhist": "Parādīt apmeklējumu vēsturi",
+        "m_clients": "Kluba klienti un atslēgas",
+        "m_abnmnt": "Kluba pakalpojumi un abonementi",
+        "m_clubsett": "Zāles, treneri un nodarbību saraksts",
+        "m_reportsm": "Kluba statistika",
+        "sm_clients": "Klienti",
+        "sm_keys": "Atslēgas",
+        "sm_services": "Kluba pieejamie pakalpojumi",
+        "sm_abonements": "Izveidotie abonementi",
+        "sm_tariffs": "Tarifu saraksts",
+        "sm_dicts": "Papildus uzstādījumi",
+        "sm_rooms": "Zāles",
+        "sm_coachs": "Treneri",
+        "sm_workouts": "Nodarbību grafiks",
+        "sm_soldabonements": "Pārdotie abonementi",
+        "sm_regvis": "Pakalpojumu izmantošana (pēc klientiem)",
+        "sm_regservs": "Pārdotie pakalpojumi (pēc klientiem)",
+        "sm_visits": "Reģistrētie apmeklējumi",
+        "clientout": "Close client's visit manually",
+        "workoutcalendar": "Show workouts calendars",
+        "reversal": "Purchase anulation"
+    },
+    "button": {
+        "save": "Saglabāt",
+        "buy": "Pirkt",
+        "ok": "Ok",
+        "freeze": "Iesaldēt",
+        "unfreeze": "Atcelt iesaldēšanu",
+        "reversal": "Atcelt pirkumu",
+        "add": "Pievienot",
+        "addservice": "Pievienot pakalpojumu",
+        "register": "Reģistrēt",
+        "cancel": "Atcelt",
+        "clone": "Kopēt",
+        "back": "Atpakaļ",
+        "prolong": "Pagarināt",
+        "filter": "Filtrs",
+        "unfilter": "Atcelt filtru",
+        "block": "Bloķēt",
+        "delete": "Dzēst"
+    },
+    "servs": {
+        "label": "Pakalpojuma veids",
+        "hint": {
+            "normal": "Pakalpojums ar iespēju ierobežot apmeklējumu skaitu abonementā (piemēram: trenažieru zāle, treniņš)",
+            "scalar": "Pakalpojums ar obligātu lietošanas apjoma norādi (piemēram, solārijs minūtē)",
+            "timed": "Pakalpojums, kas norāda maksimālo lietošanas ilgumu viena apmeklējuma laikā (piemēram: akvaparks, SPA)"
+        },
+        "normal": "Parasta",
+        "scalar": "Daudzuma pakalpojums",
+        "timed": "Ar laika ierobežojumu"
+    },
+    "caltypes": {
+        "month": "Mēnesis",
+        "day": "Diena",
+        "week": "Nedēļa"
+    },
+    "durations": [
+        "1 mēn", "2 mēn", "3 mēn", "4 mēn", "5 mēn", "6 mēn"
+    ],
+    "phone": {
+        "country": "Valsts kods",
+        "number": "numurs",
+        "example": "",
+        "error": "Nepareizs numurs"
+    },
+    "menu": {
+        "home": "Sākums",
+        "clienthome": "Client's dashboard",
+        "login": "",
+        "clubsett": "Klubs",
+        "abnmnt": "Abonementi",
+        "users": "Operatori",
+        "groups": "Klientu grupas",
+        "logs": "Žurnāls",
+        "logout": "Izeja",
+        "config": "Uzstādījumi",
+        "events": "Notikumu žurnāls",
+        "clients": "Klienti",
+        "services": "Pakalpojumi",
+        "rooms": "Zāles",
+        "coachs": "Treneri",
+        "tariffs": "Tarifu plāni",
+        "tariff":{
+            "tariffs": "Tarifu plāni",
+            "services": "Pakalpojumu tarifi",
+            "abonements": "Abonementu tarifi"
+        },
+        "workouts": "Nodarbību grafiks",
+        "todaywo": "Šodienas nodarbības",
+        "abonements": "Abonementi",
+        "regvis": "Izmantotie pakalpojumi",
+        "reports": "Atskaites",
+        "reportsm": "Tekošā statistika",
+        "clubs": "Sporta klubs",
+        "visits": "Apmeklētāji",
+        "activity": "Aktivitāšu žurnāls",
+        "anonymclienthome": "Anonīms klients",
+        "workstations": "Darba vietas",
+        "keys": "Atslēgas",
+        "regservs": "Aktīvie pakalpojumi",
+        "dicts": "Papildus uzstādījumi",
+        "soldabonements": "Pārdošanas"
+    },
+    "label": {
+        "regservnotfounds": "Nav reģistrētu apmeklētāju",
+        "startAt": "Sākuma laiks {time}",
+        "myclub": "Filtrēts pēc kluba",
+        "clubs2add": "Klubi, kuri izmanto šo pakalpojumu",
+        "nodata": "Ieraksts nav atrasts",
+        "selall": "Izvēlēties visu",
+        "blocked": "Radīt bloķētos",
+        "rowPerPage": "ierakstu skaits lapā",
+        "startDate": "Sākuma datums",
+        "startTime": "Sākuma laiks",
+        "endDate": "Beigu datums",
+        "endTime": "Beigu laiks",
+        "activeat": "uz izvēlēto datumu",
+        "freekey": "rādīt tikai pieejamas atslēgas",
+        "period": "Periods",
+        "filter": "Filtra parametri"
+    },
+    "periods": [{
+            "text": "Šodien",
+            "value": 1
+        },
+        {
+            "text": "Vakar",
+            "value": 2
+        }, {
+            "text": "Tekošā nedēļa",
+            "value": 3
+        },
+        {
+            "text": "Iepriekšējā nedēļa",
+            "value": 4
+        }, {
+            "text": "Tekošais mēnesis",
+            "value": 5
+        },
+        {
+            "text": "Iepriekšējais mēnesis",
+            "value": 6
+        },
+        {
+            "text": "No iepriekšējā mēneša",
+            "value": 7
+        },
+        {
+            "text": "Tekošais gads",
+            "value": 8
+        }
+    ],
+    "dict": {
+        "times": "Laika uzstādījumi",
+        "tags": "Pirkuma tagi",
+        "groups": "Atlaižu grupas"
+    },
+    "tariff_types": [{
+        "text": "Abonements",
+        "value": "ABONEMENT"
+    }, {
+        "text": "Pakalpojums",
+        "value": "SERVICE"
+    }],
+    "duration_types": [{
+        "text": "Stunda",
+        "value": "st"
+    }, {
+        "text": "Diena",
+        "value": "d"
+    }, {
+        "text": "Mēnesis",
+        "value": "mēn"
+    }],
+    "icons": {
+        "config": "mdi-cogs",
+        "users": "mdi-account",
+        "groups": "mdi-account-multiple",
+        "events": "mdi-notebook",
+        "logs": "mdi-notebook",
+        "clients": "mdi-account-group",
+        "services": "mdi-human-scooter",
+        "abonements": "mdi-table-multiple",
+        "abnmnt": "mdi-table-multiple",
+        "rooms": "mdi-greenhouse",
+        "coachs": "mdi-weight-lifter",
+        "workouts": "mdi-calendar-month",
+        "tariffs": "mdi-grid",
+        "boxkey": "mdi-key",
+        "client": "mdi-account",
+        "keys": "mdi-key-change",
+        "soldabonements": "mdi-cart-variant",
+        "regvis": "mdi-star-check-outline",
+        "regservs": "mdi-human-scooter",
+        "reportsm": "mdi-server",
+        "reports": "mdi-chart-multiple",
+        "clubsett": "mdi-city",
+        "clubs": "mdi-city-variant",
+        "visits": "mdi-account-supervisor",
+        "time": "mdi-clock",
+        "activity": "mdi-text-account",
+        "workstations": "mdi-lan",
+        "dicts": "mdi-notebook"
+    },
+    "week": [{
+        "text": "Pirmdiena",
+        "short": "P",
+        "value": 1
+    }, {
+        "text": "Otrdiena",
+        "short": "Ot",
+        "value": 2
+    }, {
+        "text": "Trešdiena",
+        "short": "Tr",
+        "value": 3
+    }, {
+        "text": "Ceturtdiena",
+        "short": "Ce",
+        "value": 4
+    }, {
+        "text": "Piektdiena",
+        "short": "Pk",
+        "value": 5
+    }, {
+        "text": "Sestdiena",
+        "short": "Se",
+        "value": 6
+    }, {
+        "text": "Svētdiena",
+        "short": "Sv",
+        "value": 7
+    }],
+    "week1": [
+        "Pirmdiena", "Otrdiena", "Trešdiena", "Ceturtdiena", "Piektdiena", "Sestdiena", "Svētdiena"
+    ],
+    "roles": [{
+        "text": "Anonīms",
+        "value": "BROKEN"
+    }, {
+        "text": "Operātors",
+        "value": "USER"
+    }, {
+        "text": "Galvenais operātors",
+        "value": "POWERUSER"
+    }, {
+        "text": "Administrātors",
+        "value": "ADMIN"
+    }],
+    "statuses": [{
+            "text": "Aktīvs",
+            "value": "OK"
+        }, {
+            "text": "Bloķēts",
+            "value": "BLOCKED"
+        },
+        {
+            "text": "Neaktīvs",
+            "value": "BROKEN"
+        }
+    ],
+    "atypes": ["Simple", "Freeze", "Prolong", "Unfreeze"],
+    "dialog": {
+        "ttl": {
+            "delete": "Apstiprināt",
+            "block": "Apstiprināt",
+            "reversal": "Apstiprināt",
+            "settime": "Apstiprināt"
+        },
+        "txt": {
+            "delete": "Dzēst ?",
+            "block": "Bloķēt ?",
+            "reversal": "Atcelt pirkumu ?",
+            "settime": "Reģistrēt izeju manuāli ?"
+        },
+        "btn": {
+            "delete": "Dzēst",
+            "reversal": "Atcelt",
+            "block": "Bloķēt",
+            "settime": "Ok"
+        },
+        "ico": {
+            "delete": "mdi-delete",
+            "reversal": "mdi-cash-refund",
+            "block": "mdi-cancel",
+            "settime": "mdi-clock-check-outline"
+        }
+    },
+    "report": {
+        "group": {
+            "clients": "Klienti",
+            "finances": "Finanses",
+            "club": "Klubs",
+            "chart": "Grafiki"
+        },
+        "title": {
+            "purchases": "Klientu pirkumi",
+            "coachsact": "Trenieru aktivitāte",
+            "clientsact": "Klientu aktivitāte",
+            "clientsvis": "Klientu apmeklējumi",
+            "chartvis": "Kluba noslogojums"
+        },
+        "icons": {
+            "purchases": "mdi-cart-outline",
+            "coachsact": "mdi-weight-lifter",
+            "clientsact": "mdi-human-scooter",
+            "clientsvis": "mdi-account",
+            "chartvis": "mdi-chart-bar"
+        },
+        "text": {
+            "purchases": "Pārdošanas atskaite par norādīto periodu. Ar iespēju filtrēt pēc vārda un klienta.",
+            "coachsact": "Treniņu atskaite par norādīto periodu, norādot treneri un apmeklētāju skaitu",
+            "clientsact": "Pārskats par klientu izmantoto kluba pakalpojumu, norādot treniņu, laiku vai vienību skaitu. Pakalpojuma izmantošana",
+            "clientsvis": "Atskaite par kluba apmeklējuma ilgumu, norādot atslēgas un detalizēti norādot klientu datus",
+            "chartvis": "Kluba apmeklētāju skaits pēc darba laika"
+        },
+        "chartvis": {
+            "title": "Noslogojums pēc laika",
+            "yaxis": "Apmekletāju skaits",
+            "xaxis": "Dienas laiks",
+            "hint": "Apmeklētāju skaits: "
+        },
+        "clientsvis": {
+            "spendtime": "Izmantotais laiks"
+        },
+        "created": "Atskaite izveidota {ts}",
+        "range": "Izvēlieties periodu",
+        "period": "Izvēlētais periods : {st} - {ed}",
+        "filterby": "Izmantotais filtrs",
+        "filterBySportclub": "pēc kluba",
+        "filterBySale": "pēc pārdošanas",
+        "filterByTariff": "pēc tarifiem",
+        "filterByCoach": "pēc treneriem",
+        "filterByWorkout": "pēc nodarbībām",
+        "filterByService": "pēc pakalpojumiem",
+        "filterByClient": "pēc klientiem",
+        "filterByKey": "pēc atslēgām",
+        "total": "Kopā: {total}",
+        "totaldur": "Kopā: {total}, vidējais lielums: {average}",
+        "rows": "Rindu skaits: {rows}"
+    },
+    "testcode": {
+        "0": "Pakalpojums ir pieejams",
+        "5": "Pakalpojums nav pieejams izvēlētajā klubā",
+        "1": "Pakalpojums nav pieejams izvēlētajā datumā",
+        "2": "Pakalpojums ir pieejams citā dienā",
+        "3": "Pakalpojums ir pieejams citā laikā",
+        "92": "Apmaksātie apmeklējumi ir beigušies",
+        "93": "Apmaksātais pakalpojums ir izmantots"
+    }
+
+}

@@ -3,7 +3,7 @@
     <sc-dashboard-panel />
     <v-main class="vertical-center raduis-25">
       <v-row justify="center">
-        <v-col cols="10">
+        <v-col cols="8">
           <v-card class="main-card raduis-25">
             <v-card-title>
               <v-spacer></v-spacer>

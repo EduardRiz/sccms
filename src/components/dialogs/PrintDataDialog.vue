@@ -26,9 +26,9 @@
           <template v-for="(v,k) in filter">
             <tr v-if="v" :key="k">
               <td>
-                <i18n :path="'fields.'+k" />
+                <i18n :path="'fields.'+k" style="margin-right: 12px;"/>
               </td>
-              <th>{{v}}</th>
+              <th style="text-align: left;">{{v}}</th>
             </tr>
           </template>
         </table>
@@ -48,6 +48,7 @@
               <td>{{pos+1}}</td>
               <template v-for="h in headers">
                 <td :key="h.value" v-if="h.value=='price'" align="right">{{item[h.value]|currency}}</td>
+                <td :key="h.value" v-else-if="h.value=='duration'" align="right">{{item|fduration}}</td>
                 <td :key="h.value" v-else :align="h.align">{{item[h.value]}}</td>
               </template>
             </tr>
@@ -66,6 +67,8 @@
 </template>
 
 <script>
+import moment from "moment";
+
 export default {
   name: "PrintDataDialog",
   props: {
@@ -85,6 +88,17 @@ export default {
   methods: {
     printdoc() {
       window.print();
+    },
+  },
+  filters: {
+    fduration(i) {
+      try {
+        return moment
+          .duration(moment(i.todate).diff(moment(i.fromdate)))
+          .humanize();
+      } catch (error) {
+        return "";
+      }
     },
   },
   computed: {

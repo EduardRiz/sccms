@@ -23,7 +23,7 @@
               <v-text-field
                 v-model.trim="user"
                 :placeholder="$t('login.login')"
-                name="login"
+                name="username"
                 outlined
                 autofocus
                 shaped
@@ -73,7 +73,7 @@ export default {
       userRules: [(v) => !!v || this.$t("error.required")],
       pass: "",
       domen: "",
-      wsid: null
+      wsid: null,
     };
   },
   mounted() {
@@ -102,7 +102,7 @@ export default {
             pars: {
               username: this.user,
               pass: this.pass,
-              wsid: this.wsid
+              wsid: this.wsid,
             },
             __vm: this,
           })
@@ -117,7 +117,7 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style scoped lang="scss">
 .login-class {
   border-radius: 25px !important;
 }

@@ -14,9 +14,11 @@
           :items="items_"
           item-key="idx"
           class="transparent table-custom"
+          :footer-props="foot_props"
+          :no-data-text="$t('label.nodata')"
         >
           <template #item.created="{ item }">
-            <span v-if="item.audit">{{item.audit.created | dt-time}}</span>
+            <span v-if="item">{{item.created | dt-time}}</span>
           </template>
           <template #item.workout="{ item }">
             <v-icon>{{item.workout?"mdi-check":""}}</v-icon>
@@ -44,6 +46,9 @@
             <span>{{item.time.hours | time_interval}}</span>
           </template>
           <template #item.fromDate="{ item }">{{item.fromDate | dt-only}}</template>
+          <template #item.testcode="{ item }">
+            <ServiceTestField :item="item" />
+          </template>
           <template #item.toDate="{ item }">
             <span>{{item.toDate | dt-only}}</span>
             <v-btn v-if="isCanProlog" icon color="primary" @click.stop="openProlong(item)">
@@ -83,8 +88,11 @@
 </template>
 
 <script>
+import ServiceTestField from "@/components/controls/ServiceTestField";
+
 export default {
   name: "ClientServicesList",
+  components: { ServiceTestField },
   props: {
     items: Array,
     value: Boolean,
@@ -128,17 +136,27 @@ export default {
         },
         {
           text: this.$t("fields.fromDate"),
-          value: "fromDate",
+          value: "fromdate",
         },
         {
           text: this.$t("fields.toDate"),
-          value: "toDate",
+          value: "todate",
         },
         {
-          text: "",
+          text: this.$t("fields.status"),
           value: "testcode",
+          sortable: false,
         },
       ],
+      foot_props: {
+        itemsPerPageOptions: [10, 14, 20, 50, 100], // -> Add this example
+        showFirstLastPage: true,
+        firstIcon: "mdi-arrow-collapse-left",
+        lastIcon: "mdi-arrow-collapse-right",
+        prevIcon: "mdi-less-than",
+        nextIcon: "mdi-greater-than",
+        itemsPerPageText: this.$t("label.rowPerPage"),
+      },
     };
   },
   computed: {

@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  name: "daterange",
+  name: "AskValidDate",
   props: {
     value: String,
   },

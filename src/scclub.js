@@ -21,23 +21,28 @@ import filters from './filters.js';
 
 const settings = {
     reports: [{
-        id: "1",
+        id: "Report-1",
         label: "purchases",
         groups: ["finances", "clients"]
     }, {
-        id: "2",
+        id: "Report-2",
         label: "coachsact",
         groups: ["club"]
     }, {
-        id: "3",
+        id: "Report-3",
         label: "clientsact",
         groups: ["clients"]
     }, {
-        id: "4",
+        id: "Report-4",
         label: "clientsvis",
         groups: ["clients"]
+    }, {
+        id: "Chart-1",
+        label: "chartvis",
+        aclass:"green white--text",
+        groups: ["chart", "clients"]
     }],
-    groups: ["finances", "clients", "club"],
+    groups: ["finances", "clients", "club", "chart"],
     upper_menu: [{
             text: "clients",
             fmenu: false,

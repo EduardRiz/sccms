@@ -1,9 +1,13 @@
 <template>
   <div>
     <v-row align="center" align-content="center">
-      <i18n path="menu.tariffs" class="ml-3 text-h5" />
+      <i18n
+        :path="'menu.tariff.'+$route.name.toLowerCase()"
+        class="ml-4 primary--text text-uppercase text-h4"
+      ></i18n>
+
       <v-spacer></v-spacer>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-select
           v-model="filter.type"
           :items="$t('tariff_types')"
@@ -12,13 +16,13 @@
           v-if="alltypes"
         ></v-select>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-select v-model="filter.tag" :items="tags" :label="$t('fields.tags')" clearable></v-select>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" clearable></v-text-field>
       </v-col>
-      <v-btn icon class="error ma-4" dark to="/">
+      <v-btn icon class="error ma-4" dark @click="close">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-row>
@@ -50,12 +54,21 @@
       <template v-slot:item.spend="{ item }">
         <span>{{item.duration | spend_filter}}</span>
       </template>
+      <template v-slot:item.type="{ item }">
+        <span>{{item.type | tarifftype($t("tariff_types"))}}</span>
+      </template>
       <template v-slot:item.price="{ item }">{{item.price*100 | currency}}</template>
       <template v-slot:item.status="{ item }">
         <sc-record-status :status="item.info.status" />
       </template>
       <template v-slot:footer.prepend>
-        <v-btn fab @click="edit(null)" dark class="pink my-1" v-if="$store.getters['session/testPowerUser']">
+        <v-btn
+          fab
+          @click="edit(null)"
+          dark
+          class="pink my-1"
+          v-if="$store.getters['session/testPowerUser']"
+        >
           <v-icon color="white">mdi-plus</v-icon>
         </v-btn>
         <v-btn fab @click="saveTariffs" dark class="accept-btn success" v-if="isSelectable">
@@ -63,7 +76,7 @@
         </v-btn>
       </template>
     </v-data-table>
-    <sc-tariff-dialog v-model="d_edit" :item.sync="item" :type="type" />
+    <sc-tariff-dialog v-model="d_edit" :item.sync="item" :type="type" @save="saveTariff" />
   </div>
 </template>
 
@@ -104,6 +117,15 @@ export default {
   },
   components: {
     "sc-tariff-dialog": () => import("@/components/dialogs/TariffDialog"),
+  },
+  filters: {
+    tarifftype(v, list) {
+      try {
+        return list.find((e) => e.value == v).text;
+      } catch (error) {
+        return v;
+      }
+    },
   },
   computed: {
     selected2() {
@@ -182,6 +204,21 @@ export default {
     },
   },
   methods: {
+    saveTariff(t) {
+      if (!this.item.idx) {
+        let a = [];
+        try {
+          this.selected.forEach((e) => {
+            a.push(e.idx);
+          });
+          a.push(t.idx);
+        } catch (error) {
+          console.log(error.message);
+        }
+        this.$emit("onSave", a);
+        this.close();
+      }
+    },
     saveTariffs() {
       let a = [];
       try {
@@ -196,6 +233,9 @@ export default {
     edit(i) {
       this.item = this.$api.copy(i, DEF_ITEM);
       this.d_edit = true;
+    },
+    close() {
+      this.$emit("onClose");
     },
   },
   mounted() {

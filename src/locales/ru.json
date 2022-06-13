@@ -1,1 +1,535 @@
-{}
+{
+    "title": "Sportclub CMS",
+    "fields": {
+        "created": "Создан",
+        "dsales": "Дата продажи",
+        "updated": "Последнее изменение",
+        "action": "Действие",
+        "tags": "Тэг",
+        "status": "Состояние",
+        "description": "Описание",
+        "group": "Группа",
+        "coach": "Тренер",
+        "room": "Зал",
+        "wsid": "данные тренеровки",
+        "avatar": "Фото",
+        "client": "Клиент",
+        "keyid": "ID ключа",
+        "role": "Role",
+        "club": "Клуб",
+        "abonement": "Абонемент",
+        "cardExists": "Карта уже существует. Создать копию карты?",
+        "service": "Услуга",
+        "days": "День недели",
+        "hours": "Часы работы",
+        "frozen": "Заморожен с",
+        "price": "Цена",
+        "time": "Время",
+        "license": "Лицензия",
+        "mac": "ID",
+        "atype": "Вид",
+        "fromDate": "Начало",
+        "toDate": "Окончание",
+        "duration": "Срок действия",
+        "spendmin": "Продолжительность в мин.",
+        "scalarcount": "Использовано (ед.)",
+        "valid": "Время проведенное в клубе",
+        "lastvisit": "Последнее посещение",
+        "activeservs": "Доступно услуг",
+        "wofix": "День недели / Дата",
+        "wodate": "Укажите дату",
+        "wodays": "Укажите день недели",
+        "wotime": "Начало тренировки",
+        "woduration": "Продолжительность в минутах",
+        "wodates": "Дата или день недели",
+        "wotimes": "Начало",
+        "wodurations": "Продолжительность",
+        "duration_type": "Вид продолжительности",
+        "workout": "Тренировка",
+        "aworkout": "Как тренировка",
+        "ascalar": "Количественная услуга",
+        "atimed": "С ограничением по времени",
+        "spend": "Продолжительность",
+        "visitcontrol": "Ограничение времени посещения",
+        "remainvisits": "Осталось посещений",
+        "services": "Сервис",
+        "card": "№ карты",
+        "tariffs": "Тарифы",
+        "tariff": "Тариф",
+        "servisvisits": "Ограничение по посещениям",
+        "dateofbuy": "Дата покупки",
+        "servis_timed": "Продолжительность в мин.",
+        "servis_scalar": "Количество использований",
+        "servis_visits": "Количество посещений",
+        "count2reg": "Count to register",
+        "tariff_type": "Вид тарифа",
+        "buytag": "Доп. информации о покупке",
+        "place": "Place",
+        "thread": "Thread",
+        "key": "Ключ",
+        "keyname": "Имя ключа",
+        "count": "Количество",
+        "saletype": "Вид",
+        "sale": "Наименование продажи",
+        "profile": "Профиль",
+        "visitfrom": "Вход",
+        "visitto": "Выход",
+        "detail": "Доп. информация",
+        "clubstart": "Время начала работы",
+        "clubstop": "Время окончания работы",
+        "text": "Текст",
+        "type": "Вид",
+        "login": "Login",
+        "email": "Эл.почта",
+        "phone": "Тел.",
+        "date": "Дата",
+        "address": "Адрес",
+        "password": "Новый пароль",
+        "color": "Цвет",
+        "cmsuser": "Оператор",
+        "name": "Имя"
+    },
+    "events": {
+        "counters": "Count of client changed"
+    },
+    "dialogs": {
+        "ryba": "{prefix} {object} (#{idx})",
+        "edit": "Изменить",
+        "create": "Создать",
+        "key": "Ключ",
+        "group": "Група",
+        "user": "Пользователь",
+        "clientsservices": "Список доступных услуг",
+        "freeze": "Клиент заморожен {client}",
+        "freezefrom": "Укажите дату начала заморозки",
+        "frozen": "Клиент заморожен с {date}",
+        "room": "Зал",
+        "history": "История посещений",
+        "client": "Клиент",
+        "club": "Клуб",
+        "service": "Услуги",
+        "newrec": "Новая запись",
+        "tag": "Изменить тэг ({idx})",
+        "time": "Изменить время ({idx})",
+        "assignWorkout": "Назначить тренировку",
+        "assignKey": "Выдать ключ",
+        "buyAbonement": "Купить абонемент",
+        "buyService": "Купить услугу",
+        "addService": "Докупить услугу",
+        "prolongt": "Продлить срок действия",
+        "prolong": "Укажите новую дату окончания работы сервиса",
+        "tariff": "Тариф",
+        "ws": "Изменение данных рабочего места {wsid}",
+        "workout": "Рабочее место",
+        "abonement": "абонемент",
+        "wocalendar": "Календарь тренеровок",
+        "coach": "тренер",
+        "clients_purchases": "Покупки клиента"
+    },
+    "login": {
+        "title": "Авторизация",
+        "login": "Пользователь",
+        "pass": "Пароль",
+        "b_login": "Войти"
+    },
+    "home": {
+        "cllist": "Найденно клиентов {size} ",
+        "klist": "Найденно ключей {size}",
+        "keyinfo": "С: {from}",
+        "findlbl": "Поиск по клиенту или ID ключа",
+        "finderr": "не менее 3 символов",
+        "findhint": "Find clients or keys by part of card or client name or key id",
+        "scalar": "{count} из {total}",
+        "profile": "Данные клиента",
+        "from": "С : {date}",
+        "price": "Цена : {price}",
+        "to": "До : {date}",
+        "total": " Сейчас в клубе {count} посетителей(я)",
+        "freekey": " Кол-во доступных ключей {count}",
+        "clfrom": "Клиент клуба с {created}",
+        "worktime": "Время : {time}",
+        "available": "Доступные к использованию услуги",
+        "usedservs": "Зарегистрированные использования",
+        "anonymservices": "Регистрировать использование",
+        "unavailable": "Временно недоступые услуги",
+        "clientin": "Клиент вошел в клуб",
+        "stime": "Время пребывания внутри (в минутах)",
+        "ptime": "Купленное время (minutes)",
+        "abonement": "Текущий абонемент"
+    },
+    "error": {
+        "required": "Необходимо к заполнению",
+        "email": "Неправильный формат э-почты",
+        "login": "Ошибка в имени пользователя или пароле",
+        "noworkouts": "Нет доступных тренировок",
+        "clientNotFound": "Клиент не найден",
+        "keysNotFound": "Ключ {key} не найден",
+        "accessToken": "Ваша сессия закончилась! Обновите страницу и попробуйте снова"
+    },
+    "tt": {
+        "extratime": "Разница между купленным и использованным временем",
+        "pandbcl": "Количество клиентов по тэгу {tag}",
+        "pandbk": "Свободные ключи",
+        "panclin": "Посетители клуба",
+        "pankeyava": "Доступные ключи",
+        "panwoava": "Количество сегодняшних тренировок",
+        "buyserv": "Покупка услуги",
+        "buyabn": "Покупка абонемента",
+        "clanon": "Обслуживание анонимных посетителей ",
+        "cladd": "Создание нового клиента",
+        "cledit": "Изменение данных клиента",
+        "clservs": "Показать доступные услуги",
+        "clpurch": "Показать все покупки",
+        "clhist": "Показать историю посещений",
+        "m_clients": "Клиенты клуба и ключи",
+        "m_abnmnt": "Услуги и абонементы клуба",
+        "m_clubsett": "Залы, тренера и график тренеровок",
+        "m_reportsm": "Статистика клуба",
+        "sm_clients": "Клиенты",
+        "sm_keys": "Ключи",
+        "sm_services": "Доступные Услуги клуба",
+        "sm_abonements": "Созданные Абонементы",
+        "sm_tariffs": "Список всех тарифов",
+        "sm_dicts": "Дополнительные настройки",
+        "sm_rooms": "Залы",
+        "sm_coachs": "Тренера",
+        "sm_workouts": "График тренеровок",
+        "sm_soldabonements": "Проданные абонементы",
+        "sm_regvis": "Пользование услуг по клиентам",
+        "sm_regservs": "Купленные услуги по клиентам",
+        "sm_visits": "Зарегистрированные посещения",
+        "clientout": "Зарегистрировать выход вручную",
+        "workoutcalendar": "Показать календарь тренеровок",
+        "reversal": "Отмена покупки"
+    },
+    "button": {
+        "save": "Сохранить",
+        "buy": "Купить",
+        "ok": "Ок",
+        "freeze": "Заморозить",
+        "unfreeze": "Разморозить",
+        "reversal": "Отменить покупку",
+        "add": "Добавить",
+        "addservice": "Добавить услугу",
+        "register": "Зарегистрировать",
+        "cancel": "Отменить",
+        "clone": "Клонировать",
+        "back": "Назад",
+        "prolong": "Продлить",
+        "filter": "Фильтр",
+        "unfilter": "Отменить фильтр",
+        "block": "Блокировать",
+        "delete": "Удалить"
+    },
+    "servs": {
+        "label": "Тип услуги",
+        "hint": {
+            "normal": "Услуга с возможностью ограничения количества посещений в абонементе (пример: тренажерный зал, тренировки)",
+            "scalar": "Услуга с обязательным указанием количества использования (пример: солярий по минутам)",
+            "timed": "Услуга с указанием максимального времени продолжительности использования за одно посещение (например: аквапарк, СПА)"
+        },
+        "normal": "Простая",
+        "scalar": "Количественное использование",
+        "timed": "С ограничением по времени"
+    },
+    "caltypes": {
+        "month": "Месяц",
+        "day": "День",
+        "week": "Неделя"
+    },
+    "durations": [
+        "1 мес", "2 мес", "3 мес", "4 мес", "5 мес", "6 мес"
+    ],
+    "phone": {
+        "country": "Код страны",
+        "number": "Номер",
+        "example": "",
+        "error": "Неправильный номер"
+    },
+    "menu": {
+        "home": "Начало",
+        "clienthome": "Client's dashboard",
+        "login": "",
+        "clubsett": "Клуб",
+        "abnmnt": "Абонементы",
+        "users": "Операторы",
+        "groups": "Группы клиентов",
+        "logs": "Журнал",
+        "logout": "Выход",
+        "config": "Настройки",
+        "events": "Журнал событий",
+        "clients": "Клиенты",
+        "services": "Услуги",
+        "rooms": "Залы",
+        "coachs": "Тренера",
+        "tariffs": "Тарифные планы",
+        "tariff":{
+            "tariffs": "Тарифные планы",
+            "services": "Тарифы услуг",
+            "abonements": "Тарифы абонементов"
+        },
+        "workouts": "График тренеровок",
+        "todaywo": "Сегодняшние тренеровки",
+        "abonements": "Абонементы",
+        "regvis": "Использованные услуги",
+        "reports": "отчеты",
+        "reportsm": "Живая статистика",
+        "clubs": "Спортивный клуб",
+        "visits": "Посетители",
+        "activity": "Журнал активности",
+        "anonymclienthome": "Анонимный клиент",
+        "workstations": "Рабочие места",
+        "keys": "Ключи",
+        "regservs": "Активные услуги",
+        "dicts": "Дополнительные настройки",
+        "soldabonements": "Продажи"
+    },
+    "label": {
+        "regservnotfounds": "Нет зарегистрированных посетителей",
+        "startAt": "Начало в {time}",
+        "myclub": "Отфильтровано по клубу",
+        "clubs2add": "Клубы использующие эту услугу",
+        "nodata": "Запись не найдена",
+        "selall": "Выбрать всё",
+        "blocked": "Показать заблокированные",
+        "rowPerPage": "Записей на странице",
+        "startDate": "Начальная дата",
+        "startTime": "Время начала",
+        "endDate": "Конечная дата",
+        "endTime": "Время окончания",
+        "period": "Период",
+        "activeat": "на указанную дату",
+        "freekey": "показывать только доступные ключи",
+        "filter": "Параметры фильтра"
+    },
+    "periods": [{
+            "text": "Сегодня",
+            "value": 1
+        },
+        {
+            "text": "Вчера",
+            "value": 2
+        }, {
+            "text": "Текущая неделя",
+            "value": 3
+        },
+        {
+            "text": "Предыдущая неделя",
+            "value": 4
+        }, {
+            "text": "Текущий месяц",
+            "value": 5
+        },
+        {
+            "text": "Предыдущий месяц",
+            "value": 6
+        },
+        {
+            "text": "С предыдущего месяца",
+            "value": 7
+        },
+        {
+            "text": "Текущий год",
+            "value": 8
+        }
+    ],
+    "dict": {
+        "times": "Настройки времени",
+        "tags": "Тэги покупок",
+        "groups": "Группы скидок"
+    },
+    "tariff_types": [{
+        "text": "Абонемент",
+        "value": "ABONEMENT"
+    }, {
+        "text": "Услуга",
+        "value": "SERVICE"
+    }],
+    "duration_types": [{
+        "text": "Час",
+        "value": "ч"
+    }, {
+        "text": "День",
+        "value": "д"
+    }, {
+        "text": "Месяц",
+        "value": "мес"
+    }],
+    "icons": {
+        "config": "mdi-cogs",
+        "users": "mdi-account",
+        "groups": "mdi-account-multiple",
+        "events": "mdi-notebook",
+        "logs": "mdi-notebook",
+        "clients": "mdi-account-group",
+        "services": "mdi-human-scooter",
+        "abonements": "mdi-table-multiple",
+        "abnmnt": "mdi-table-multiple",
+        "rooms": "mdi-greenhouse",
+        "coachs": "mdi-weight-lifter",
+        "workouts": "mdi-calendar-month",
+        "tariffs": "mdi-grid",
+        "boxkey": "mdi-key",
+        "client": "mdi-account",
+        "keys": "mdi-key-change",
+        "soldabonements": "mdi-cart-variant",
+        "regvis": "mdi-star-check-outline",
+        "regservs": "mdi-human-scooter",
+        "reportsm": "mdi-server",
+        "reports": "mdi-chart-multiple",
+        "clubsett": "mdi-city",
+        "clubs": "mdi-city-variant",
+        "visits": "mdi-account-supervisor",
+        "time": "mdi-clock",
+        "activity": "mdi-text-account",
+        "workstations": "mdi-lan",
+        "dicts": "mdi-notebook"
+    },
+    "week": [{
+        "text": "Понедельник",
+        "short": "Пн",
+        "value": 1
+    }, {
+        "text": "Вторник",
+        "short": "Вт",
+        "value": 2
+    }, {
+        "text": "Среда",
+        "short": "Ср",
+        "value": 3
+    }, {
+        "text": "Четверг",
+        "short": "Чт",
+        "value": 4
+    }, {
+        "text": "Пятница",
+        "short": "Пт",
+        "value": 5
+    }, {
+        "text": "Суббота",
+        "short": "Сб",
+        "value": 6
+    }, {
+        "text": "Воскресение",
+        "short": "Вс",
+        "value": 7
+    }],
+    "week1": [
+        "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресение"
+    ],
+    "roles": [{
+        "text": "Аноним",
+        "value": "BROKEN"
+    }, {
+        "text": "Обычн. оператор",
+        "value": "USER"
+    }, {
+        "text": "Оператор с повыш. правами",
+        "value": "POWERUSER"
+    }, {
+        "text": "Администратор",
+        "value": "ADMIN"
+    }],
+    "statuses": [{
+            "text": "Активный",
+            "value": "OK"
+        }, {
+            "text": "Блокирован",
+            "value": "BLOCKED"
+        },
+        {
+            "text": "Не активный",
+            "value": "BROKEN"
+        }
+    ],
+    "atypes": ["Simple", "Freeze", "Prolong", "Unfreeze"],
+    "dialog": {
+        "ttl": {
+            "delete": "Подтвердить",
+            "block": "Подтвердить",
+            "reversal": "Подтвердить",
+            "settime": "Подтвердить"
+        },
+        "txt": {
+            "delete": "Удалить ?",
+            "block": "Блокировать ?",
+            "reversal": "Отменить покупку ?",
+            "settime": "Зарегистрировать выход вручную ?"
+        },
+        "btn": {
+            "delete": "Удалить",
+            "reversal": "Отменить",
+            "block": "Блокировать",
+            "settime": "Ок"
+        },
+        "ico": {
+            "delete": "mdi-delete",
+            "reversal": "mdi-cash-refund",
+            "block": "mdi-cancel",
+            "settime": "mdi-clock-check-outline"
+        }
+    },
+    "report": {
+        "group": {
+            "clients": "Клиенты",
+            "finances": "Финансы",
+            "club": "Клуб",
+            "chart": "Графики"
+        },
+        "title": {
+            "purchases": "Покупки клиентов",
+            "coachsact": "Активность тренеров",
+            "clientsact": "Активность клиентов",
+            "clientsvis": "Посещения клиентов",
+            "chartvis": "Нагрузка по времени"
+        },
+        "icons": {
+            "purchases": "mdi-cart-outline",
+            "coachsact": "mdi-weight-lifter",
+            "clientsact": "mdi-human-scooter",
+            "clientsvis": "mdi-account",
+            "chartvis": "mdi-chart-bar"
+        },
+        "text": {
+            "purchases": "Отчет по продажам за указанный период. С возможностью фильтрации по наименованию и клиенту",
+            "coachsact": "Отчет проведенных тренировок за указанный период с указанием тренера и количеством посетителей",
+            "clientsact": "Отчет по использованию клиентами услуг клуба с указанием тренировки, времени или количества ед. использования услуги",
+            "clientsvis": "Отчет по продолжительности посещения клуба с указанием ключей и детализацией клиентов",
+            "chartvis": "График, отображающий количество посетителей текущего клуба по часам работы"
+        },
+        "chartvis": {
+            "title": "Заполняемость клуба по времени",
+            "yaxis": "Количество посетителей",
+            "xaxis": "Время дня",
+            "hint": "Кол-во посетителей: "
+        },
+        "clientsvis": {
+            "spendtime": "Использованное время"
+        },
+        "created": "Отчет создан {ts}",
+        "range": "Укажите период отчета",
+        "period": "Выбранный период : {st} - {ed}",
+        "filterby": "Применимый фильтр",
+        "filterBySportclub": "по клубу",
+        "filterBySale": "по продажам",
+        "filterByTariff": "по тарифам",
+        "filterByCoach": "по тренерам",
+        "filterByWorkout": "по тренеровкам",
+        "filterByService": "по услугам",
+        "filterByClient": "по клиентам",
+        "filterByKey": "по ключам",
+        "total": "Итого: {total}",
+        "totaldur": "Всего: {total}, среднее значение: {average}",
+        "rows": "Строк: {rows}"
+    },
+    "testcode": {
+        "0": "Услуга доступна",
+        "5": "Услуга недоступна в данном клубе",
+        "1": "Услуга недоступна по дате использования",
+        "2": "Услуга доступна в другой день",
+        "3": "Услуга доступна, но в другое время дня",
+        "92": "Купленные посещения закончились",
+        "93": "Вся преобретенная услуга закончилась"
+    }
+
+}
