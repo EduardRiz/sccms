@@ -32,6 +32,9 @@
       <template v-slot:item.count="{ item }">
         <span v-if="item.count">{{item.count}}</span>
       </template>
+      <template v-slot:item.comment="{ item }">
+        <span v-if="item.visitdet">{{item.visitdet.comment}}</span>
+      </template>
       <template v-slot:item.time="{ item }">
         <sc-time-interval
           v-if="item.wdet.idx"
@@ -72,6 +75,10 @@ export default {
         {
           text: this.$t("fields.client"),
           value: "client",
+        },
+        {
+          text: this.$t("fields.comment"),
+          value: "comment",
         },
         // {
         //   text: this.$t("fields.avatar"),

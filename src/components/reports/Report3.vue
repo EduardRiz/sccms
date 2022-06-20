@@ -62,6 +62,9 @@
         <template #item.position="{ item }">
           <span>{{data.indexOf(item)+1}}</span>
         </template>
+        <template v-slot:item.comment="{ item }">
+          <span v-if="item.visitdet">{{item.visitdet.comment}}</span>
+        </template>
         <template #item.scalarcount="{ item }">
           <span v-if="item.scalar">{{item.scalarcount}}</span>
         </template>
@@ -145,6 +148,10 @@ export default {
         {
           text: this.$t("fields.client"),
           value: "client",
+        },
+        {
+          text: this.$t("fields.comment"),
+          value: "comment",
         },
         {
           text: this.$t("fields.workout"),

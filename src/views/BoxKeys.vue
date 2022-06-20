@@ -83,6 +83,7 @@
               v-model="item.sportclub"
               :items="$store.getters['clubs/items']"
               :label="$t('fields.club')"
+              :rules="[v=>!!v||$t('error.required')]"
               item-value="idx"
               item-text="info.name"
             ></v-select>
@@ -172,6 +173,7 @@ export default {
     save() {
       if (!this.$refs.form.validate()) return;
       if (!this.item.tags || this.item.tags.length == 0) return;
+      this.item.keyid = this.item.keyid.replace(/(?:\r\n|\r|\n)/g,"")
       this.$store.dispatch(store_module + "/SAVE", this.item).then(() => {
         this.d_edit = false;
       });
@@ -191,6 +193,7 @@ export default {
     this.freeonly = this.$route.path == '/keys/free'
     try {
       this.$root.$on("app-event/hid", (e) => {
+        //console.log(this.$store.getters["session/testWsid"](e.detail.wsid))
         if (!this.$store.getters["session/testWsid"](e.detail.wsid)) return;
         if (!this.d_edit) return;
         this.$set(this.item, "keyid", e.detail.data);

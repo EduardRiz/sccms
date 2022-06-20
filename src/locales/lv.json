@@ -86,6 +86,7 @@
         "address": "Adrese",
         "password": "Jauna parole",
         "color": "Krāsa",
+        "comment": "Komentārs",
         "cmsuser": "Operators",
         "name": "Vārds"
     },
@@ -198,9 +199,11 @@
         "sm_regvis": "Pakalpojumu izmantošana (pēc klientiem)",
         "sm_regservs": "Pārdotie pakalpojumi (pēc klientiem)",
         "sm_visits": "Reģistrētie apmeklējumi",
-        "clientout": "Close client's visit manually",
-        "workoutcalendar": "Show workouts calendars",
-        "reversal": "Purchase anulation"
+        "clientout": "Reģistrēt klienta izēju manuāli",
+        "clientoutbtn": "Reģistrēt klienta izēju",
+        "vcomment": "Pievienot komentāru apmeklējumam",
+        "workoutcalendar": "Rādīt treniņu kalendāru",
+        "reversal": "Pirkuma anulēšana"
     },
     "button": {
         "save": "Saglabāt",
@@ -280,6 +283,7 @@
         "anonymclienthome": "Anonīms klients",
         "workstations": "Darba vietas",
         "keys": "Atslēgas",
+        "keysfree": "Atslēgas",
         "regservs": "Aktīvie pakalpojumi",
         "dicts": "Papildus uzstādījumi",
         "soldabonements": "Pārdošanas"
@@ -287,6 +291,8 @@
     "label": {
         "regservnotfounds": "Nav reģistrētu apmeklētāju",
         "startAt": "Sākuma laiks {time}",
+        "openedvis":"Rādīt kas tagad ir klubā",
+        "allvis":"Visi apmeklējumi",
         "myclub": "Filtrēts pēc kluba",
         "clubs2add": "Klubi, kuri izmanto šo pakalpojumu",
         "nodata": "Ieraksts nav atrasts",
@@ -347,13 +353,13 @@
     }],
     "duration_types": [{
         "text": "Stunda",
-        "value": "st"
+        "value": "h"
     }, {
         "text": "Diena",
         "value": "d"
     }, {
         "text": "Mēnesis",
-        "value": "mēn"
+        "value": "m"
     }],
     "icons": {
         "config": "mdi-cogs",

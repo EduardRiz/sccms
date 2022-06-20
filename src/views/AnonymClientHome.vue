@@ -81,7 +81,7 @@
                                 <i18n path="home.price" class="ml-4 text-h6">
                                   <template
                                     #price
-                                  >{{item.tariff.price*item.service.count | currencyEur}}</template>
+                                  >{{item.tariff.price*item.service.count | currency}}</template>
                                 </i18n>
                               </v-list-item-subtitle>
                               <v-list-item-subtitle>
@@ -108,7 +108,7 @@
                         </template>
                       </v-list>
                     </v-card-text>
-                    <v-card-actions>
+                    <v-card-actions style="height: 86px;">
                       <v-btn icon fab class="primary" dark @click="d_buyService=true">
                         <v-icon>mdi-human-scooter</v-icon>
                       </v-btn>
@@ -116,6 +116,7 @@
                       <!-- <v-btn v-if="boxkey && !isAvailableRegister" @click="registerClientOut" fab>
                         <v-icon>mdi-exit-run</v-icon>
                       </v-btn>-->
+                      <sc-visit-comment v-model="comment" />
                       <v-btn
                         :class="isAvailableRegister?'success':'grey lighten-1'"
                         @click="assignKey"
@@ -130,14 +131,22 @@
                   </v-card>
                 </v-col>
                 <v-col cols="1" v-if="boxkey && !isAvailableRegister" align-self="center">
-                  <v-img
-                    src="~@/assets/Exit_red.png"
-                    class="exit-btn"
-                    max-width="80px"
-                    width="80px"
-                    @click="registerClientOut"
-                    :style="{visibility:!isAvailableRegister?'visible':'hidden'}"
-                  ></v-img>
+                  <v-tooltip></v-tooltip>
+                  <v-tooltip bottom>
+                    <template #activator="{on, attrs}">
+                      <v-img
+                        src="~@/assets/Exit_red.png"
+                        class="exit-btn"
+                        max-width="80px"
+                        width="80px"
+                        v-on="on"
+                        v-bind="attrs"
+                        @click="registerClientOut"
+                        :style="{visibility:!isAvailableRegister?'visible':'hidden'}"
+                      ></v-img>
+                    </template>
+                    <i18n path="tt.clientoutbtn" />
+                  </v-tooltip>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -173,6 +182,7 @@ export default {
     "sc-dialog-set-key": SetKey,
     "sc-dashboard-panel": Dashboard,
     "sc-list-registered-services": ListRegisteredService,
+    "sc-visit-comment": () => import("../components/controls/CommentField.vue"),
   },
   data() {
     return {
@@ -180,6 +190,7 @@ export default {
       d_setkey: false,
       d_buyService: false,
       d_client_history: false,
+      comment: null,
 
       item: { service: {} },
       panels: 0,
@@ -243,7 +254,8 @@ export default {
           this.current_client.idx,
           key,
           this.boxkey,
-          this.clientServices
+          this.clientServices,
+          { comment: this.comment }
         )
         .then((response) => {
           if (response != 1) console.log(response);

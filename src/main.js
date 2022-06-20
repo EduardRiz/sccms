@@ -33,6 +33,7 @@ api.setVm(vm);
 
 Vue.prototype.$rules = {
   required: (value) => !!value || vm.$t("error.required"),
+  nonzero: (value) => value>0 || vm.$t("error.required"),
   counter: (value) => value.length <= 20 || "Max 20 characters",
   email: (value) => {
     const pattern =

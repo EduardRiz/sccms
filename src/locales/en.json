@@ -56,6 +56,7 @@
         "card": "Card",
         "tariffs": "Tariffs",
         "tariff": "Tariff",
+        "webtarif": "Web shop",
         "servisvisits": "Is limited visits",
         "dateofbuy": "Date of activation",
         "servis_timed": "Duration of visit in minutes",
@@ -86,6 +87,7 @@
         "address": "Address",
         "password": "New password",
         "color": "Color",
+        "comment": "Visit comment",
         "cmsuser": "Operator",
         "name": "Name"
     },
@@ -199,7 +201,9 @@
         "sm_regservs": "List of registered services to clients",
         "sm_visits": "List of clients visits",
         "clientout": "Close client's visit manually",
+        "clientoutbtn": "Close client's visit",
         "workoutcalendar": "Show workouts calendars",
+        "vcomment": "Comment for the client visit",
         "reversal": "Purchase anulation"
     },
     "button": {
@@ -280,6 +284,7 @@
         "anonymclienthome": "Anonymous client",
         "workstations": "Workstations",
         "keys": "Keys",
+        "keysfree": "Keys",
         "regservs": "Active services",
         "dicts": "Additional settings",
         "soldabonements": "Sold abonements"
@@ -287,6 +292,8 @@
     "label": {
         "regservnotfounds": "No registered visits today",
         "startAt": "Start at {time}",
+        "openedvis": "Show unclosed visits",
+        "allvis": "Show all visits",
         "myclub": "Filter by my club",
         "clubs2add": "Add service to selected club(s)",
         "nodata": "Records not found",

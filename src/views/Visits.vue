@@ -6,7 +6,15 @@
         class="ml-4 primary--text text-uppercase text-h4"
       ></i18n>
       <v-spacer></v-spacer>
-      <v-switch v-model="opened" label="opened"></v-switch>
+      <v-btn-toggle v-model="opened" rounded dense color="primary">
+        <v-btn :value="false">
+          <i18n path="label.allvis" />
+        </v-btn>
+        <v-btn :value="true">
+          <i18n path="label.openedvis" />
+        </v-btn>
+      </v-btn-toggle>
+      <!-- <v-switch v-model="opened" :label="$t('label.opened')"></v-switch> -->
       <v-btn icon class="error ma-4" dark to="/">
         <v-icon>mdi-close</v-icon>
       </v-btn>
@@ -32,6 +40,9 @@
       </template>
       <template v-slot:item.fromdate="{ item }">
         <span>{{item.fromdate | dt-time}}</span>
+      </template>
+      <template v-slot:item.comment="{ item }">
+        <span>{{item.details?item.details.comment:''}}</span>
       </template>
       <template v-slot:item.todate="{ item }">
         <span>{{item.todate | dt-time}}</span>
@@ -97,6 +108,10 @@ export default {
         {
           text: this.$t("fields.duration"),
           value: "duration",
+        },
+        {
+          text: this.$t("fields.comment"),
+          value: "comment",
         },
         {
           text: this.$t("fields.action"),

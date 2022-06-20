@@ -52,7 +52,7 @@
         <span>{{item.tariff.type}}</span>
       </template>
       <template v-slot:item.price="{ item }">
-        <span>{{(item.tariff.price*100) | currency}}</span>
+        <span>{{(item.price) | currency}}</span>
       </template>
       <template v-slot:item.image="{ item }">
         <v-avatar v-if="item.image" class="my-1">

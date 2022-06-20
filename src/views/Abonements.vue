@@ -118,7 +118,7 @@
               <v-col cols="12">
                 <i18n path="fields.tariffs" />
                 <v-data-table :items="tariffs" :headers="tariffs_hdrs" class="orange lighten-5">
-                  <template v-slot:item.price="{ item }">{{item.price*100 | currency}}</template>
+                  <template v-slot:item.price="{ item }">{{item.price | currency}}</template>
                   <template v-slot:item.days="{ item }">
                     <sc-week-days v-if="item.time" :days="item.time.days" />
                   </template>

@@ -332,6 +332,7 @@ export default {
       }
       const rec = this.item_;
       if (this.img) rec.imgsrc = this.img;
+      rec.card = rec.card.replace(/(?:\r\n|\r|\n)/g,"")
       this.$api.apiPostRequest("cms/clients", rec).then((response) => {
         this.$emit("save", response);
         if (this.closeFrozen) this.close();

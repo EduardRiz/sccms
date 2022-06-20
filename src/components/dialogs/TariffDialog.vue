@@ -18,7 +18,7 @@
                 :rules="[$rules.required]"
               ></v-text-field>
             </v-col>
-            <v-col cols="3">
+            <v-col cols="2">
               <v-select
                 v-model="item_.type"
                 :items="$t('tariff_types')"
@@ -26,12 +26,18 @@
                 :label="$t('fields.tariff_type')"
               ></v-select>
             </v-col>
-            <v-col cols="3">
+            <v-col cols="2">
               <v-select
                 v-model="item_.info.status"
                 :items="$t('statuses')"
                 :label="$t('fields.status')"
               ></v-select>
+            </v-col>
+            <v-col cols="2">
+              <v-checkbox
+                v-model="item_.webtype"
+                :label="$t('fields.webtarif')"
+              ></v-checkbox>
             </v-col>
           </v-row>
           <v-textarea
@@ -48,7 +54,7 @@
                 clearable
                 prefix="€"
                 :label="$t('fields.price')"
-                :rules="[$rules.required]"
+                :rules="[$rules.required,$rules.nonzero]"
               ></v-text-field>
             </v-col>
             <v-col cols="4" class="d-flex">
@@ -174,6 +180,7 @@ export default {
   watch: {
     value() {
       this.item_ = this.$api.copy(this.item, DEF_ITEM);
+      if(this.item_.price) this.item_.price = this.item_.price/100;
       if (!this.item_.idx) this.item_.type = this.type;
       //console.log("watch", this.item_);
     },
@@ -191,6 +198,7 @@ export default {
     save() {
       if (!this.$refs.form.validate()) return;
       if (this.item_.type == "ABONEMENT") delete this.item_.duration.spendmin;
+      this.item_.price = this.item_.price*100;
 
       this.$store
         .dispatch(store_module + "/SAVE", this.item_)

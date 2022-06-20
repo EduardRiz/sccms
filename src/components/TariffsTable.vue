@@ -57,7 +57,10 @@
       <template v-slot:item.type="{ item }">
         <span>{{item.type | tarifftype($t("tariff_types"))}}</span>
       </template>
-      <template v-slot:item.price="{ item }">{{item.price*100 | currency}}</template>
+      <template v-slot:item.webtype="{ item }">
+        <v-icon v-if="item.webtype">mdi-check</v-icon>
+      </template>
+      <template v-slot:item.price="{ item }">{{item.price | currency}}</template>
       <template v-slot:item.status="{ item }">
         <sc-record-status :status="item.info.status" />
       </template>
@@ -181,6 +184,10 @@ export default {
             if (!this.filter.type) return true;
             return value == this.filter.type;
           },
+        },
+        {
+          text: this.$t("fields.webtarif"),
+          value: "webtype",
         },
         {
           text: this.$t("fields.tags"),

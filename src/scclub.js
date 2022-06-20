@@ -100,11 +100,13 @@ const settings = {
             role: "USER",
             side: false,
             fmenu: false,
-            menu: [{
-                text: "soldabonements",
-                role: "USER",
-                route: "/soldabonements",
-            }, {
+             menu: [
+            //    {
+            //     text: "soldabonements",
+            //     role: "USER",
+            //     route: "/soldabonements",
+            // }, 
+            {
                 text: "regvis",
                 role: "USER",
                 route: "/regvis",

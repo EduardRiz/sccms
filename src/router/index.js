@@ -107,7 +107,7 @@ const routes = [{
   },
   {
     path: '/keys/free',
-    name: 'Keys',
+    name: 'Keysfree',
     component: () => import('@/views/BoxKeys.vue'),
     meta: {
       role: "USER",

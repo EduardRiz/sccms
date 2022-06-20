@@ -53,6 +53,7 @@
         :no-data-text="$t('label.nodata')"
       >
         <template #item.duration="{item}">{{item | fduration}}</template>
+        <template #item.comment="{item}">{{item.details?item.details.comment:""}}</template>
         <template #item.position="{ item }">
           <span>{{data.indexOf(item)+1}}</span>
         </template>
@@ -139,6 +140,10 @@ export default {
         {
           text: this.$t("fields.client"),
           value: "client",
+        },
+        {
+          text: this.$t("fields.comment"),
+          value: "comment",
         },
         {
           text: this.$t("fields.phone"),

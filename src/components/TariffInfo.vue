@@ -1,8 +1,8 @@
 <template>
   <v-row v-if="tariff">
-    <v-col :class="priceClass+' d-flex'" align-self="center" cols="4">
-      <span class="price-span">{{price | currency}}</span>
-      <div v-if="showCounter" class="counter-div">
+    <v-col :class="priceClass+' d-flex justify-end'" align-self="center" cols="4">
+      <div class="price-span">{{price | currency}}</div>
+      <div v-if="showCounter" class="counter-div ml-2">
         <v-btn icon @click="--service.count" :disabled="service.count<2">
           <v-icon>mdi-arrow-left-circle-outline</v-icon>
         </v-btn>
@@ -53,7 +53,7 @@ export default {
   computed: {
     price() {
       return (
-        this.tariff.price * 100 * (this.service.count ? this.service.count : 1)
+        this.tariff.price * (this.service.count ? this.service.count : 1)
       );
     },
     priceClass() {
@@ -97,8 +97,8 @@ export default {
   font-family: "Roboto", sans-serif !important;
 }
 .counter-div {
-  position: absolute;
-  left: 95px;
+  /* position: absolute; */
+  /* left: 95px; */
 }
 .price-span{
   padding-top: 3px;

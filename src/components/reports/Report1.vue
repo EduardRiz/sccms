@@ -163,6 +163,14 @@ export default {
           value: "tariff",
         },
         {
+          text: this.$t("fields.fromDate"),
+          value: "from_date",
+        },
+        {
+          text: this.$t("fields.toDate"),
+          value: "to_date",
+        },
+        {
           text: this.$t("fields.price"),
           value: "price",
           align: "right",

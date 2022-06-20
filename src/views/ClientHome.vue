@@ -255,7 +255,7 @@
                                       />
                                     </v-list-item-title>
                                     <v-list-item-subtitle>
-                                      <span>{{item.tariff.info.name}}</span>
+                                      <span>{{item.tariff.info?item.tariff.info.name:item.details.name}}</span>
                                       <span v-if="item.timed" class="ml-4">{{item.spendmin+'min'}}</span>
                                     </v-list-item-subtitle>
                                     <v-list-item-subtitle>
@@ -366,7 +366,7 @@
                         </v-expansion-panel>
                       </v-expansion-panels>
                     </v-card-text>
-                    <v-card-actions>
+                    <v-card-actions style="height: 86px;">
                       <v-tooltip bottom>
                         <template #activator="{on, attrs}">
                           <v-btn
@@ -400,6 +400,7 @@
                         <i18n path="tt.buyabn" />
                       </v-tooltip>
                       <v-spacer></v-spacer>
+                      <sc-visit-comment v-model="comment" />
                       <v-btn
                         :class="isAvailableRegister?'success':'grey lighten-1'"
                         @click="assignKey"
@@ -546,6 +547,7 @@ export default {
     "sc-client-services-dialog": ClientServicesDialog,
     "sc-client-purchases-dialog": ClientPurchasesDialog,
     "sc-list-registered-services": ListRegisteredService,
+    "sc-visit-comment": () => import("../components/controls/CommentField.vue"),
   },
   data() {
     return {
@@ -558,6 +560,7 @@ export default {
       d_clservs: false,
       d_clpurchases: false,
 
+      comment: null,
       clientfab: false,
       panels: 0,
       workout2assign: null,
@@ -748,7 +751,8 @@ export default {
         .registerVisit2client(
           this.current_client.idx,
           key,
-          this.clientServices.filter((e) => e.sels)
+          this.clientServices.filter((e) => e.sels),
+          { comment: this.comment }
         )
         .then((response) => {
           if (response != 1) console.log(response);

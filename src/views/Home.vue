@@ -260,8 +260,9 @@ export default {
       this.$root.$on("app-event/hid", (e) => {
         //        console.log(e, this.$store.getters["session/testWsid"](e.detail.wsid));
         if (!this.$store.getters["session/testWsid"](e.detail.wsid)) return;
-        //      console.log(e.detail.data);
-        this.searchData = e.detail.data;
+        console.log(e.detail.data);
+        const p = e.detail.data.replace(/(?:\r\n|\r|\n)/g,"");
+        this.searchData = p; //e.detail.data;
         this.globalClientSearch();
       });
       if (this.$route.query.c) {

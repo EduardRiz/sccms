@@ -60,7 +60,7 @@
       :server-items-length="totalItems"
     >
       <template v-slot:item.price="{ item }">
-        <span v-if="item.tariff">{{(item.tariff.price*100) | currency}}</span>
+        <span v-if="item.tariff">{{(item.tariff.price) | currency}}</span>
       </template>
       <template v-slot:item.fromdate="{ item }">
         <span>{{item.fromdate | dt-only}}</span>

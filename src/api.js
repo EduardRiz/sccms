@@ -24,7 +24,7 @@ const api = {
         });
     },
     publicImgLink(img, def) {
-        if(!img && def) return "/img/default-avatar.jpg";
+        if (!img && def) return "/img/default-avatar.jpg";
         return this.api + '/photos/' + img;
     },
     imageClientLink(idx) {
@@ -61,17 +61,41 @@ const api = {
     addAbonement2client(data) {
         return this.apiPostRequest("operator/buy/abonement", data);
     },
-    registerVisit2client(idx, key, data) {
+    registerVisit2client(idx, key, data, details) {
+        let det = null;
+        if (details) {
+            for (var k in details) {
+                if (details[k]) {
+                    det = {
+                        ...details
+                    };
+                    break;
+                }
+            }
+        }
         return this.apiPostRequest("operator/client/visit/" + idx, {
             services: data,
-            key: key
+            key: key,
+            details: det
         });
     },
-    registerAnonymVisit(idx, key, boxkey, data) {
+    registerAnonymVisit(idx, key, boxkey, data, details) {
+        let det = null;
+        if (details) {
+            for (var k in details) {
+                if (details[k]) {
+                    det = {
+                        ...details
+                    };
+                    break;
+                }
+            }
+        }
         return this.apiPostRequest("operator/client/anonymvisit/" + idx, {
             services: data,
             key: key,
-            boxkey: boxkey
+            boxkey: boxkey,
+            details: det
         });
     },
 
