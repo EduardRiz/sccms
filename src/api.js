@@ -180,7 +180,19 @@ const api = {
     getInOutInfo() {
         return this.apiGetRequest("operator/counters");
     },
-
+    sendFeedback(fb) {
+        return this.apiPostRequest("operator/client/feedback", fb);
+    },
+    // Info Messages
+    loadInfoMessages() {
+        return this.apiGetRequest("msgs");
+    },
+    saveInfoMessage(item) {
+        return this.apiPostRequest("cms/imsgs", item);
+    },
+    deleteInfoMessage(idx) {
+        return this.apiDeleteRequest("cms/imsgs/" + idx);
+    },
     //LOG FUNCTIONAL
     getServerLog(file) {
         return this.apiGetRequest("cms/log/load", {

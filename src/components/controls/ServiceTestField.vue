@@ -46,7 +46,7 @@ export default {
           this.$set(this.item, "testcode", 93);
         } else if (from.isAfter() || to.isBefore()) {
           this.$set(this.item, "testcode", 1);
-        } else if (this.item.time.days.indexOf(this.$moment().day()) == -1) {
+        } else if (this.item.time.days.indexOf(this.$moment().isoWeekday()) == -1) {
           this.$set(this.item, "testcode", 2);
         } else if (this.item.time.hours[this.$moment().hour()] != 1) {
           this.$set(this.item, "testcode", 3);

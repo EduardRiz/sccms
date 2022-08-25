@@ -87,6 +87,9 @@
         "password": "Новый пароль",
         "color": "Цвет",
         "cmsuser": "Оператор",
+        "fbsubj": "Тема",
+        "fbtext": "Сообщение",
+        "fbanswer": "Контактные данные (е-майл, телефон или другой)",
         "name": "Имя"
     },
     "events": {
@@ -94,6 +97,7 @@
     },
     "dialogs": {
         "ryba": "{prefix} {object} (#{idx})",
+        "imsgs": "сообщение",
         "edit": "Изменить",
         "create": "Создать",
         "key": "Ключ",
@@ -166,8 +170,32 @@
         "keysNotFound": "Ключ {key} не найден",
         "accessToken": "Ваша сессия закончилась! Обновите страницу и попробуйте снова"
     },
+    "msgs": {
+        "title": "Тема",
+        "text": "Сообщение",
+        "type": "Тип оформления",
+        "time": "Время",
+        "date": "Дата",
+        "showmode": "Вариант показа",
+        "periodErr": "Ошибка",
+        "plogin": "Только на входе",
+        "phome": "Только на главной странице",
+        "pnoone": "Не показывать",
+        "ploginhome": "Везде",
+        "types": [{
+            "text": "Информационное",
+            "value": "info"
+        }, {
+            "text": "Предупреждение",
+            "value": "warn"
+        }, {
+            "text": "Важное",
+            "value": "error"
+        }]
+    },
     "tt": {
         "extratime": "Разница между купленным и использованным временем",
+        "feedback": "Сообщение технической службе",
         "pandbcl": "Количество клиентов по тэгу {tag}",
         "pandbk": "Свободные ключи",
         "panclin": "Посетители клуба",
@@ -220,6 +248,7 @@
         "filter": "Фильтр",
         "unfilter": "Отменить фильтр",
         "block": "Блокировать",
+        "send": "Отправить",
         "delete": "Удалить"
     },
     "servs": {
@@ -252,6 +281,7 @@
         "clienthome": "Client's dashboard",
         "login": "",
         "clubsett": "Клуб",
+        "imsgs": "Оповешения",
         "abnmnt": "Абонементы",
         "users": "Операторы",
         "groups": "Группы клиентов",
@@ -364,6 +394,7 @@
         "users": "mdi-account",
         "groups": "mdi-account-multiple",
         "events": "mdi-notebook",
+        "imsgs": "mdi-information",
         "logs": "mdi-notebook",
         "clients": "mdi-account-group",
         "services": "mdi-human-scooter",

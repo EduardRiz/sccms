@@ -658,7 +658,7 @@ export default {
         this.$set(i, "testcode", 93);
       } else if (from.isAfter() || to.isBefore()) {
         this.$set(i, "testcode", 1);
-      } else if (i.time.days.indexOf(this.$moment().day()) == -1) {
+      } else if (i.time.days.indexOf(this.$moment().isoWeekday()) == -1) {
         this.$set(i, "testcode", 2);
       } else if (i.time.hours[this.$moment().hour()] != 1) {
         this.$set(i, "testcode", 3);
@@ -712,7 +712,7 @@ export default {
                     const to = from.clone().endOf("day");
                     if (now.isAfter(from) && now.isBefore(to)) return true;
                   } else {
-                    if (e.dayofweek == now.day()) return true;
+                    if (e.dayofweek == now.isoWeekday()) return true;
                   }
                   return false;
                 } catch (error) {

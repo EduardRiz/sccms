@@ -232,6 +232,15 @@ const routes = [{
     },
   },
   {
+    path: '/imsgs',
+    name: 'imsgs',
+    component: () => import("@/views/InfoMessages.vue"),
+    meta: {
+      role: "ADMIN",
+      auth: true,
+    },
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import("@/views/Login.vue"),

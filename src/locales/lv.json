@@ -88,13 +88,17 @@
         "color": "Krāsa",
         "comment": "Komentārs",
         "cmsuser": "Operators",
-        "name": "Vārds"
+        "name": "Vārds",
+        "fbsubj": "Ziņojuma tēma",
+        "fbtext": "Ziņojuma teksts",
+        "fbanswer": "Jūsu kontakts (epasts vai tālr.)"
     },
     "events": {
         "counters": "Count of client changed"
     },
     "dialogs": {
         "ryba": "{prefix} {object} (#{idx})",
+        "imsgs": "ziņojumu",
         "edit": "Mainīt",
         "create": "Izveidot jaunu",
         "key": "Atslēga",
@@ -169,6 +173,7 @@
     },
     "tt": {
         "extratime": "Apmaksātā laika bilance (+/-)",
+        "feedback": "Ziņojums tehniskajam dienestam",
         "pandbcl": "Klientu skaits pēc taga {tag}",
         "pandbk": "Neizmantotas atslēgas {tag}",
         "panclin": "Kluba apmekletāji",
@@ -199,11 +204,34 @@
         "sm_regvis": "Pakalpojumu izmantošana (pēc klientiem)",
         "sm_regservs": "Pārdotie pakalpojumi (pēc klientiem)",
         "sm_visits": "Reģistrētie apmeklējumi",
-        "clientout": "Reģistrēt klienta izēju manuāli",
-        "clientoutbtn": "Reģistrēt klienta izēju",
+        "clientout": "Reģistrēt klienta izeju manuāli",
+        "clientoutbtn": "Reģistrēt klienta izeju",
         "vcomment": "Pievienot komentāru apmeklējumam",
         "workoutcalendar": "Rādīt treniņu kalendāru",
         "reversal": "Pirkuma anulēšana"
+    },
+    "msgs": {
+        "title": "Ziņojuma nosaukums",
+        "text": "Ziņojuma saturs",
+        "type": "Ziņojuma veids",
+        "time": "Laiks",
+        "date": "Datums",
+        "showmode": "Izvēlēties ziņojuma parametru",
+        "periodErr": "Nepareizi datumi",
+        "plogin": "Rādīt tikai piekļuves formā",
+        "phome": "Rādīt galvenajā lapā",
+        "pnoone": "Nerādīt",
+        "ploginhome": "Rādīt abos gadījumos",
+        "types": [{
+            "text": "Informatīvs ziņojums balts uz zila",
+            "value": "info"
+        }, {
+            "text": "Brīdinājuma ziņojums balts uz oranža",
+            "value": "warn"
+        }, {
+            "text": "Svarīgs ziņojums balts uz sarkana",
+            "value": "error"
+        }]
     },
     "button": {
         "save": "Saglabāt",
@@ -222,6 +250,7 @@
         "filter": "Filtrs",
         "unfilter": "Atcelt filtru",
         "block": "Bloķēt",
+        "send": "Nosūtīt",
         "delete": "Dzēst"
     },
     "servs": {
@@ -256,6 +285,7 @@
         "clubsett": "Klubs",
         "abnmnt": "Abonementi",
         "users": "Operatori",
+        "imsgs": "Apziņošana",
         "groups": "Klientu grupas",
         "logs": "Žurnāls",
         "logout": "Izeja",
@@ -369,6 +399,7 @@
         "logs": "mdi-notebook",
         "clients": "mdi-account-group",
         "services": "mdi-human-scooter",
+        "imsgs": "mdi-information",
         "abonements": "mdi-table-multiple",
         "abnmnt": "mdi-table-multiple",
         "rooms": "mdi-greenhouse",
@@ -484,7 +515,7 @@
         },
         "title": {
             "purchases": "Klientu pirkumi",
-            "coachsact": "Trenieru aktivitāte",
+            "coachsact": "Treneru aktivitāte",
             "clientsact": "Klientu aktivitāte",
             "clientsvis": "Klientu apmeklējumi",
             "chartvis": "Kluba noslogojums"

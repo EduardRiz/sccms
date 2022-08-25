@@ -55,6 +55,11 @@
         </v-card>
       </v-col>
     </v-row>
+    <div class="info-panel">
+      <div class="info-panel-msg" v-for="msg in infoMessages" :key="msg.idx">
+        <sc-info-message :item="msg" test />
+      </div>
+    </div>
   </v-container>
   <!-- </v-content> -->
 </template>
@@ -63,12 +68,16 @@
 import SelectLocale from "@/components/Select-locale";
 
 export default {
-  components: { SelectLocale },
+  components: {
+    SelectLocale,
+    "sc-info-message": () => import("@/components/controls/InfoMessage.vue"),
+  },
   name: "Login",
   data() {
     return {
       showAlert: false,
       alertMessage: "",
+      infoMessages: [],
       user: "",
       userRules: [(v) => !!v || this.$t("error.required")],
       pass: "",
@@ -84,6 +93,7 @@ export default {
         this.wsid = d.wsid;
       });
     //window.history.replaceState({}, document.title, "/#/login");
+    this.$api.loadInfoMessages().then((r) => (this.infoMessages = [...r]));
   },
   methods: {
     showAlertMessage(m) {
@@ -120,6 +130,17 @@ export default {
 <style scoped lang="scss">
 .login-class {
   border-radius: 25px !important;
+}
+.info-panel {
+  position: absolute;
+  margin-bottom: 5px;
+  bottom: 0;
+  width: 100%;
+}
+.info-panel-msg {
+  margin: auto;
+  margin-bottom: 5px;
+  width: 40%;
 }
 </style>>
 

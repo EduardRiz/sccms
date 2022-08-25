@@ -256,7 +256,7 @@ export default {
                     const to = from.clone().endOf("day");
                     if (now.isAfter(from) && now.isBefore(to)) return true;
                   } else {
-                    if (e.dayofweek == now.day()) return true;
+                    if (e.dayofweek == now.isoWeekday()) return true;
                   }
                   return false;
                 } catch (error) {

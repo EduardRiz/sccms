@@ -151,6 +151,11 @@ const settings = {
         }, {
             divider: true,
         }, {
+            text: "imsgs",
+            route: "/imsgs",
+            role: "ADMIN",
+            side: true,
+        }, {
             text: "events",
             route: "/events",
             role: "ADMIN",

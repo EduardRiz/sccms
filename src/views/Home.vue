@@ -140,7 +140,40 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-btn fab absolute bottom color="primary" class="feedback-btn" @click="d_feedback=true">
+      <v-icon large dark>mdi-email-fast-outline</v-icon>
+    </v-btn>
+    <div v-if="!availableSearcData" class="info-panel">
+      <div class="info-panel-msg" v-for="msg in infoMessages" :key="msg.idx">
+        <sc-info-message :item="msg" test/>
+      </div>
+    </div>
     <sc-client-dialog v-model="d_client" :item="item" @save="onNewClient" />
+    <v-dialog v-model="d_feedback" persistent width="400px">
+      <v-card dark>
+        <v-card-title>
+          <i18n path="tt.feedback" />
+          <v-spacer></v-spacer>
+          <v-btn icon @click="d_feedback=false">
+            <v-icon color="error">mdi-close-circle</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="feedback">
+            <v-text-field v-model="fb.subj" :rules="[$rules.required]" :label="$t('fields.fbsubj')"></v-text-field>
+            <v-text-field v-model="fb.answer" :label="$t('fields.fbanswer')"></v-text-field>
+            <v-textarea v-model="fb.text" :rules="[$rules.required]" :label="$t('fields.fbsubj')"></v-textarea>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text @click.stop="sendFeedback">
+            <i18n path="button.send" class="mr-2" />
+            <v-icon>mdi-email-fast-outline</v-icon>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-sheet>
 </template>
 
@@ -153,14 +186,18 @@ export default {
   components: {
     "sc-client-dialog": ClientDialog,
     "sc-dashboard-panel": Dashboard,
+    "sc-info-message": () => import("@/components/controls/InfoMessage.vue"),
   },
   data() {
     return {
       d_client: false,
+      d_feedback: false,
       item: {},
+      fb: { subj: null, text: null },
       searchData: null,
       foundedClients: [],
       foundedKeys: [],
+      infoMessages: [],
       searchError: null,
     };
   },
@@ -186,8 +223,8 @@ export default {
     foundedHeight() {
       try {
         const l = this.foundedClients.length + this.foundedKeys.length;
-        if (l < 3) return "240px";
-        if (l < 5) return "430px";
+        if (l < 3) return "60vh";
+        if (l < 5) return "60vh";
         return "500px";
       } catch (error) {
         return "0px";
@@ -251,6 +288,10 @@ export default {
         }
       }
     },
+    sendFeedback() {
+      if (!this.$refs.feedback.validate()) return;
+      this.$api.sendFeedback(this.fb).finally(() => (this.d_feedback = false));
+    },
   },
   beforeDestroy() {
     this.$root.$off("app-event/hid");
@@ -261,7 +302,7 @@ export default {
         //        console.log(e, this.$store.getters["session/testWsid"](e.detail.wsid));
         if (!this.$store.getters["session/testWsid"](e.detail.wsid)) return;
         console.log(e.detail.data);
-        const p = e.detail.data.replace(/(?:\r\n|\r|\n)/g,"");
+        const p = e.detail.data.replace(/(?:\r\n|\r|\n)/g, "");
         this.searchData = p; //e.detail.data;
         this.globalClientSearch();
       });
@@ -269,6 +310,7 @@ export default {
         this.searchData = this.$route.query.c;
         this.globalClientSearch();
       }
+      this.$api.loadInfoMessages().then((r) => (this.infoMessages = [...r]));
     } catch (error) {
       console.log(error);
     }
@@ -296,5 +338,20 @@ export default {
   -webkit-box-shadow: 10px 10px 8px 5px rgba(34, 60, 80, 0.19);
   -moz-box-shadow: 10px 10px 8px 5px rgba(34, 60, 80, 0.19);
   box-shadow: 10px 10px 8px 5px rgba(34, 60, 80, 0.19);
+}
+.info-panel {
+  position: absolute;
+  margin-bottom: 5px;
+  bottom: 0;
+  width: 100%;
+}
+.info-panel-msg {
+  margin: auto;
+  margin-bottom: 5px;
+  width: 40%;
+}
+.feedback-btn {
+  margin-bottom: 40px;
+  margin-left: 12px;
 }
 </style>
