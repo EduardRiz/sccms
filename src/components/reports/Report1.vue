@@ -151,6 +151,10 @@ export default {
           value: "client",
         },
         {
+          text: this.$t("fields.comment"),
+          value: "clientdet",
+        },
+        {
           text: this.$t("fields.sale"),
           value: "sale",
         },

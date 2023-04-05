@@ -70,7 +70,7 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="4">
-                  <v-text-field v-model="item_.card" :label="$t('fields.card')"></v-text-field>
+                  <v-text-field v-model="item_.card" :label="$t('fields.card')" :error-messages="cardErrorMessage" :error="cardErrorMessage!=null" @keypress="cardErrorMessage=null"></v-text-field>
                 </v-col>
                 <v-col cols="3">
                   <v-select
@@ -200,6 +200,7 @@ export default {
       img: null,
       isCapturedImage: false,
       isCameraActive: false,
+      cardErrorMessage: null,
       camera: null,
       devices: [],
       deviceId: null,
@@ -332,7 +333,11 @@ export default {
       }
       const rec = this.item_;
       if (this.img) rec.imgsrc = this.img;
-      rec.card = rec.card.replace(/(?:\r\n|\r|\n)/g,"")
+      rec.card = rec.card.replace(/(?:\r\n|\r|\n)/g,"");
+      if (this.$store.getters["keys/keyid"](rec.card).idx) {
+        this.cardErrorMessage = this.$t("error.keyascard");
+        return;
+      }
       this.$api.apiPostRequest("cms/clients", rec).then((response) => {
         this.$emit("save", response);
         if (this.closeFrozen) this.close();
@@ -387,6 +392,9 @@ export default {
       });
     } catch (error) {
       console.log(error);
+    }
+    if (!this.$store.getters["keys/isItems"]) {
+      this.$store.dispatch("keys/LOAD");
     }
   },
 };

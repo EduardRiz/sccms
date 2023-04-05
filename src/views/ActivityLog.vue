@@ -20,7 +20,7 @@
     >
       <template v-slot:item.atype="{ item }">{{$t("atypes")[item.atype]}}</template>
       <template v-slot:expanded-item="{ item }">
-        <td :colspan="headers.length">{{JSON.stringify(item.details)}}</td>
+        <td :colspan="headers.length">{{detail2string(item)}}</td>
       </template>
     </v-data-table>
   </v-sheet>
@@ -63,6 +63,13 @@ export default {
     };
   },
   methods: {
+    detail2string(item) {
+      let det = item.details;
+      if (det && det.unfreezedate) {
+        det.freeze = new Date(det.unfreezedate).toLocaleString();
+      }
+      return JSON.stringify(det);
+    },
     loadData(q) {
       if (q == 1) this.search = null;
       this.$api

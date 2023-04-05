@@ -24,6 +24,14 @@ const getters = {
             return o ? o : {};
         }
     },
+    keyid: state => {
+        return (id) => {
+            const o = state.items.find(e => {
+                return e.keyid == id
+            });
+            return o ? o : {};
+        }
+    },
 }
 const actions = {
     LOAD: function (context) {

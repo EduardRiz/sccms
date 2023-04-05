@@ -164,6 +164,7 @@
         "abonement": "Current abonement"
     },
     "error": {
+        "keyascard" : "Key can't used as a card",
         "required": "Required",
         "email": "Wrong email format",
         "login": "Authorization failed",

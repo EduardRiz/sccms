@@ -163,6 +163,7 @@
         "abonement": "Tekošais abonements"
     },
     "error": {
+        "keyascard" : "Atslēgu nevar izmantot kā klienta karti",
         "required": "Obligāti aizpildīt",
         "email": "Nepareizs e-pasts",
         "login": "Klūda lietotāja vārdā vai parolē",
